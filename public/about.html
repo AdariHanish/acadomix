@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Learn about Acadomix - Your trusted partner for academic project development and mentoring.">
+    <title>About Us - Acadomix</title>
+    <script>
+        (function () {
+            const theme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+    <link rel="icon" href="images/logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+    <!-- Loader -->
+    <div class="loader-wrapper">
+        <div class="loader">
+            <div class="loader-logo"><img src="images/logo.png" alt="Acadomix"></div>
+            <div class="loader-text">Acadomix</div>
+            <div class="loader-bar">
+                <div class="loader-bar-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="images/logo.png" alt="Acadomix">
+                <span>Acadomix</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="projects.html">Projects</a></li>
+                <li><a href="pricing.html">Pricing</a></li>
+                <li><a href="about.html" class="active">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="review.html">Review</a></li>
+                <li><a href="/admin/login.html" class="admin-nav-link">Admin</a></li>
+            </ul>
+            <div class="nav-actions">
+                <div class="theme-toggle">
+                    <div class="theme-toggle-track">
+                        <span class="toggle-sun">☀️</span>
+                        <span class="toggle-moon">🌙</span>
+                        <div class="toggle-stars"><span></span><span></span><span></span></div>
+                        <div class="toggle-clouds"><span></span><span></span></div>
+                    </div>
+                    <div class="toggle-thumb"></div>
+                </div>
+                <button class="mobile-menu-btn"><span></span><span></span><span></span></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero fluid-section" style="min-height: 50vh;">
+        <div class="hero-bg">
+            <div class="hero-bg-gradient"></div>
+        </div>
+        <div class="particles-container"></div>
+        <div class="fluid-container text-center-mobile" style="position: relative; z-index: 1;">
+            <span class="section-tag">🚀 About Us</span>
+            <h1 class="section-title">Who We <span class="highlight">Are</span></h1>
+            <p class="section-description">Your trusted partner for academic project success</p>
+        </div>
+    </section>
+
+    <!-- About Content -->
+    <section class="fluid-section">
+        <div class="fluid-container">
+
+            <!-- Main About Card -->
+            <div class="about-card reveal">
+                <div class="flex-responsive" style="align-items: center; margin-bottom: 25px;">
+                    <img src="images/logo.png" alt="Logo" style="width: clamp(40px, 8vw, 60px); height: auto;">
+                    <h2 style="font-size: clamp(1.5rem, 5vw, 2.5rem); color: var(--text-primary);">Acadomix</h2>
+                </div>
+                <p style="color: var(--text-secondary); font-size: 1.1rem; line-height: 1.8; margin-bottom: 20px;">
+                    Acadomix is a student-focused IT project development and mentoring startup that helps
+                    engineering students successfully complete their academic projects with real understanding and
+                    practical skills.
+                </p>
+                <p style="color: var(--text-secondary); font-size: 1.1rem; line-height: 1.8;">
+                    Our mission is not just giving projects — but guiding students from <strong
+                        style="color: var(--accent-primary);">idea → development → explanation → submission →
+                        confidence</strong>.
+                </p>
+            </div>
+
+            <!-- Mission & Vision -->
+            <div class="mission-vision-grid reveal">
+                <div class="about-card-sm">
+                    <h3
+                        style="margin-bottom: 18px; display: flex; align-items: center; gap: 12px; color: var(--text-primary); font-size: 1.4rem;">
+                        <span class="card-icon">🎯</span> Our Mission
+                    </h3>
+                    <p style="color: var(--text-secondary); line-height: 1.7;">
+                        To empower every engineering student with quality projects and real understanding, enabling them
+                        to confidently present and explain their work during viva and beyond.
+                    </p>
+                </div>
+                <div class="about-card-sm">
+                    <h3
+                        style="margin-bottom: 18px; display: flex; align-items: center; gap: 12px; color: var(--text-primary); font-size: 1.4rem;">
+                        <span class="card-icon">👁️</span> Our Vision
+                    </h3>
+                    <p style="color: var(--text-secondary); line-height: 1.7;">
+                        To become the most trusted name in academic project development and grow into a comprehensive
+                        skill development platform for students across India.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Why Choose Us -->
+            <div class="about-card reveal">
+                <h3 style="font-size: 1.8rem; margin-bottom: 8px; text-align: center; color: var(--text-primary);">
+                    Why Choose <span
+                        style="background: var(--gradient-accent); background-clip: text; -webkit-background-clip: text; color: transparent; -webkit-text-fill-color: transparent;">Acadomix?</span>
+                </h3>
+
+                <div class="about-feature-grid">
+                    <div class="about-feature-item">
+                        <div class="about-icon">💡</div>
+                        <h4>Unique Ideas</h4>
+                        <p>Trending & innovative project ideas that make you stand out from the crowd</p>
+                    </div>
+                    <div class="about-feature-item">
+                        <div class="about-icon">🧠</div>
+                        <h4>Real Guidance</h4>
+                        <p>Complete code explanation for confident viva performance and deeper understanding</p>
+                    </div>
+                    <div class="about-feature-item">
+                        <div class="about-icon">💰</div>
+                        <h4>Affordable</h4>
+                        <p>Student-friendly pricing with no hidden costs — transparent and honest</p>
+                    </div>
+                    <div class="about-feature-item">
+                        <div class="about-icon">📚</div>
+                        <h4>Documentation</h4>
+                        <p>Complete docs, PPT & IEEE papers included with every project delivery</p>
+                    </div>
+                    <div class="about-feature-item">
+                        <div class="about-icon">🤝</div>
+                        <h4>24/7 Support</h4>
+                        <p>WhatsApp support available till your submission — we're always there</p>
+                    </div>
+                    <div class="about-feature-item">
+                        <div class="about-icon">🚀</div>
+                        <h4>Deployment</h4>
+                        <p>Free hosting & deployment assistance for all frontend projects</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tagline -->
+            <div class="reveal" style="text-align: center; margin-top: 30px; padding: 40px;">
+                <p style="font-size: 1.8rem; font-weight: 700; margin-bottom: 10px;">
+                    ⭐ <span
+                        style="background: var(--gradient-accent); background-clip: text; -webkit-background-clip: text; color: transparent; -webkit-text-fill-color: transparent;">Spark
+                        the Code. Shape the Future.</span>
+                </p>
+                <p style="font-size: 1.2rem; color: var(--text-secondary);">Your Project Partner Till Submission</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="fluid-section text-center-mobile" style="background: var(--bg-secondary);">
+        <div class="fluid-container reveal">
+            <h2 class="section-title">Ready to Start Your <span class="highlight">Project?</span></h2>
+            <p class="section-description" style="margin-bottom: 40px;">Let's build something amazing together!</p>
+            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                <a href="contact.html" class="btn btn-primary">Get Started →</a>
+                <a href="https://wa.me/918897492936?text=Hi! I want to know more about Acadomix." target="_blank"
+                    class="btn btn-secondary">💬 Chat with Us</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <img src="images/logo.png" alt="Acadomix">
+                    <span>Acadomix</span>
+                </div>
+                <p>Spark the Code. Shape the Future. Your trusted partner for academic project development.</p>
+                <div class="footer-social">
+                    <a href="https://wa.me/918897492936" target="_blank">💬</a>
+                    <a href="mailto:acadomix@gmail.com">📧</a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="projects.html">Projects</a></li>
+                    <li><a href="pricing.html">Pricing</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Contact</h4>
+                <ul>
+                    <li><a href="tel:+918897492936">📞 +91 8897492936</a></li>
+                    <li><a href="mailto:acadomix@gmail.com">📧 acadomix@gmail.com</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2024 Acadomix. All rights reserved.</p>
+            <p>Made with ❤️ for Students</p>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Button -->
+    <a href="https://wa.me/918897492936?text=Hi! I'm interested in Acadomix services." target="_blank"
+        class="whatsapp-btn">💬</a>
+
+    <script src="js/main.js"></script>
+    <!-- Vercel Web Analytics -->
+    <script defer src="/_vercel/insights/script.js"></script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
+</body>
+
+</html>
+
+

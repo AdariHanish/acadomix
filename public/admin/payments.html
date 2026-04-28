@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payments - Admin | Acadomix</title>
+    <script>
+        // Prevent flash of wrong theme
+        (function () {
+            const theme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+    <link rel="icon" href="../images/logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <div class="admin-sidebar-logo">
+                <img src="../images/logo.png" alt="Acadomix">
+                <span>Admin Panel</span>
+            </div>
+
+            <nav class="admin-nav">
+                <a href="dashboard.html"><span>📊</span> Dashboard</a>
+                <a href="responses.html"><span>📬</span> Responses</a>
+                <a href="payments.html" class="active"><span>💳</span> Payments</a>
+                <a href="testimonials.html"><span>⭐</span> Reviews</a>
+                <a href="projects-manage.html"><span>📁</span> Projects</a>
+                <a href="#" onclick="logout(); return false;"><span>🚪</span> Logout</a>
+            </nav>
+
+            <div style="margin-top: auto; padding-top: 30px;">
+                <div class="theme-toggle" style="margin: 0 auto;">
+                    <div class="theme-toggle-track">
+                        <span class="toggle-sun">☀️</span>
+                        <span class="toggle-moon">🌙</span>
+                        <div class="toggle-stars"><span></span><span></span><span></span></div>
+                        <div class="toggle-clouds"><span></span><span></span></div>
+                    </div>
+                    <div class="toggle-thumb"></div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="admin-content">
+            <div class="admin-header">
+                <div>
+                    <h1>💳 Payment Submissions</h1>
+                    <p>Verify payment screenshots from students</p>
+                </div>
+            </div>
+
+            <div class="admin-stats" style="margin-bottom: 30px;">
+                <div class="admin-stat-card">
+                    <h3 data-stat="pendingPayments">0</h3>
+                    <p>Pending Verification</p>
+                </div>
+                <div class="admin-stat-card">
+                    <h3 data-stat="verifiedPayments">0</h3>
+                    <p>Verified Payments</p>
+                </div>
+            </div>
+
+            <div class="admin-table" id="payments-table">
+                <p style="padding: 30px; text-align: center; color: var(--text-muted);">Loading payments...</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/admin.js"></script>
+    <!-- Vercel Web Analytics -->
+    <script defer src="/_vercel/insights/script.js"></script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
+</body>
+
+</html>
+

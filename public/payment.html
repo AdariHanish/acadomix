@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Pay advance to book your project slot at Acadomix. Scan QR code and upload screenshot.">
+    <title>Payment - Acadomix</title>
+
+    <!-- Theme Flash Prevention -->
+    <script>
+        (function () {
+            const theme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+
+    <link rel="icon" href="images/logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <!-- Loader -->
+    <div class="loader-wrapper">
+        <div class="loader">
+            <div class="loader-logo"><img src="images/logo.png" alt="Acadomix"></div>
+            <div class="loader-text">Acadomix</div>
+            <div class="loader-bar">
+                <div class="loader-bar-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="images/logo.png" alt="Acadomix">
+                <span>Acadomix</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="projects.html">Projects</a></li>
+                <li><a href="pricing.html">Pricing</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="review.html">Review</a></li>
+                <li><a href="/admin/login.html" class="admin-nav-link">Admin</a></li>
+            </ul>
+            <div class="nav-actions">
+                <div class="theme-toggle">
+                    <div class="theme-toggle-track">
+                        <span class="toggle-sun">☀️</span>
+                        <span class="toggle-moon">🌙</span>
+                        <div class="toggle-stars"><span></span><span></span><span></span></div>
+                        <div class="toggle-clouds"><span></span><span></span></div>
+                    </div>
+                    <div class="toggle-thumb"></div>
+                </div>
+                <button class="mobile-menu-btn"><span></span><span></span><span></span></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero fluid-section" style="min-height: 50vh;">
+        <div class="hero-bg">
+            <div class="hero-bg-gradient"></div>
+        </div>
+        <div class="particles-container"></div>
+        <div class="fluid-container text-center-mobile" style="position: relative; z-index: 1;">
+            <span class="section-tag">💳 Payment</span>
+            <h1 class="section-title">Book Your <span class="highlight">Slot</span></h1>
+            <p class="section-description">Pay ₹500 advance to confirm your project booking</p>
+        </div>
+    </section>
+
+    <!-- Payment Section -->
+    <section class="payment-section fluid-section">
+        <div class="payment-container">
+            <!-- QR Code Section -->
+            <div class="qr-container reveal">
+                <h3 style="margin-bottom: 15px; font-size: 1.5rem; color: var(--text-primary);">📱 Scan QR Code to Pay
+                </h3>
+                <p style="color: var(--text-secondary); margin-bottom: 25px;">Click on QR code to enlarge</p>
+
+                <!-- QR Image - Clickable -->
+                <div class="qr-image" id="qrImageTrigger">
+                    <img src="images/qr-code.png" alt="Payment QR Code"
+                        onerror="this.onerror=null; this.src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi%3A%2F%2Fpay%3Fpa%3D8897492936%40ybl%26pn%3DAcadomix%26am%3D500%26cu%3DINR';">
+                </div>
+
+                <div class="fluid-container"
+                    style="margin-top: 40px; padding: 20px; background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 12px; display: inline-block;">
+                    <p style="color: var(--text-secondary); margin: 0; font-size: 1rem;">
+                        <strong style="color: var(--text-primary);">UPI ID:</strong> 9491782936@ybl<br>
+                        <strong style="color: var(--text-primary);">Phone Number:</strong>9515192936<br>
+                        <strong style="color: var(--text-primary);">Amount:</strong> <span
+                            style="color: var(--accent-primary); font-weight: 700; font-size: 1.2rem;">₹500</span>
+                        (Advance Payment)
+                    </p>
+                </div>
+
+                <div style="margin-top: 25px;">
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">
+                        ✅ Advance will be deducted from final amount<br>
+                        ✅ Booking confirmed within 1 hour of verification
+                    </p>
+                </div>
+            </div>
+
+            <!-- Payment Upload Form -->
+            <div class="payment-form reveal">
+                <h3 style="margin-bottom: 30px; font-size: 1.5rem; color: var(--text-primary);">📤 Upload Payment
+                    Screenshot</h3>
+
+                <form id="payment-form">
+                    <div class="form-group">
+                        <label for="student_name">Your Name *</label>
+                        <input type="text" id="student_name" name="student_name" required
+                            placeholder="Enter your full name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">WhatsApp Number *</label>
+                        <input type="tel" id="phone" name="phone" required placeholder="e.g., 9876543210">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="project_name">Project Name / Type *</label>
+                        <input type="text" id="project_name" name="project_name" required
+                            placeholder="e.g., Image Classification, E-Commerce Website">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="amount">Amount Paid (₹) *</label>
+                        <input type="number" id="amount" name="amount" value="500" required min="500" placeholder="500">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Payment Screenshot *</label>
+                        <div class="file-upload">
+                            <input type="file" id="screenshot" name="screenshot" accept="image/*" required>
+                            <div class="file-upload-icon">📷</div>
+                            <p class="file-upload-text">
+                                Click to upload or drag and drop<br>
+                                <small>PNG, JPG, JPEG up to 5MB</small>
+                            </p>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Submit Payment Proof →</button>
+                </form>
+
+                <div
+                    style="margin-top: 25px; padding: 20px; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 12px;">
+                    <p style="color: #22c55e; margin: 0; font-size: 0.9rem; text-align: center;">
+                        🔒 Secure Payment • ✅ Verified within 1 hour • 📞 We'll contact you on WhatsApp
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- QR Modal -->
+    <div class="qr-modal" id="qrModal">
+        <div class="qr-modal-content">
+            <button class="qr-modal-close" id="qrModalClose" type="button">×</button>
+            <img src="images/qr-code.png" alt="Payment QR Code - Enlarged"
+                onerror="this.onerror=null; this.src='https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=upi%3A%2F%2Fpay%3Fpa%3D8897492936%40ybl%26pn%3DAcadomix%26am%3D500%26cu%3DINR';">
+            <p>UPI: 8897492936@ybl | Amount: ₹500</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <img src="images/logo.png" alt="Acadomix">
+                    <span>Acadomix</span>
+                </div>
+                <p>Spark the Code. Shape the Future.</p>
+                <div class="footer-social">
+                    <a href="https://wa.me/918897492936" target="_blank">💬</a>
+                    <a href="mailto:acadomix@gmail.com">📧</a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="projects.html">Projects</a></li>
+                    <li><a href="pricing.html">Pricing</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Contact</h4>
+                <ul>
+                    <li><a href="tel:+918897492936">📞 +91 8897492936</a></li>
+                    <li><a href="mailto:acadomix@gmail.com">📧 acadomix@gmail.com</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2024 Acadomix. All rights reserved.</p>
+            <p>Made with ❤️ for Students</p>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Button -->
+    <a href="https://wa.me/918897492936?text=Hi! I just made a payment for my project booking." target="_blank"
+        class="whatsapp-btn">💬</a>
+
+    <script src="js/main.js"></script>
+    <!-- Vercel Web Analytics -->
+    <script defer src="/_vercel/insights/script.js"></script>
+
+    <!-- Inline QR Modal Script (Backup) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const qrImage = document.getElementById('qrImageTrigger') || document.querySelector('.qr-image');
+            const qrModal = document.getElementById('qrModal') || document.querySelector('.qr-modal');
+            const qrClose = document.getElementById('qrModalClose') || document.querySelector('.qr-modal-close');
+
+            if (qrImage && qrModal) {
+                qrImage.onclick = function (e) {
+                    e.preventDefault();
+                    qrModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                };
+
+                if (qrClose) {
+                    qrClose.onclick = function (e) {
+                        e.preventDefault();
+                        qrModal.classList.remove('active');
+                        document.body.style.overflow = '';
+                    };
+                }
+
+                qrModal.onclick = function (e) {
+                    if (e.target === qrModal) {
+                        qrModal.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                };
+
+                document.onkeydown = function (e) {
+                    if (e.key === 'Escape' && qrModal.classList.contains('active')) {
+                        qrModal.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                };
+            }
+        });
+    </script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
+</body>
+
+</html>
+

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Share your experience with Acadomix. Submit your review and help other students.">
+    <title>Submit Review - Acadomix</title>
+    <script>
+        // Prevent flash of wrong theme
+        (function () {
+            const theme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+    <link rel="icon" href="images/logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <!-- Loader -->
+    <div class="loader-wrapper">
+        <div class="loader">
+            <div class="loader-logo"><img src="images/logo.png" alt="Acadomix"></div>
+            <div class="loader-text">Acadomix</div>
+            <div class="loader-bar">
+                <div class="loader-bar-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="images/logo.png" alt="Acadomix">
+                <span>Acadomix</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="projects.html">Projects</a></li>
+                <li><a href="pricing.html">Pricing</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="review.html" class="active">Review</a></li>
+                <li><a href="/admin/login.html" class="admin-nav-link">Admin</a></li>
+            </ul>
+            <div class="nav-actions">
+                <div class="theme-toggle">
+                    <div class="theme-toggle-track">
+                        <span class="toggle-sun">☀️</span>
+                        <span class="toggle-moon">🌙</span>
+                        <div class="toggle-stars"><span></span><span></span><span></span></div>
+                        <div class="toggle-clouds"><span></span><span></span></div>
+                    </div>
+                    <div class="toggle-thumb"></div>
+                </div>
+                <button class="mobile-menu-btn"><span></span><span></span><span></span></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero fluid-section" style="min-height: 50vh;">
+        <div class="hero-bg">
+            <div class="hero-bg-gradient"></div>
+        </div>
+        <div class="particles-container"></div>
+        <div class="fluid-container text-center-mobile" style="position: relative; z-index: 1;">
+            <span class="section-tag">⭐ Student Reviews</span>
+            <h1 class="section-title">Success <span class="highlight">Stories</span></h1>
+            <p class="section-description">Hear what our students say about their project experience</p>
+        </div>
+    </section>
+
+    <!-- Review Form Section -->
+    <section class="review-form-section fluid-section">
+        <div class="review-form-container reveal">
+            <h3 style="text-align: center; margin-bottom: 30px; color: var(--text-primary); font-size: 1.4rem;">
+                📝 Write Your Review
+            </h3>
+
+            <form id="review-form">
+                <!-- Star Rating -->
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <label style="display: block; text-align: center; margin-bottom: 15px;">Your Rating *</label>
+                    <div class="star-rating">
+                        <input type="radio" id="star5" name="rating" value="5" checked>
+                        <label for="star5" title="5 stars">★</label>
+                        <input type="radio" id="star4" name="rating" value="4">
+                        <label for="star4" title="4 stars">★</label>
+                        <input type="radio" id="star3" name="rating" value="3">
+                        <label for="star3" title="3 stars">★</label>
+                        <input type="radio" id="star2" name="rating" value="2">
+                        <label for="star2" title="2 stars">★</label>
+                        <input type="radio" id="star1" name="rating" value="1">
+                        <label for="star1" title="1 star">★</label>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="student_name">Your Name *</label>
+                        <input type="text" id="student_name" name="student_name" required
+                            placeholder="Enter your full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="college_name">College Name *</label>
+                        <input type="text" id="college_name" name="college_name" required
+                            placeholder="Enter your college name">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="year_of_study">Year of Study *</label>
+                        <select id="year_of_study" name="year_of_study" required>
+                            <option value="">Select Year</option>
+                            <option value="1st Year">1st Year</option>
+                            <option value="2nd Year">2nd Year</option>
+                            <option value="3rd Year">3rd Year</option>
+                            <option value="4th Year">4th Year</option>
+                            <option value="Passed Out">Passed Out</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="project_name">Project Name *</label>
+                        <input type="text" id="project_name" name="project_name" required
+                            placeholder="e.g., Image Classification System">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="experience">Your Experience *</label>
+                    <textarea id="experience" name="experience" rows="4" required
+                        placeholder="Share your experience working with Acadomix. How was the project quality, support, and code explanation?"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="pricing_review">Pricing Experience (Optional)</label>
+                    <textarea id="pricing_review" name="pricing_review" rows="2"
+                        placeholder="How was the pricing compared to others? Was it value for money?"></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">Submit Review →</button>
+
+                <p style="text-align: center; margin-top: 20px; color: var(--text-muted); font-size: 0.9rem;">
+                    ✅ Your review will be visible on our website after admin approval.
+                </p>
+            </form>
+        </div>
+    </section>
+
+    <!-- Why Review Section -->
+    <section class="fluid-section" style="background: var(--bg-secondary);">
+        <div class="fluid-container text-center-mobile" class="reveal">
+            <h3 style="font-size: clamp(1.5rem, 5vw, 2.2rem); margin-bottom: 30px; color: var(--text-primary);">Why Your
+                Review <span
+                    style="background: var(--gradient-accent); background-clip: text; -webkit-background-clip: text; color: transparent; -webkit-text-fill-color: transparent;">Matters</span>
+            </h3>
+
+            <div class="grid-responsive-3">
+                <div style="padding: 25px;">
+                    <div style="font-size: 2.5rem; margin-bottom: 15px;">🎓</div>
+                    <h4 style="margin-bottom: 10px; color: var(--text-primary);">Help Students</h4>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Your honest feedback helps other students
+                        make informed decisions.</p>
+                </div>
+                <div style="padding: 25px;">
+                    <div style="font-size: 2.5rem; margin-bottom: 15px;">📈</div>
+                    <h4 style="margin-bottom: 10px; color: var(--text-primary);">Improve Service</h4>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Your suggestions help us improve our
+                        services and support.</p>
+                </div>
+                <div style="padding: 25px;">
+                    <div style="font-size: 2.5rem; margin-bottom: 15px;">🤝</div>
+                    <h4 style="margin-bottom: 10px; color: var(--text-primary);">Build Community</h4>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Join our community of successful students
+                        who completed their projects.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <img src="images/logo.png" alt="Acadomix">
+                    <span>Acadomix</span>
+                </div>
+                <p>Spark the Code. Shape the Future.</p>
+                <div class="footer-social">
+                    <a href="https://wa.me/918897492936" target="_blank">💬</a>
+                    <a href="mailto:acadomix@gmail.com">📧</a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="projects.html">Projects</a></li>
+                    <li><a href="pricing.html">Pricing</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Contact</h4>
+                <ul>
+                    <li><a href="tel:+918897492936">📞 +91 8897492936</a></li>
+                    <li><a href="mailto:acadomix@gmail.com">📧 acadomix@gmail.com</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2024 Acadomix. All rights reserved.</p>
+            <p>Made with ❤️ for Students</p>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Button -->
+    <a href="https://wa.me/918897492936" target="_blank" class="whatsapp-btn">💬</a>
+
+    <script src="js/main.js"></script>
+    <!-- Vercel Web Analytics -->
+    <script defer src="/_vercel/insights/script.js"></script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
+</body>
+
+</html>
+

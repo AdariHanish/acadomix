@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Projects - Admin | Acadomix</title>
+    <script>
+        // Prevent flash of wrong theme
+        (function () {
+            const theme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+    <link rel="icon" href="../images/logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <div class="admin-sidebar-logo">
+                <img src="../images/logo.png" alt="Acadomix">
+                <span>Admin Panel</span>
+            </div>
+
+            <nav class="admin-nav">
+                <a href="dashboard.html"><span>📊</span> Dashboard</a>
+                <a href="responses.html"><span>📬</span> Responses</a>
+                <a href="payments.html"><span>💳</span> Payments</a>
+                <a href="testimonials.html"><span>⭐</span> Reviews</a>
+                <a href="projects-manage.html" class="active"><span>📁</span> Projects</a>
+                <a href="#" onclick="logout(); return false;"><span>🚪</span> Logout</a>
+            </nav>
+
+            <div style="margin-top: auto; padding-top: 30px;">
+                <div class="theme-toggle" style="margin: 0 auto;">
+                    <div class="theme-toggle-track">
+                        <span class="toggle-sun">☀️</span>
+                        <span class="toggle-moon">🌙</span>
+                        <div class="toggle-stars"><span></span><span></span><span></span></div>
+                        <div class="toggle-clouds"><span></span><span></span></div>
+                    </div>
+                    <div class="toggle-thumb"></div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="admin-content">
+            <div class="admin-header">
+                <div>
+                    <h1>📁 Manage Projects</h1>
+                    <p>Add, edit, or delete projects displayed on the website</p>
+                </div>
+            </div>
+
+            <!-- Add Project Form -->
+            <div
+                style="background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 20px; padding: 35px; margin-bottom: 35px; backdrop-filter: blur(20px);">
+                <h3 style="margin-bottom: 25px; color: var(--text-primary); font-size: 1.3rem;">➕ Add New Project</h3>
+                <form id="add-project-form">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                        <div class="form-group">
+                            <label for="title">Project Title *</label>
+                            <input type="text" id="title" name="title" required
+                                placeholder="e.g., Image Classification System">
+                        </div>
+                        <div class="form-group">
+                            <label for="category">Category *</label>
+                            <select id="category" name="category" required>
+                                <option value="">Select Category</option>
+                                <option value="aiml">AI/ML</option>
+                                <option value="datascience">Data Science</option>
+                                <option value="frontend">Frontend</option>
+                                <option value="cybersecurity">Cybersecurity</option>
+                                <option value="python">Python</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="year_type">Year Type *</label>
+                            <select id="year_type" name="year_type" required>
+                                <option value="">Select Type</option>
+                                <option value="mini">Mini Project (2nd Year)</option>
+                                <option value="third">3rd Year Project</option>
+                                <option value="major">Major Project (Final Year)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="price">Price (₹) *</label>
+                            <input type="number" id="price" name="price" required placeholder="e.g., 2999" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="features">Features (comma separated) *</label>
+                            <input type="text" id="features" name="features" required
+                                placeholder="e.g., CNN Model, Web UI, Documentation">
+                        </div>
+                        <div class="form-group"
+                            style="display: flex; align-items: center; gap: 12px; padding-top: 28px;">
+                            <input type="checkbox" id="is_popular" name="is_popular"
+                                style="width: 20px; height: 20px; cursor: pointer;">
+                            <label for="is_popular" style="margin: 0; cursor: pointer;">Mark as Popular 🔥</label>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label for="description">Description *</label>
+                        <textarea id="description" name="description" rows="3" required
+                            placeholder="Brief description of the project..."></textarea>
+                    </div>
+                    <div style="margin-top: 25px;">
+                        <button type="submit" class="btn btn-primary">Add Project →</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Projects List -->
+            <h3 style="margin-bottom: 20px; color: var(--text-primary); font-size: 1.3rem;">📋 All Projects</h3>
+            <div class="admin-table" id="projects-table">
+                <p style="padding: 30px; text-align: center; color: var(--text-muted);">Loading projects...</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/admin.js"></script>
+    <!-- Vercel Web Analytics -->
+    <script defer src="/_vercel/insights/script.js"></script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
+</body>
+
+</html>
+

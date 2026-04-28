@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Acadomix - Student Project Development & Mentoring. Get AI/ML, Data Science, Frontend projects with complete guidance and viva preparation.">
+    <meta name="keywords"
+        content="student projects, engineering projects, AI ML projects, final year projects, mini projects, project help">
+    <meta name="author" content="Acadomix">
+    <title>Acadomix - Spark the Code. Shape the Future.</title>
+    <script>
+        // Prevent flash of wrong theme
+        (function () {
+            const theme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+    <link rel="icon" href="images/logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <!-- Loader -->
+    <div class="loader-wrapper">
+        <div class="loader">
+            <div class="loader-logo">
+                <img src="images/logo.png" alt="Acadomix">
+            </div>
+            <div class="loader-text">Acadomix</div>
+            <div class="loader-bar">
+                <div class="loader-bar-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="images/logo.png" alt="Acadomix">
+                <span>Acadomix</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="projects.html">Projects</a></li>
+                <li><a href="pricing.html">Pricing</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="review.html">Review</a></li>
+                <li><a href="/admin/login.html" class="admin-nav-link">Admin</a></li>
+            </ul>
+            <div class="nav-actions">
+                <div class="theme-toggle">
+                    <div class="theme-toggle-track">
+                        <span class="toggle-sun">☀️</span>
+                        <span class="toggle-moon">🌙</span>
+                        <div class="toggle-stars">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <div class="toggle-clouds">
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                    <div class="toggle-thumb"></div>
+                </div>
+                <button class="mobile-menu-btn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg">
+            <div class="hero-bg-gradient"></div>
+        </div>
+        <div class="particles-container"></div>
+
+        <div class="hero-content">
+            <div class="hero-text">
+                <div class="hero-badge">
+                    <span class="hero-badge-dot"></span>
+                    Available for Projects
+                </div>
+                <h1 class="hero-title">
+                    <span class="highlight">Spark</span> the Code.<br>
+                    <span class="highlight">Shape</span> the Future.
+                </h1>
+                <p class="hero-subtitle">Your Project Partner Till Submission</p>
+                <p class="hero-description">
+                    We help engineering students successfully complete their academic projects
+                    with real understanding, practical skills, and confidence for viva.
+                </p>
+                <div class="hero-buttons">
+                    <a href="projects.html" class="btn btn-primary">
+                        Explore Projects
+                        <span>→</span>
+                    </a>
+                    <a href="contact.html" class="btn btn-secondary">
+                        Get Started
+                        <span>📞</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <div class="hero-3d-container">
+                    <div class="orbit-ring orbit-ring-1">
+                        <div class="orbit-dot"></div>
+                    </div>
+                    <div class="orbit-ring orbit-ring-2">
+                        <div class="orbit-dot"></div>
+                    </div>
+                    <div class="hero-logo-3d">
+                        <img src="images/logo.png" alt="Acadomix Logo">
+                    </div>
+                    <div class="code-particle" style="top: 15%; left: 5%;">&lt;/&gt;</div>
+                    <div class="code-particle" style="top: 75%; left: 90%;">{ }</div>
+                    <div class="code-particle" style="top: 35%; right: 0%;">AI</div>
+                    <div class="code-particle" style="bottom: 15%; left: 10%;">ML</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="stats-container">
+            <div class="stat-card reveal">
+                <div class="stat-number" data-target="60">0</div>
+                <div class="stat-label">Projects Delivered</div>
+            </div>
+            <div class="stat-card reveal">
+                <div class="stat-number" data-target="40">0</div>
+                <div class="stat-label">Happy Students</div>
+            </div>
+            <div class="stat-card reveal">
+                <div class="stat-number" data-target="5">0</div>
+                <div class="stat-label">Colleges Covered</div>
+            </div>
+            <div class="stat-card reveal">
+                <div class="stat-number" data-target="95">0</div>
+                <div class="stat-label">Success Rate %</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services-section">
+        <div class="section-header">
+            <span class="section-tag">💼 Our Services</span>
+            <h2 class="section-title">What We <span class="highlight">Offer</span></h2>
+            <p class="section-description">Complete end-to-end project development and mentoring services for
+                engineering students</p>
+        </div>
+
+        <div class="services-grid">
+            <div class="service-card reveal">
+                <div class="service-icon">🎯</div>
+                <h3 class="service-title">Project Development</h3>
+                <p class="service-description">Complete project development from scratch with clean, well-documented
+                    code that you can understand and explain.</p>
+            </div>
+            <div class="service-card reveal">
+                <div class="service-icon">🧠</div>
+                <h3 class="service-title">Mentorship & Guidance</h3>
+                <p class="service-description">One-on-one mentoring sessions to help you understand every aspect of your
+                    project for confident viva performance.</p>
+            </div>
+            <div class="service-card reveal">
+                <div class="service-icon">📚</div>
+                <h3 class="service-title">Documentation Support</h3>
+                <p class="service-description">Complete documentation including synopsis, reports, PPT presentations,
+                    and IEEE format papers.</p>
+            </div>
+            <div class="service-card reveal">
+                <div class="service-icon">🚀</div>
+                <h3 class="service-title">Deployment Help</h3>
+                <p class="service-description">Get your project deployed on free hosting platforms with proper setup and
+                    configuration guidance.</p>
+            </div>
+            <div class="service-card reveal">
+                <div class="service-icon">💡</div>
+                <h3 class="service-title">Unique Project Ideas</h3>
+                <p class="service-description">Stand out with trending and innovative project ideas that impress your
+                    professors and evaluators.</p>
+            </div>
+            <div class="service-card reveal">
+                <div class="service-icon">🎓</div>
+                <h3 class="service-title">Viva Preparation</h3>
+                <p class="service-description">Comprehensive code explanation sessions to help you confidently answer
+                    any question during viva.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Preview Section -->
+    <section class="projects-section">
+        <div class="section-header">
+            <span class="section-tag">🔥 Featured Projects</span>
+            <h2 class="section-title">Popular <span class="highlight">Projects</span></h2>
+            <p class="section-description">Check out our most requested project categories</p>
+        </div>
+
+        <div class="filter-container">
+            <button class="filter-btn active" data-filter="all">All Projects</button>
+            <button class="filter-btn" data-filter="aiml">AI/ML</button>
+            <button class="filter-btn" data-filter="datascience">Data Science</button>
+            <button class="filter-btn" data-filter="frontend">Frontend</button>
+            <button class="filter-btn" data-filter="mini">Mini Projects</button>
+            <button class="filter-btn" data-filter="major">Major Projects</button>
+        </div>
+
+        <div class="projects-grid">
+            <!-- Projects will be loaded dynamically from server/server.js -->
+        </div>
+
+        <div style="text-align: center; margin-top: 50px;">
+            <a href="projects.html" class="btn btn-primary">View All Projects →</a>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section">
+        <div class="section-header">
+            <span class="section-tag">⭐ Testimonials</span>
+            <h2 class="section-title">What Students <span class="highlight">Say</span></h2>
+            <p class="section-description">Real feedback from our happy students</p>
+        </div>
+
+        <div class="testimonials-wrapper">
+            <button class="testi-btn prev" aria-label="Previous review">❮</button>
+            <div class="testimonials-slider">
+                <div class="testimonials-track">
+                    <!-- Reviews will be populated dynamically via JavaScript from the database -->
+                </div>
+            </div>
+            <button class="testi-btn next" aria-label="Next review">❯</button>
+        </div>
+
+        <div style="text-align: center; margin-top: 50px;">
+            <button class="btn btn-primary" id="viewAllReviewsBtn">View All Reviews →</button>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section style="padding: 100px 50px; text-align: center; background: var(--bg-secondary);">
+        <div class="reveal">
+            <h2 class="section-title">Ready to Start Your <span class="highlight">Project?</span></h2>
+            <p class="section-description" style="margin-bottom: 40px;">Book your slot now with just ₹500 advance
+                payment</p>
+            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                <a href="contact.html" class="btn btn-primary">Get Started Now →</a>
+                <a href="https://wa.me/918897492936?text=Hi! I'm interested in getting a project from Acadomix."
+                    target="_blank" class="btn btn-secondary">💬 WhatsApp Us</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <img src="images/logo.png" alt="Acadomix">
+                    <span>Acadomix</span>
+                </div>
+                <p>Spark the Code. Shape the Future. Your trusted partner for academic project development and
+                    mentoring.</p>
+                <div class="footer-social">
+                    <a href="https://wa.me/918897492936" target="_blank" title="WhatsApp">💬</a>
+                    <a href="mailto:acadomix@gmail.com" title="Email">📧</a>
+                    <!-- <a href="#" title="Instagram">📷</a>
+                    <a href="#" title="LinkedIn">💼</a> -->
+                </div>
+            </div>
+
+            <div class="footer-column">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="projects.html">Projects</a></li>
+                    <li><a href="pricing.html">Pricing</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>Services</h4>
+                <ul>
+                    <li><a href="projects.html">AI/ML Projects</a></li>
+                    <li><a href="projects.html">Data Science</a></li>
+                    <li><a href="projects.html">Frontend</a></li>
+                    <li><a href="projects.html">Cybersecurity</a></li>
+                    <li><a href="projects.html">Mini Projects</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>Contact</h4>
+                <ul>
+                    <li><a href="tel:+918897492936">📞 +91 8897492936</a></li>
+                    <li><a href="mailto:acadomix@gmail.com">📧 acadomix@gmail.com</a></li>
+                    <li><a href="https://wa.me/918897492936" target="_blank">💬 WhatsApp</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2024 Acadomix. All rights reserved.</p>
+            <p>Made with ❤️ for Students</p>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Button -->
+    <a href="https://wa.me/918897492936?text=Hi! I'm interested in getting a project from Acadomix."
+        target="_blank" class="whatsapp-btn" title="Chat on WhatsApp">
+        💬
+    </a>
+
+    <script src="js/main.js"></script>
+    <!-- Vercel Web Analytics -->
+    <script defer src="/_vercel/insights/script.js"></script>
+
+    <!-- All Reviews Modal -->
+    <div class="reviews-modal-overlay" id="allReviewsModal">
+        <div class="reviews-modal-content">
+            <div class="reviews-modal-header">
+                <h3>All Testimonials</h3>
+                <button class="reviews-modal-close" id="closeReviewsModal">&times;</button>
+            </div>
+            <div class="reviews-modal-body" id="allReviewsContainer">
+                <!-- Reviews will be populated here -->
+            </div>
+        </div>
+    </div>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
+</body>
+
+</html>
+
