@@ -284,10 +284,12 @@ app.post('/api/payments', upload.single('screenshot'), async (req, res) => {
         }
 
         const screenshot_path = req.file ? req.file.originalname : null;
+        const screenshot_data = req.file ? req.file.buffer : null;
+        const mime_type = req.file ? req.file.mimetype : null;
 
         const [result] = await pool.execute(
-            'INSERT INTO payments (student_name, phone, project_name, amount, screenshot_path) VALUES (?, ?, ?, ?, ?)',
-            [student_name, phone, project_name, amount, screenshot_path]
+            'INSERT INTO payments (student_name, phone, project_name, amount, screenshot_path, screenshot_data, mime_type) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            [student_name, phone, project_name, amount, screenshot_path, screenshot_data, mime_type]
         );
 
         console.log('💳 New payment received from:', student_name);
@@ -325,6 +327,26 @@ app.put('/api/payments/:id/status', authenticateToken, async (req, res) => {
     }
 });
 
+app.get('/api/payment-screenshot/:id', authenticateToken, async (req, res) => {
+    try {
+        const [rows] = await pool.execute(
+            'SELECT screenshot_data, mime_type FROM payments WHERE id = ?',
+            [req.params.id]
+        );
+
+        if (rows.length === 0 || !rows[0].screenshot_data) {
+            return res.status(404).send('Screenshot not found');
+        }
+
+        const payment = rows[0];
+        res.set('Content-Type', payment.mime_type);
+        res.send(payment.screenshot_data);
+    } catch (error) {
+        console.error('Error serving payment screenshot:', error);
+        res.status(500).send('Server Error');
+    }
+});
+
 // ==================== REVIEWS ROUTES ====================
 app.post('/api/reviews', async (req, res) => {
     try {
@@ -344,6 +366,23 @@ app.post('/api/reviews', async (req, res) => {
     } catch (error) {
         console.error('Error submitting review:', error);
         res.status(500).json({ error: 'Failed to submit review' });
+    }
+});
+
+// Admin manual review submission (approved by default)
+app.post('/api/reviews/admin', authenticateToken, async (req, res) => {
+    try {
+        const { student_name, college_name, year_of_study, project_name, rating, experience } = req.body;
+        
+        const [result] = await pool.execute(
+            'INSERT INTO reviews (student_name, college_name, year_of_study, project_name, rating, experience, is_approved) VALUES (?, ?, ?, ?, ?, ?, 1)',
+            [student_name, college_name, year_of_study, project_name, parseInt(rating), experience]
+        );
+        
+        res.json({ success: true, id: result.insertId });
+    } catch (error) {
+        console.error('Error adding admin review:', error);
+        res.status(500).json({ error: 'Failed to add review' });
     }
 });
 
@@ -468,46 +507,23 @@ app.use((err, req, res, next) => {
 });
 
 // Start server and Export for Vercel Serverless
-if (process.env.NODE_ENV !== 'production') {
-    app.listen(PORT, () => {
-        console.log('');
-        console.log('╔═══════════════════════════════════════════════════════════╗');
-        console.log('║                                                           ║');
-        console.log('║     🚀 Acadomix Server Running!                           ║');
-        console.log('║                                                           ║');
-        console.log('║     🌐 Website:  http://localhost:' + PORT + '                   ║');
-        console.log('║     👤 Admin:    http://localhost:' + PORT + '/admin             ║');
-        console.log('║                                                           ║');
-        console.log('║     📧 Email:    acadomix@gmail.com                       ║');
-        console.log('║     📱 WhatsApp: 8897492936                               ║');
-        console.log('║                                                           ║');
-        console.log('║     ─────────────────────────────────────────────────     ║');
-        console.log('║     👤 Admin Username: hanish                             ║');
-        console.log('║     🔑 Admin Password: 12345                              ║');
-        console.log('║                                                           ║');
-        console.log('╚═══════════════════════════════════════════════════════════╝');
-        console.log('');
-    });
-}
-
 // Start server locally OR export for Vercel
 if (require.main === module) {
-    // Running locally via `node start.js` or `node server/server.js`
     app.listen(PORT, () => {
         console.log('');
         console.log('╔═══════════════════════════════════════════════════════════╗');
         console.log('║              🌐 Acadomix is LIVE!                         ║');
         console.log('║                                                           ║');
         console.log(`║   Local:  http://localhost:${PORT}                          ║`);
+        console.log('║   Admin:  http://localhost:${PORT}/admin                    ║');
         console.log('║                                                           ║');
         console.log('║     ─────────────────────────────────────────────────     ║');
-        console.log('║     👤 Admin Username: hanish                             ║');
-        console.log('║     🔑 Admin Password: 12345                              ║');
+        console.log('║     📧 Email:    acadomix@gmail.com                       ║');
+        console.log('║     📱 WhatsApp: 8897492936                               ║');
         console.log('║                                                           ║');
         console.log('╚═══════════════════════════════════════════════════════════╝');
         console.log('');
     });
-} else {
-    // Exported for Vercel serverless
-    module.exports = app;
 }
+
+module.exports = app;

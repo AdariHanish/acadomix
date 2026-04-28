@@ -43,6 +43,8 @@ CREATE TABLE IF NOT EXISTS payments (
     project_name VARCHAR(200) NOT NULL,
     amount DECIMAL(10,2) NOT NULL,
     screenshot_path VARCHAR(255),
+    screenshot_data LONGBLOB,
+    mime_type VARCHAR(50),
     status ENUM('pending', 'verified', 'rejected') DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
