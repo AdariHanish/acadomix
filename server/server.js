@@ -482,7 +482,11 @@ app.put('/api/settings', authenticateToken, async (req, res) => {
         res.json({ success: true, message: 'Settings updated successfully' });
     } catch (error) {
         console.error('Error updating settings:', error);
-        res.status(500).json({ error: 'Failed to update settings' });
+        res.status(500).json({ 
+            success: false, 
+            error: 'Database error while updating settings',
+            details: error.message 
+        });
     }
 });
 

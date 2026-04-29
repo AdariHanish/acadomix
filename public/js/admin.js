@@ -680,7 +680,8 @@ async function saveSettings() {
         if (response.ok) {
             showAdminNotification('Prices updated successfully!', 'success');
         } else {
-            throw new Error('Failed to update prices');
+            const result = await response.json();
+            throw new Error(result.details || result.error || 'Failed to update prices');
         }
     } catch (error) {
         showAdminNotification('Error: ' + error.message, 'error');
