@@ -148,11 +148,33 @@ app.get('/api/assets/:name', async (req, res) => {
 
         const asset = rows[0];
         res.set('Content-Type', asset.mime_type);
-        res.set('Cache-Control', 'public, max-age=2592000'); // Cache for 30 days
-        res.send(asset.data);
+        res.set('Cache-Control', 'public, max-age=86400');
+        res.send(Buffer.from(asset.data));
     } catch (error) {
         console.error('Error serving asset:', error);
-        res.status(500).send('Server Error');
+        res.status(500).json({ error: 'DB Connection Error', details: error.message });
+    }
+});
+
+// [DEBUG] Database Diagnostic Route
+app.get('/api/debug/db', async (req, res) => {
+    try {
+        const [rows] = await pool.execute('SELECT DATABASE() as db, 1+1 as result');
+        res.json({
+            status: 'connected',
+            database: rows[0].db,
+            test_query: rows[0].result === 2 ? 'success' : 'failed',
+            env_db_name: process.env.DB_NAME,
+            env_db_user: process.env.DB_USER,
+            env_db_host: process.env.DB_HOST
+        });
+    } catch (error) {
+        res.status(500).json({
+            status: 'failed',
+            error: error.message,
+            code: error.code,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        });
     }
 });
 
