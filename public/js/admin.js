@@ -993,45 +993,59 @@ window.saveSettings = saveSettings;
 window.uploadAsset = uploadAsset;
 // ============ Manual Review Management ============
 function openAddReviewModal() {
-    const modal = document.getElementById('add-review-modal'); if (modal) modal.classList.add('show');
+    const modal = document.getElementById('add-review-modal');
+    if (modal) modal.classList.add('active' || 'show');
 }
 
 function closeAddReviewModal() {
-    const modal = document.getElementById('add-review-modal'); if (modal) modal.classList.remove('show');
+    const modal = document.getElementById('add-review-modal');
+    if (modal) modal.classList.remove('active' || 'show');
 }
 
 function initAddReviewForm() {
-    const form = document.getElementById('add-review-form'); if (!form) return; form.addEventListener('submit', async (e) => {
-        e.preventDefault(); const reviewData = {
+    const form = document.getElementById('add-review-form');
+    if (!form) return;
+    
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const reviewData = {
             student_name: document.getElementById('review-student-name').value,
             college_name: document.getElementById('review-college-name').value,
             year_of_study: document.getElementById('review-year').value,
             rating: parseInt(document.getElementById('review-rating').value),
             project_name: document.getElementById('review-project-name').value,
             experience: document.getElementById('review-experience').value
-        }; try {
+        };
+
+        try {
             const response = await fetch('/api/reviews/admin', {
                 method: 'POST',
                 headers: getAuthHeaders(),
                 body: JSON.stringify(reviewData)
-            }); if (response.ok) {
-                showAdminNotification('Review added successfully!', 'success'); form.reset(); closeAddReviewModal(); loadReviews(); loadStats();
+            });
+
+            if (response.ok) {
+                showAdminNotification('Review added successfully!', 'success');
+                form.reset();
+                closeAddReviewModal();
+                loadReviews();
+                loadStats();
             } else {
-                const error = await response.json(); showAdminNotification(error.error || 'Error adding review', 'error');
+                const error = await response.json();
+                showAdminNotification(error.error || 'Error adding review', 'error');
             }
         } catch (error) {
-            console.error('Error:', error); showAdminNotification('Error adding review', 'error');
+            console.error('Error:', error);
+            showAdminNotification('Error adding review', 'error');
         }
     });
 }
 
-window.openAddReviewModal = openAddReviewModal; window.closeAddReviewModal = closeAddReviewModal; EOF
-
 // ============ Asset Management ============
 async function uploadAsset(event, assetName) {
     event.preventDefault();
-    const input = document.getElementById(${assetName === 'logo' ? 'logo' : 'qr'}-input);
-    const file = input.files[0];
+    const input = document.getElementById(`${assetName === 'logo' ? 'logo' : 'qr'}-input`);
+    const file = input.files ? input.files[0] : null;
     
     if (!file) {
         showAdminNotification('Please select a file', 'error');
@@ -1059,9 +1073,13 @@ async function uploadAsset(event, assetName) {
         const result = await response.json();
 
         if (response.ok) {
-            showAdminNotification(${assetName} updated successfully!, 'success');
-            const preview = document.getElementById(dmin--preview);
-            if (preview) preview.src = /api/assets/?t=;
+            showAdminNotification(`${assetName} updated successfully!`, 'success');
+            // Refresh previews
+            const previewId = assetName === 'logo' ? 'admin-logo-preview' : 'admin-qr-preview';
+            const preview = document.getElementById(previewId);
+            if (preview) {
+                preview.src = `/api/assets/${assetName}?t=${Date.now()}`;
+            }
             input.value = '';
         } else {
             showAdminNotification(result.error || 'Upload failed', 'error');
@@ -1075,4 +1093,7 @@ async function uploadAsset(event, assetName) {
     }
 }
 
+// Final Exports
+window.openAddReviewModal = openAddReviewModal;
+window.closeAddReviewModal = closeAddReviewModal;
 window.uploadAsset = uploadAsset;
