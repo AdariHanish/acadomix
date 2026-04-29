@@ -994,12 +994,18 @@ window.uploadAsset = uploadAsset;
 // ============ Manual Review Management ============
 function openAddReviewModal() {
     const modal = document.getElementById('add-review-modal');
-    if (modal) modal.classList.add('active' || 'show');
+    if (modal) {
+        modal.classList.add('show');
+        modal.classList.add('active');
+    }
 }
 
 function closeAddReviewModal() {
     const modal = document.getElementById('add-review-modal');
-    if (modal) modal.classList.remove('active' || 'show');
+    if (modal) {
+        modal.classList.remove('show');
+        modal.classList.remove('active');
+    }
 }
 
 function initAddReviewForm() {
