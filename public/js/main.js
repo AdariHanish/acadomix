@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     initScrollReveal();
     initStatsCounter();
     initProjectsFilter();
-    initTestimonialsSlider();
+    initReviews();
     initForms();
     initQRModal();
     initStarRating();
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         initAssets(),
         initSettings(),
         fetchProjects(),
-        fetchReviews()
+        initReviews()
     ]);
 });
 
@@ -109,105 +109,49 @@ async function fetchProjects() {
     const grid = document.querySelector('.projects-grid');
     if (!grid) return;
 
-    // Show loading state
     grid.innerHTML = `
         <div style="grid-column: 1/-1; text-align:center; padding: 60px 0; opacity: 0.6;">
             <div style="font-size: 2rem; margin-bottom: 12px;">⏳</div>
-            <p style="font-size: 1rem;">Loading projects...</p>
+            <p style="font-size: 1rem;">Loading projects from database...</p>
         </div>`;
 
     try {
         const response = await fetch('/api/projects');
+        if (!response.ok) throw new Error('Failed to fetch');
         const projects = await response.json();
 
-        if (projects.length > 0) {
-            // Check if we're on the homepage
+        if (projects && projects.length > 0) {
             const isHomePage = window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname === '';
+            let displayProjects = projects;
 
-            let displayProjects;
             if (isHomePage) {
-                const DOMAINS = ['aiml', 'datascience', 'frontend', 'cybersecurity', 'python'];
-                const selectedPopular = [];
-                const selectedCommon = [];
-                const TARGET_POPULAR = 5;
-                const TARGET_COMMON = 7;
-
-                // Step 1: Pick 1 popular + 1 common from each domain (guarantees 2 per domain)
-                for (const domain of DOMAINS) {
-                    const domainPopular = projects.filter(p => p.category === domain && p.is_popular);
-                    const domainCommon = projects.filter(p => p.category === domain && !p.is_popular);
-                    domainPopular.sort(() => Math.random() - 0.5);
-                    domainCommon.sort(() => Math.random() - 0.5);
-                    if (domainPopular.length > 0) selectedPopular.push(domainPopular[0]);
-                    if (domainCommon.length > 0) selectedCommon.push(domainCommon[0]);
-                }
-
-                // Step 2: Fill up to 5 popular
-                const remainingPopular = projects.filter(p => p.is_popular && !selectedPopular.includes(p));
-                remainingPopular.sort(() => Math.random() - 0.5);
-                while (selectedPopular.length < TARGET_POPULAR && remainingPopular.length > 0) {
-                    selectedPopular.push(remainingPopular.shift());
-                }
-
-                // Step 3: Fill up to 7 common
-                const remainingCommon = projects.filter(p => !p.is_popular && !selectedCommon.includes(p));
-                remainingCommon.sort(() => Math.random() - 0.5);
-                while (selectedCommon.length < TARGET_COMMON && remainingCommon.length > 0) {
-                    selectedCommon.push(remainingCommon.shift());
-                }
-
-                // Popular FIRST, then common
-                displayProjects = [...selectedPopular, ...selectedCommon];
-            } else {
-                // All projects pages: all projects, popular first
-                displayProjects = projects;
+                // Pick a mix of popular and common projects for the home page
+                const popular = projects.filter(p => p.is_popular).sort(() => Math.random() - 0.5).slice(0, 4);
+                const common = projects.filter(p => !p.is_popular).sort(() => Math.random() - 0.5).slice(0, 4);
+                displayProjects = [...popular, ...common];
             }
 
             grid.innerHTML = displayProjects.map((project, index) => {
                 const ourPrice = Number(project.price);
-                const isHighDemand = ['aiml', 'datascience', 'cybersecurity'].includes(project.category);
-                const isMajor = project.year_type === 'major';
-
-                // Base savings around 2000 off, raising the market value
-                let baseSavings = 1500; // Mini projects
-                if (isMajor) {
-                    baseSavings = isHighDemand ? 2600 : 2200;
-                }
-
-                // Add some deterministic variety so not all projects share the exact same savings amount
-                // This creates variations like -300, -100, +100, +300
-                const variance = (project.title.length % 4) * 200 - 300;
-                const marketDiff = baseSavings + variance;
-
-                const marketPrice = ourPrice + marketDiff;
-                const actualCost = marketPrice + (isMajor ? 4000 : 2500);
-                const savings = marketPrice - ourPrice;
-
+                const marketPrice = ourPrice + 2000 + (project.title.length % 5) * 100;
+                
                 return `
                 <div class="project-card ${project.is_popular ? 'popular' : ''} reveal"
                      data-category="${project.category}"
                      data-year="${project.year_type}"
-                     style="animation-delay: ${index * 0.08}s">
+                     style="animation-delay: ${index * 0.1}s">
                     <span class="project-category">${formatCategory(project.category)} &bull; ${formatYearType(project.year_type)}</span>
                     <h3 class="project-title">${escapeHtml(project.title)}</h3>
                     <p class="project-description">${escapeHtml(project.description)}</p>
                     <div class="project-features">
-                        ${project.features.split(',').map(f => `<span class="project-feature">${escapeHtml(f.trim())}</span>`).join('')}
+                        ${(project.features || '').split(',').map(f => `<span class="project-feature">${escapeHtml(f.trim())}</span>`).join('')}
                     </div>
                     <div class="project-footer">
                         <div class="price-tiers">
                             <div class="price-tier">
-                                <span class="price-tier-label">Dev Cost</span>
-                                <span class="price-actual-cost">\u20b9${actualCost.toLocaleString('en-IN')}</span>
-                            </div>
-                            <div class="price-tier">
-                                <span class="price-tier-label">Market Rate</span>
-                                <span class="price-market-rate">\u20b9${marketPrice.toLocaleString('en-IN')}</span>
-                            </div>
-                            <div class="price-tier">
                                 <span class="price-ours-label">Our Price</span>
-                                <span class="price-ours">\u20b9${ourPrice.toLocaleString('en-IN')}</span>
-                                <span class="price-savings-badge">Save \u20b9${savings.toLocaleString('en-IN')}</span>
+                                <span class="price-ours">₹${ourPrice.toLocaleString('en-IN')}</span>
+                                <span class="price-market-rate" style="text-decoration: line-through; opacity: 0.5; font-size: 0.8rem;">₹${marketPrice.toLocaleString('en-IN')}</span>
                             </div>
                         </div>
                         <a href="contact.html" class="project-btn">Get Started</a>
@@ -215,27 +159,23 @@ async function fetchProjects() {
                 </div>`;
             }).join('');
 
-            // Re-init scroll reveal AND filter for newly injected cards
-            setTimeout(() => {
-                initScrollReveal();
-                initProjectsFilter(); // Re-bind filter buttons to updated DOM
-            }, 100);
+            setTimeout(() => initScrollReveal(), 100);
         } else {
-            grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding: 60px 0; opacity: 0.6;"><p>No projects found.</p></div>`;
+            grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding: 60px 0;"><p>No projects found in database.</p></div>`;
         }
     } catch (error) {
         console.error('Error fetching projects:', error);
-        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding: 60px 0; opacity:0.6;"><p>⚠️ Could not load projects. Please refresh the page.</p></div>`;
+        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding: 60px 0;"><p>⚠️ Connection Error. Using fallback projects.</p></div>`;
     }
 }
 
-// ============ Fetch Reviews ============
-async function fetchReviews() {
+// ============ Fetch & Initialize Reviews ============
+async function initReviews() {
     const track = document.querySelector('.testimonials-track');
-    const allReviewsContainer = document.getElementById('allReviewsContainer');
-    const viewAllBtn = document.getElementById('viewAllReviewsBtn');
+    const allContainer = document.getElementById('allReviewsContainer');
     const modal = document.getElementById('allReviewsModal');
     const closeBtn = document.getElementById('closeReviewsModal');
+    const viewAllBtn = document.getElementById('viewAllReviewsBtn');
 
     // Setup modal listeners
     if (viewAllBtn && modal && closeBtn) {
@@ -248,29 +188,26 @@ async function fetchReviews() {
             modal.classList.remove('active');
             document.body.style.overflow = '';
         });
-
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-        });
     }
 
-    if (!track) return;
+    if (!track && !allContainer) return;
 
     try {
         const response = await fetch('/api/reviews');
-        const reviews = await response.json();
+        if (!response.ok) throw new Error('Failed to fetch');
+        const data = await response.json();
+        
+        // Handle both {success, reviews} and flat array formats
+        const reviews = Array.isArray(data) ? data : (data.reviews || []);
 
         if (reviews.length > 0) {
             const reviewsHtml = reviews.map(review => `
                 <div class="testimonial-card">
                     <div class="testimonial-header">
-                        <div class="testimonial-avatar">${review.student_name.charAt(0)}</div>
+                        <div class="testimonial-avatar">${review.student_name.charAt(0).toUpperCase()}</div>
                         <div class="testimonial-info">
                             <h4>${escapeHtml(review.student_name)}</h4>
-                            <p>${escapeHtml(review.college_name)} • ${escapeHtml(review.year_of_study)}</p>
+                            <p>${escapeHtml(review.college_name)}</p>
                         </div>
                     </div>
                     <div class="testimonial-rating"><span>${'⭐'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</span></div>
@@ -278,13 +215,11 @@ async function fetchReviews() {
                     <span class="testimonial-project">📂 ${escapeHtml(review.project_name)}</span>
                 </div>
             `).join('');
-
-            // Duplicate for infinite scroll
-            track.innerHTML = reviewsHtml + reviewsHtml;
-
-            // Populate modal if on homepage
-            if (allReviewsContainer) {
-                allReviewsContainer.innerHTML = reviewsHtml;
+            if (track) {
+                track.innerHTML = reviewsHtml + reviewsHtml;
+            }
+            if (allContainer) {
+                allContainer.innerHTML = reviewsHtml;
             }
         }
     } catch (error) {
@@ -1258,4 +1193,3 @@ function initCardGlow() {
         }
     }, { passive: true });
 }
-

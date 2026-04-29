@@ -156,6 +156,52 @@ app.get('/api/assets/:name', async (req, res) => {
     }
 });
 
+// Asset Upload Route for Admin
+app.post('/api/admin/assets', authenticateToken, upload.single('asset_file'), async (req, res) => {
+    try {
+        const { asset_name } = req.body;
+        if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+
+        await pool.execute(
+            'INSERT INTO app_assets (asset_name, mime_type, data) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE mime_type = VALUES(mime_type), data = VALUES(data)',
+            [asset_name, req.file.mimetype, req.file.buffer]
+        );
+
+        res.json({ success: true, message: `${asset_name} updated successfully!` });
+    } catch (error) {
+        console.error('Error uploading asset:', error);
+        res.status(500).json({ error: 'Failed to upload asset', details: error.message });
+    }
+});
+
+// Admin Pricing Settings Routes
+app.get('/api/admin/settings', authenticateToken, async (req, res) => {
+    try {
+        const [rows] = await pool.execute('SELECT * FROM site_settings');
+        const settings = {};
+        rows.forEach(row => settings[row.setting_key] = row.setting_value);
+        res.json(settings);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch settings' });
+    }
+});
+
+app.post('/api/admin/settings', authenticateToken, async (req, res) => {
+    try {
+        const settings = req.body;
+        for (const [key, value] of Object.entries(settings)) {
+            await pool.execute(
+                'INSERT INTO site_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)',
+                [key, String(value)]
+            );
+        }
+        res.json({ success: true, message: 'Settings updated successfully' });
+    } catch (error) {
+        console.error('Error saving settings:', error);
+        res.status(500).json({ error: 'Failed to save settings' });
+    }
+});
+
 // [DEBUG] Database Diagnostic Route
 app.get('/api/debug/db', async (req, res) => {
     try {
