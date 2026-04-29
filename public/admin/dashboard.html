@@ -97,6 +97,33 @@
                 <p style="margin-top: 15px; color: var(--text-muted); font-size: 0.85rem;">* These prices will be reflected on the Pricing page and project comparisons.</p>
             </div>
 
+            <!-- Asset Management Section -->
+            <div style="margin-top: 35px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px;">
+                <div style="background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 20px; padding: 30px; backdrop-filter: blur(20px);">
+                    <h2 style="color: var(--text-primary); font-size: 1.3rem; margin-bottom: 20px;">🖼️ Site Logo</h2>
+                    <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
+                        <img src="/api/assets/logo" id="admin-logo-preview" style="height: 60px; width: auto; border-radius: 8px; background: rgba(255,255,255,0.05); padding: 5px;" onerror="this.src='../images/logo.png'">
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">Current Logo stored in Database</p>
+                    </div>
+                    <form onsubmit="uploadAsset(event, 'logo')" class="form-group">
+                        <input type="file" id="logo-input" accept="image/*" required style="margin-bottom: 15px; font-size: 0.8rem;">
+                        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 10px;">Update Logo</button>
+                    </form>
+                </div>
+
+                <div style="background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 20px; padding: 30px; backdrop-filter: blur(20px);">
+                    <h2 style="color: var(--text-primary); font-size: 1.3rem; margin-bottom: 20px;">💳 Payment QR Code</h2>
+                    <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
+                        <img src="/api/assets/qr_code" id="admin-qr-preview" style="height: 60px; width: auto; border-radius: 8px; background: white; padding: 5px;" onerror="this.src='../images/qr-code.png'">
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">Current QR used for payments</p>
+                    </div>
+                    <form onsubmit="uploadAsset(event, 'qr_code')" class="form-group">
+                        <input type="file" id="qr-input" accept="image/*" required style="margin-bottom: 15px; font-size: 0.8rem;">
+                        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 10px;">Update QR Code</button>
+                    </form>
+                </div>
+            </div>
+
             <div style="margin-top: 30px;">
                 <h2 style="margin-bottom: 20px; color: var(--text-primary);">📬 Recent Leads</h2>
                 <div class="admin-table" id="leads-table">

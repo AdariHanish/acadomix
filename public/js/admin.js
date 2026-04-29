@@ -990,6 +990,7 @@ window.loadReviews = loadReviews;
 window.loadProjects = loadProjects;
 window.editProject = editProject;
 window.saveSettings = saveSettings;
+window.uploadAsset = uploadAsset;
 // ============ Manual Review Management ============
 function openAddReviewModal() {
     const modal = document.getElementById('add-review-modal'); if (modal) modal.classList.add('show');
@@ -1025,3 +1026,53 @@ function initAddReviewForm() {
 }
 
 window.openAddReviewModal = openAddReviewModal; window.closeAddReviewModal = closeAddReviewModal; EOF
+
+// ============ Asset Management ============
+async function uploadAsset(event, assetName) {
+    event.preventDefault();
+    const input = document.getElementById(${assetName === 'logo' ? 'logo' : 'qr'}-input);
+    const file = input.files[0];
+    
+    if (!file) {
+        showAdminNotification('Please select a file', 'error');
+        return;
+    }
+
+    const btn = event.target.querySelector('button');
+    const originalText = btn.textContent;
+    btn.textContent = 'Uploading...';
+    btn.disabled = true;
+
+    const formData = new FormData();
+    formData.append('asset_name', assetName);
+    formData.append('asset_file', file);
+
+    try {
+        const response = await fetch('/api/admin/assets', {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('adminToken')
+            },
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            showAdminNotification(${assetName} updated successfully!, 'success');
+            const preview = document.getElementById(dmin--preview);
+            if (preview) preview.src = /api/assets/?t=;
+            input.value = '';
+        } else {
+            showAdminNotification(result.error || 'Upload failed', 'error');
+        }
+    } catch (error) {
+        console.error('Error uploading asset:', error);
+        showAdminNotification('Error uploading asset', 'error');
+    } finally {
+        btn.textContent = originalText;
+        btn.disabled = false;
+    }
+}
+
+window.uploadAsset = uploadAsset;
