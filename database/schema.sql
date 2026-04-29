@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS reviews (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 6. Site Settings Table (Dynamic Pricing)
+-- Create site_settings table for dynamic pricing and other configs
 CREATE TABLE IF NOT EXISTS site_settings (
     setting_key VARCHAR(100) PRIMARY KEY,
     setting_value TEXT NOT NULL,
