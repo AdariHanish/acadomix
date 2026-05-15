@@ -1,10 +1,12 @@
 import mysql from 'mysql2/promise';
 
-// Extract connection details for better debugging
-const dbUrl = process.env.DATABASE_URL || '';
-
-const pool = mysql.createPool({
-  uri: dbUrl,
+// Discrete variables are much more reliable on Vercel than one long URI
+const dbConfig = {
+  host: process.env.TIDB_HOST || 'gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com',
+  port: parseInt(process.env.TIDB_PORT || '4000'),
+  user: process.env.TIDB_USER || '2r32GhnXE46aPEJ.root',
+  password: process.env.TIDB_PASSWORD || '2R4qAiCxEDIvPSjZ',
+  database: process.env.TIDB_DATABASE || 'test',
   ssl: {
     rejectUnauthorized: true
   },
@@ -13,21 +15,21 @@ const pool = mysql.createPool({
   queueLimit: 0,
   enableKeepAlive: true,
   keepAliveInitialDelay: 0
-});
+};
 
-// Test the connection and log any errors
+// Use DATABASE_URL only if discrete variables are missing
+const pool = process.env.DATABASE_URL && !process.env.TIDB_HOST
+  ? mysql.createPool({ uri: process.env.DATABASE_URL, ssl: { rejectUnauthorized: true } })
+  : mysql.createPool(dbConfig);
+
+// Test connection on startup
 pool.getConnection()
   .then(conn => {
-    console.log('✅ Database connected successfully');
+    console.log('✅ Connected to TiDB Cloud successfully');
     conn.release();
   })
   .catch(err => {
-    console.error('❌ Database connection failed!');
-    console.error('Error Code:', err.code);
-    console.error('Error Message:', err.message);
-    if (err.code === 'ETIMEDOUT' || err.code === 'ECONNREFUSED') {
-      console.error('👉 TIP: Ensure you have added 0.0.0.0/0 to your TiDB Cloud IP Access List.');
-    }
+    console.error('❌ TiDB Connection Error:', err.message);
   });
 
 export default pool;
