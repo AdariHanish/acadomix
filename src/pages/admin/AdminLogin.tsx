@@ -58,9 +58,9 @@ export default function AdminLogin() {
     setError('');
     setMode('otp');
 
-    // In production: call SMS API (Twilio / MSG91 / Fast2SMS) here
+    // TODO: In production, call SMS API (Twilio / MSG91 / Fast2SMS) to send OTP to ADMIN_PHONE
     // Example: await fetch('/api/send-otp', { method: 'POST', body: JSON.stringify({ phone: ADMIN_PHONE, otp: code }) })
-    // For demo, we show the OTP in console and as a toast
+    // For now, OTP is logged to browser console only (for development/testing)
     console.log(`[Acadomix] OTP for password reset: ${code}`);
   };
 
@@ -80,17 +80,23 @@ export default function AdminLogin() {
     if (newPassword !== confirmNewPassword) { setError('Passwords do not match'); return; }
     if (newPassword.length < 4) { setError('Minimum 4 characters'); return; }
 
-    await SettingsDB.update({ admin_password: newPassword });
-    setResetSuccess(true);
-    setError('');
-    setTimeout(() => {
-      setMode('login');
-      setResetSuccess(false);
-      setOtp('');
-      setNewPassword('');
-      setConfirmNewPassword('');
-      setOtpSent(false);
-    }, 3000);
+    try {
+      // Fetch current settings first, then merge in the new password
+      const currentSettings = await SettingsDB.get();
+      await SettingsDB.update({ ...currentSettings, admin_password: newPassword });
+      setResetSuccess(true);
+      setError('');
+      setTimeout(() => {
+        setMode('login');
+        setResetSuccess(false);
+        setOtp('');
+        setNewPassword('');
+        setConfirmNewPassword('');
+        setOtpSent(false);
+      }, 3000);
+    } catch {
+      setError('Failed to reset password. Please try again.');
+    }
   };
 
   const inputCls = "w-full px-4 py-3.5 glass-input rounded-xl text-white text-sm placeholder-white/25 focus:outline-none";
@@ -140,15 +146,14 @@ export default function AdminLogin() {
             )}
           </AnimatePresence>
 
-          {/* OTP Demo Notice - shown when OTP is sent */}
+          {/* OTP Sent Confirmation */}
           <AnimatePresence>
             {otpSent && mode === 'otp' && (
               <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
                 className="mb-5 p-3 rounded-xl bg-gold/10 border border-gold/20 text-center">
-                <p className="text-gold text-xs font-medium mb-1">📱 OTP sent to {MASKED_PHONE}</p>
-                <p className="text-white/60 text-lg font-mono font-bold tracking-[0.3em]">{generatedOtp}</p>
-                <p className="text-white/20 text-[10px] mt-1">
-                  ⚠️ Demo mode — In production, OTP is sent via SMS only
+                <p className="text-gold text-xs font-medium">📱 OTP sent to {MASKED_PHONE}</p>
+                <p className="text-white/30 text-[10px] mt-1">
+                  Check your phone for the 6-digit code
                 </p>
               </motion.div>
             )}

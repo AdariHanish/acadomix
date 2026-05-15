@@ -56,7 +56,7 @@ export default function Services() {
                 ))}
               </ul>
 
-              <a href={`https://wa.me/918897492936?text=${encodeURIComponent(`Hi! I'm interested in ${s.title} (${s.price}). Can you help?`)}`}
+              <a href={`https://wa.me/919515192936?text=${encodeURIComponent(`Hi! I'm interested in ${s.title} (${s.price}). Can you help?`)}`}
                 target="_blank" rel="noopener noreferrer"
                 className={`flex items-center gap-1 text-[10px] sm:text-xs font-semibold transition-colors group/link active:scale-95 ${
                   s.accent === 'gold' ? 'text-gold hover:text-gold-light' : 'text-crimson hover:text-crimson-light'

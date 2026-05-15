@@ -106,8 +106,8 @@ export default function PaymentPage() {
             {/* Manual UPI */}
             <div className="glass-card rounded-2xl p-5 space-y-3">
               {[
-                { label: 'UPI ID', value: 'acadomix@upi', key: 'upi' },
-                { label: 'GPay / PhonePe Number', value: '8897492936', key: 'phone' },
+                { label: 'UPI ID', value: '9515192936@ybl', key: 'upi' },
+                { label: 'GPay / PhonePe Number', value: '9515192936', key: 'phone' },
               ].map((item) => (
                 <div key={item.key} className="flex items-center justify-between p-3 sm:p-4 glass rounded-xl">
                   <div>
@@ -169,7 +169,7 @@ export default function PaymentPage() {
               </form>
 
               <div className="mt-5 pt-5 border-t border-white/5 text-center">
-                <p className="text-xs sm:text-sm text-white/20">Need help? <a href="https://wa.me/918897492936" target="_blank" rel="noopener noreferrer" className="text-green-400 hover:underline">WhatsApp us</a></p>
+                <p className="text-xs sm:text-sm text-white/20">Need help? <a href="https://wa.me/919515192936" target="_blank" rel="noopener noreferrer" className="text-green-400 hover:underline">WhatsApp us</a></p>
               </div>
             </div>
           </motion.div>
