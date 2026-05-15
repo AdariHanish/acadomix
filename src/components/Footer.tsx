@@ -78,7 +78,7 @@ export default function Footer() {
             © {new Date().getFullYear()} Acadomix. Made with <Heart className="w-2.5 h-2.5 text-crimson fill-crimson" /> for students.
           </p>
           <div className="flex items-center gap-2">
-            <a href="https://wa.me/919515192936" target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full glass flex items-center justify-center text-white/25 hover:text-green-400 active:bg-green-500/10 transition-all text-xs">💬</a>
+            <a href="https://wa.me/919515192936?text=hi!%20iam%20intrested%20to%20do%20a%20work%20with%20you" target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full glass flex items-center justify-center text-white/25 hover:text-green-400 active:bg-green-500/10 transition-all text-xs">💬</a>
             <a href="mailto:acadomix@gmail.com" className="w-8 h-8 rounded-full glass flex items-center justify-center text-white/25 hover:text-gold active:bg-gold/10 transition-all"><Mail className="w-3.5 h-3.5" /></a>
             <Link to="/admin" onClick={() => AdminAuth.logout()} className="w-8 h-8 rounded-full glass flex items-center justify-center text-white/25 hover:text-crimson active:bg-crimson/10 transition-all"><Shield className="w-3.5 h-3.5" /></Link>
           </div>

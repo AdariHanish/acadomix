@@ -10,19 +10,43 @@ export default async function handler(req: any, res: any) {
     }
   } else if (req.method === 'PUT') {
     try {
-      const { mini_project_price, major_project_price, custom_project_price, research_paper_price, plagiarism_removal_price, admin_password, security_question, security_answer } = req.body;
+      const allowedFields = ['mini_project_price', 'major_project_price', 'custom_project_price', 'research_paper_price', 'plagiarism_removal_price', 'admin_password', 'security_question', 'security_answer'];
       
-      const [existing]: any = await pool.query('SELECT id FROM site_settings LIMIT 1');
+      const [existing]: any = await pool.query('SELECT * FROM site_settings LIMIT 1');
       if (existing.length > 0) {
-        await pool.query(
-          `UPDATE site_settings SET mini_project_price=?, major_project_price=?, custom_project_price=?, research_paper_price=?, plagiarism_removal_price=?, admin_password=?, security_question=?, security_answer=? WHERE id=?`,
-          [mini_project_price, major_project_price, custom_project_price, research_paper_price, plagiarism_removal_price, admin_password, security_question, security_answer, existing[0].id]
-        );
+        // Only update fields that are actually provided in the request body
+        const updates: string[] = [];
+        const values: any[] = [];
+        for (const field of allowedFields) {
+          if (req.body[field] !== undefined) {
+            updates.push(`${field}=?`);
+            values.push(req.body[field]);
+          }
+        }
+        if (updates.length > 0) {
+          values.push(existing[0].id);
+          await pool.query(
+            `UPDATE site_settings SET ${updates.join(', ')} WHERE id=?`,
+            values
+          );
+        }
       } else {
-        await pool.query(
-          `INSERT INTO site_settings (mini_project_price, major_project_price, custom_project_price, research_paper_price, plagiarism_removal_price, admin_password, security_question, security_answer) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-          [mini_project_price, major_project_price, custom_project_price, research_paper_price, plagiarism_removal_price, admin_password, security_question, security_answer]
-        );
+        const fields: string[] = [];
+        const placeholders: string[] = [];
+        const values: any[] = [];
+        for (const field of allowedFields) {
+          if (req.body[field] !== undefined) {
+            fields.push(field);
+            placeholders.push('?');
+            values.push(req.body[field]);
+          }
+        }
+        if (fields.length > 0) {
+          await pool.query(
+            `INSERT INTO site_settings (${fields.join(', ')}) VALUES (${placeholders.join(', ')})`,
+            values
+          );
+        }
       }
       res.status(200).json({ success: true });
     } catch (error) {
