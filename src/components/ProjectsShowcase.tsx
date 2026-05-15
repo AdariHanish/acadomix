@@ -20,9 +20,15 @@ export default function ProjectsShowcase() {
   const [allProjects, setAllProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   
+  const [error, setError] = useState<string | null>(null);
+  
   useEffect(() => {
     ProjectsDB.getAll().then(data => {
       setAllProjects(data);
+      setLoading(false);
+    }).catch(err => {
+      console.error('Fetch error:', err);
+      setError('Failed to load projects. Please check your database connection.');
       setLoading(false);
     });
   }, []);
@@ -94,15 +100,34 @@ export default function ProjectsShowcase() {
         {/* Projects Grid or Empty State */}
         {loading ? (
           <AppleLoader />
-        ) : filtered.length === 0 ? (
+        ) : error || filtered.length === 0 ? (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-12 sm:py-16">
-            <p className="text-3xl sm:text-4xl mb-3">📁</p>
-            <p className="text-base sm:text-lg text-white/40 font-medium">No projects in this category yet</p>
-            <p className="text-xs sm:text-sm text-white/20 mt-2 mb-6">Check back soon or request a custom project!</p>
-            <button onClick={scrollToContact}
-              className="px-6 py-3 bg-crimson hover:bg-crimson-light text-white text-sm font-semibold rounded-full transition-colors btn-glow active:scale-95">
-              Request Custom Project
-            </button>
+            <p className="text-3xl sm:text-4xl mb-3">{error ? '⚠️' : '📁'}</p>
+            <p className="text-base sm:text-lg text-white/40 font-medium">{error || 'No projects in this category yet'}</p>
+            {error ? (
+              <div className="mt-4 p-4 rounded-xl glass max-w-md mx-auto text-xs text-white/30 text-left">
+                <p className="font-bold text-white/50 mb-2 uppercase">Possible Fixes:</p>
+                <ul className="list-disc pl-4 space-y-1">
+                  <li>Check if <code className="text-crimson">DATABASE_URL</code> is correctly set in Vercel environment variables.</li>
+                  <li>Visit <a href="/api/setup" className="text-gold hover:underline">/api/setup</a> to initialize your database tables.</li>
+                  <li>Ensure your TiDB cluster allows connections from Vercel's IP range.</li>
+                </ul>
+              </div>
+            ) : (
+              <p className="text-xs sm:text-sm text-white/20 mt-2 mb-6">Check back soon or request a custom project!</p>
+            )}
+            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+              <button onClick={scrollToContact}
+                className="px-6 py-3 bg-crimson hover:bg-crimson-light text-white text-sm font-semibold rounded-full transition-colors btn-glow active:scale-95">
+                Request Custom Project
+              </button>
+              {error && (
+                <button onClick={() => window.location.reload()}
+                  className="px-6 py-3 glass hover:bg-white/5 text-white/60 text-sm font-semibold rounded-full transition-colors active:scale-95">
+                  Try Again
+                </button>
+              )}
+            </div>
           </motion.div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">

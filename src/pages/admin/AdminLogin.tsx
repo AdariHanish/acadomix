@@ -49,19 +49,34 @@ export default function AdminLogin() {
     }
   };
 
-  const handleSendOtp = () => {
+  const ADMIN_PHONE = '9515192936';
+
+  const handleSendOtp = async () => {
     // Generate 6-digit OTP
     const code = String(Math.floor(100000 + Math.random() * 900000));
     setGeneratedOtp(code);
-    setOtpSent(true);
-    setCountdown(60);
     setError('');
-    setMode('otp');
 
-    // TODO: In production, call SMS API (Twilio / MSG91 / Fast2SMS) to send OTP to ADMIN_PHONE
-    // Example: await fetch('/api/send-otp', { method: 'POST', body: JSON.stringify({ phone: ADMIN_PHONE, otp: code }) })
-    // For now, OTP is logged to browser console only (for development/testing)
-    console.log(`[Acadomix] OTP for password reset: ${code}`);
+    try {
+      // Call the OTP API to send SMS
+      const response = await fetch('/api/otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: ADMIN_PHONE, otp: code })
+      });
+      const result = await response.json();
+
+      if (result.success) {
+        setOtpSent(true);
+        setCountdown(60);
+        setMode('otp');
+        console.log(`[Acadomix] OTP logged for fallback: ${code}`);
+      } else {
+        setError(result.error || 'Failed to send OTP. Please try again.');
+      }
+    } catch (err) {
+      setError('Connection error. Please check your internet and try again.');
+    }
   };
 
   const handleVerifyOtp = (e: React.FormEvent) => {
