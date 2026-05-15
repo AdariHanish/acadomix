@@ -113,6 +113,96 @@ export default function AdminSettings() {
             </div>
           </div>
         </div>
+        {/* Global Assets */}
+        <div className="glass-card rounded-2xl p-6 lg:col-span-2">
+          <p className="text-base font-semibold text-white mb-5">🖼️ Global Assets</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              { key: 'logo', label: 'Website Logo', desc: 'Appears in navbar and footer. Best size: 200x50px' },
+              { key: 'hero_bg', label: 'Hero Background', desc: 'Main landing page background image. Best size: 1920x1080px' },
+              { key: 'payment_qr', label: 'Payment QR Code', desc: 'Shown on the payment page for UPI.' },
+            ].map((asset) => (
+              <div key={asset.key} className="p-4 rounded-xl glass border border-white/5 space-y-4">
+                <div>
+                  <p className="text-sm font-medium text-white">{asset.label}</p>
+                  <p className="text-xs text-white/20">{asset.desc}</p>
+                </div>
+                
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
+                    <img 
+                      src={`/api/assets?asset_name=${asset.key}&t=${Date.now()}`} 
+                      alt="Preview" 
+                      className="max-w-full max-h-full object-contain"
+                      onError={(e) => (e.currentTarget.src = 'https://via.placeholder.com/150?text=No+Asset')}
+                    />
+                  </div>
+                  <label className="flex-1">
+                    <div className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs text-white text-center cursor-pointer transition-colors">
+                      Select High Quality Image
+                    </div>
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      className="hidden" 
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        
+                        // 🚀 Lightning Fast Compression Logic
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                          const img = new Image();
+                          img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            let width = img.width;
+                            let height = img.height;
+                            
+                            // Max dimensions for speed and quality
+                            const MAX_DIM = asset.key === 'hero_bg' ? 1920 : 800;
+                            if (width > MAX_DIM || height > MAX_DIM) {
+                              if (width > height) {
+                                height = (MAX_DIM / width) * height;
+                                width = MAX_DIM;
+                              } else {
+                                width = (MAX_DIM / height) * width;
+                                height = MAX_DIM;
+                              }
+                            }
+                            
+                            canvas.width = width;
+                            canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx?.drawImage(img, 0, 0, width, height);
+                            
+                            // WebP at 0.8 quality is the gold standard for web
+                            const compressedData = canvas.toDataURL('image/webp', 0.8);
+                            
+                            // Upload to server
+                            fetch('/api/assets', {
+                              method: 'PUT',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({
+                                asset_name: asset.key,
+                                data: compressedData,
+                                mime_type: 'image/webp'
+                              })
+                            }).then(() => {
+                              setSuccess(`${asset.label} uploaded!`);
+                              setTimeout(() => setSuccess(null), 3000);
+                            });
+                          };
+                          img.src = event.target?.result as string;
+                        };
+                        reader.readAsDataURL(file);
+                      }} 
+                    />
+                  </label>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
