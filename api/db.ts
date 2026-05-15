@@ -5,7 +5,7 @@ const pool = createPool({
   port: Number(process.env.TIDB_PORT) || 4000,
   user: process.env.TIDB_USER || '2r32GhnXE46aPEJ.root',
   password: process.env.TIDB_PASSWORD || 'c6JJgBGmkI6pYkWR',
-  database: process.env.TIDB_DATABASE || 'sys',
+  database: process.env.TIDB_DATABASE || 'test',
   ssl: {
     rejectUnauthorized: false 
   },
