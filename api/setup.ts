@@ -112,9 +112,19 @@ export default async function handler(req: any, res: any) {
       }
     }
 
-    res.status(200).json({ success: true, message: "Database initialized successfully" });
+    res.status(200).json({ 
+      success: true, 
+      message: "Database initialized successfully",
+      stats: { projects: projects[0].count, settings: settings[0].count }
+    });
   } catch (error: any) {
     console.error("Setup error:", error);
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ 
+      success: false, 
+      error: error.message,
+      code: error.code,
+      stack: error.stack,
+      hint: "Check if your TIDB_PASSWORD and TIDB_HOST are correct in Vercel. Also ensure 0.0.0.0/0 is allowed in TiDB Networking."
+    });
   }
 }
