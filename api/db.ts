@@ -1,6 +1,5 @@
 import mysql from 'mysql2/promise';
 
-// Discrete variables are much more reliable on Vercel than one long URI
 const dbConfig = {
   host: process.env.TIDB_HOST || 'gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com',
   port: parseInt(process.env.TIDB_PORT || '4000'),
@@ -8,28 +7,25 @@ const dbConfig = {
   password: process.env.TIDB_PASSWORD || '2R4qAiCxEDIvPSjZ',
   database: process.env.TIDB_DATABASE || 'test',
   ssl: {
-    rejectUnauthorized: true
+    // Try with rejectUnauthorized: false if true fails
+    rejectUnauthorized: false 
   },
+  connectTimeout: 10000, // 10 seconds
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0
+  queueLimit: 0
 };
 
-// Use DATABASE_URL only if discrete variables are missing
-const pool = process.env.DATABASE_URL && !process.env.TIDB_HOST
-  ? mysql.createPool({ uri: process.env.DATABASE_URL, ssl: { rejectUnauthorized: true } })
-  : mysql.createPool(dbConfig);
+const pool = mysql.createPool(dbConfig);
 
-// Test connection on startup
+// Improved debug logging
 pool.getConnection()
   .then(conn => {
-    console.log('✅ Connected to TiDB Cloud successfully');
+    console.log('✅ Connection established');
     conn.release();
   })
   .catch(err => {
-    console.error('❌ TiDB Connection Error:', err.message);
+    console.error('❌ CONNECTION ERROR:', err);
   });
 
 export default pool;

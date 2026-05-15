@@ -5,8 +5,9 @@ export default async function handler(req: any, res: any) {
     try {
       const [rows] = await pool.query('SELECT * FROM projects ORDER BY created_at DESC');
       res.status(200).json(rows);
-    } catch (error) {
-      res.status(500).json({ error: 'Database query failed' });
+    } catch (error: any) {
+      console.error('Projects fetch error:', error);
+      res.status(500).json({ error: 'Database query failed', details: error.message });
     }
   } else if (req.method === 'POST') {
     try {
