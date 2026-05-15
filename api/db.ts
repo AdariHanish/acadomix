@@ -1,8 +1,8 @@
-import mysql from 'mysql2/promise';
+import { createPool } from 'mysql2/promise';
 
-const pool = mysql.createPool({
+const pool = createPool({
   host: process.env.TIDB_HOST || 'gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com',
-  port: parseInt(process.env.TIDB_PORT || '4000'),
+  port: Number(process.env.TIDB_PORT) || 4000,
   user: process.env.TIDB_USER || '2r32GhnXE46aPEJ.root',
   password: process.env.TIDB_PASSWORD || 'c6JJgBGmkI6pYkWR',
   database: process.env.TIDB_DATABASE || 'sys',
@@ -10,8 +10,9 @@ const pool = mysql.createPool({
     rejectUnauthorized: false 
   },
   waitForConnections: true,
-  connectionLimit: 1, // Keep it low for serverless
-  queueLimit: 0
+  connectionLimit: 1, 
+  queueLimit: 0,
+  enableKeepAlive: true
 });
 
 export default pool;
