@@ -16,11 +16,17 @@ const projectTypes = [
 export default function ReviewPage() {
   useScrollHoverFix();
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [totalStudents, setTotalStudents] = useState(1000); // Base count + dynamic
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [rating, setRating] = useState(5);
   const [hoverRating, setHoverRating] = useState(0);
+  
+  const [reviewType, setReviewType] = useState<'individual' | 'team'>('individual');
+  const [memberCount, setMemberCount] = useState(2);
+  const [teamMembers, setTeamMembers] = useState<string[]>(['', '', '', '', '']);
+
   const [formData, setFormData] = useState({
     student_name: '', college_name: '', year_of_study: '', project_name: '',
     project_type: '', experience: '', pricing_review: '', date: new Date().toISOString().split('T')[0],
@@ -29,21 +35,31 @@ export default function ReviewPage() {
   useEffect(() => { 
     ReviewsDB.getApproved().then(data => {
       setReviews(data);
+      // Sync logic: Base 1000 + actual approved reviews
+      setTotalStudents(1000 + data.length);
       setLoading(false);
     }); 
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await ReviewsDB.add({ ...formData, rating } as any);
+    const finalData = {
+      ...formData,
+      rating,
+      team_members: reviewType === 'team' 
+        ? teamMembers.slice(0, memberCount).filter(m => m.trim()).join(', ') 
+        : ''
+    };
+    await ReviewsDB.add(finalData as any);
     setSubmitted(true);
     setShowForm(false);
     setFormData({ student_name: '', college_name: '', year_of_study: '', project_name: '', project_type: '', experience: '', pricing_review: '', date: new Date().toISOString().split('T')[0] });
     setRating(5);
+    setTeamMembers(['', '', '', '', '']);
   };
 
   const avg = reviews.length > 0 ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1) : '5.0';
-  const inputCls = "w-full px-4 py-3 sm:py-3.5 glass-input rounded-xl text-white text-sm sm:text-base placeholder-white/25 focus:outline-none";
+  const inputCls = "w-full px-4 py-3 sm:py-3.5 glass-input rounded-xl text-white text-sm sm:text-base placeholder-white/25 focus:outline-none focus:border-crimson/30 transition-all";
   const labelCls = "block text-[10px] sm:text-xs text-white/30 mb-1.5 uppercase tracking-wider font-medium";
 
   return (
@@ -55,7 +71,7 @@ export default function ReviewPage() {
             <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Home</span>
           </Link>
           <Link to="/" className="flex items-center gap-2">
-            <img src="/images/logo-placeholder.png" alt="Acadomix" className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg" />
+            <img src="/api/assets?asset_name=logo" alt="Acadomix" className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg" />
             <span className="text-sm sm:text-base font-bold text-white/80">Acado<span className="text-gradient">mix</span></span>
           </Link>
           <div className="flex items-center gap-2">
@@ -86,7 +102,7 @@ export default function ReviewPage() {
             </div>
             <div className="w-px h-10 bg-white/10" />
             <div className="text-center">
-              <p className="text-2xl sm:text-3xl font-bold text-gradient">{reviews.length}+</p>
+              <p className="text-2xl sm:text-3xl font-bold text-gradient">{totalStudents}+</p>
               <p className="text-[10px] sm:text-xs text-white/25 mt-1">Happy Students</p>
             </div>
           </div>
@@ -107,10 +123,16 @@ export default function ReviewPage() {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-2xl mx-auto">
             <div className="glass-card rounded-2xl sm:rounded-3xl p-5 sm:p-8">
               <h2 className="text-lg sm:text-xl font-bold text-white mb-5 sm:mb-6">Share Your Experience ✍️</h2>
+              
+              <div className="flex gap-2 p-1 bg-white/5 rounded-xl border border-white/5 mb-6">
+                <button onClick={() => setReviewType('individual')} className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${reviewType === 'individual' ? 'bg-white text-black' : 'text-white/30'}`}>INDIVIDUAL</button>
+                <button onClick={() => setReviewType('team')} className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${reviewType === 'team' ? 'bg-white text-black' : 'text-white/30'}`}>TEAM PROJECT</button>
+              </div>
+
               <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Rating */}
                 <div>
-                  <label className={labelCls}>Your Rating</label>
+                  <label className={labelCls}>Overall Rating</label>
                   <div className="flex items-center gap-2">
                     {[1,2,3,4,5].map(s => (
                       <button key={s} type="button" onClick={() => setRating(s)} onMouseEnter={() => setHoverRating(s)} onMouseLeave={() => setHoverRating(0)} className="p-1">
@@ -121,10 +143,38 @@ export default function ReviewPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><label className={labelCls}>Your Name</label><input type="text" required value={formData.student_name} onChange={e => setFormData({...formData, student_name: e.target.value})} placeholder="John Doe" className={inputCls} /></div>
-                  <div><label className={labelCls}>College</label><input type="text" required value={formData.college_name} onChange={e => setFormData({...formData, college_name: e.target.value})} placeholder="GVPCE, Vizag" className={inputCls} /></div>
-                </div>
+                {reviewType === 'individual' ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div><label className={labelCls}>Your Name</label><input type="text" required value={formData.student_name} onChange={e => setFormData({...formData, student_name: e.target.value})} placeholder="Full Name" className={inputCls} /></div>
+                    <div><label className={labelCls}>College</label><input type="text" required value={formData.college_name} onChange={e => setFormData({...formData, college_name: e.target.value})} placeholder="GVPCE, Vizag" className={inputCls} /></div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div><label className={labelCls}>Primary Contact Person</label><input type="text" required value={formData.student_name} onChange={e => setFormData({...formData, student_name: e.target.value})} placeholder="Lead Name" className={inputCls} /></div>
+                    <div><label className={labelCls}>College</label><input type="text" required value={formData.college_name} onChange={e => setFormData({...formData, college_name: e.target.value})} placeholder="GVPCE, Vizag" className={inputCls} /></div>
+                    
+                    <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
+                      <div className="flex items-center justify-between mb-4">
+                        <label className={labelCls}>How many members in team?</label>
+                        <select value={memberCount} onChange={e => setMemberCount(+e.target.value)} className="bg-black border border-white/10 rounded-lg px-2 py-1 text-xs">
+                          {[2,3,4,5].map(n => <option key={n} value={n}>{n} Members</option>)}
+                        </select>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {[...Array(memberCount)].map((_, i) => (
+                          <div key={i}>
+                            <label className="text-[10px] text-white/20 mb-1 block">Member {i + 1} Name</label>
+                            <input type="text" required value={teamMembers[i]} onChange={e => {
+                              const newMembers = [...teamMembers];
+                              newMembers[i] = e.target.value;
+                              setTeamMembers(newMembers);
+                            }} className={inputCls} placeholder={`Member ${i+1}`} />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div><label className={labelCls}>Year of Study</label>
@@ -187,6 +237,9 @@ export default function ReviewPage() {
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-white/70">{r.student_name}</p>
+                        {r.team_members && (
+                          <p className="text-[10px] text-crimson/50 font-bold uppercase tracking-wider">Team: {r.team_members}</p>
+                        )}
                         <p className="text-[10px] sm:text-xs text-white/25 flex items-center gap-1"><GraduationCap className="w-3 h-3" /> {r.year_of_study} · {r.college_name}</p>
                       </div>
                     </div>

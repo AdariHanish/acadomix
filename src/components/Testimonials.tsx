@@ -105,6 +105,9 @@ export default function Testimonials() {
                         {reviews[currentIndex].student_name[0]}
                       </div>
                       <h4 className="text-white font-bold text-lg">{reviews[currentIndex].student_name}</h4>
+                      {reviews[currentIndex].team_members && (
+                        <p className="text-[10px] text-crimson/60 uppercase font-bold tracking-widest mt-1 mb-2">Team: {reviews[currentIndex].team_members}</p>
+                      )}
                       <p className="text-white/30 text-sm flex items-center gap-2 mt-1">
                         <GraduationCap className="w-4 h-4" /> {reviews[currentIndex].college_name} · {reviews[currentIndex].year_of_study}
                       </p>

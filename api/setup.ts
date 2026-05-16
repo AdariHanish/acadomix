@@ -62,6 +62,7 @@ export default async function handler(req: any, res: any) {
           year_of_study VARCHAR(100),
           project_name VARCHAR(255),
           project_type VARCHAR(100),
+          team_members TEXT,
           rating INT,
           experience TEXT,
           pricing_review TEXT,
