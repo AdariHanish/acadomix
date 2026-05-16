@@ -117,9 +117,11 @@ export default async function handler(req: any, res: any) {
           if (i <= 3) { isPop = true; isTrend = true; }
           else if (i <= 5) { isPop = true; }
 
+          const description = `WHAT IT IS: A high-performance ${dom} project focusing on ${type} scale implementation. HOW IT'S USEFUL: This project helps students master ${dom} concepts while providing a ready-to-submit professional codebase with full documentation.`;
+
           bufferProjects.push([
             `${dom.toUpperCase()} ${type.toUpperCase()} Project #${i}`,
-            `A professional ${type} project in ${dom} domain focusing on high performance and clean code. Perfect for students and beginners.`,
+            description,
             dom,
             type,
             original,

@@ -35,6 +35,48 @@ export default function AdminProjects() {
     setShowForm(false); setEditing(null); setForm(empty); load();
   };
 
+  const [broadcasting, setBroadcasting] = useState<number | null>(null);
+
+  const broadcast = async (project: Project) => {
+    setBroadcasting(project.id);
+    try {
+      const response = await fetch('/api/payments');
+      const payments: any[] = await response.json();
+      
+      // Get unique verified customers
+      const customers = payments
+        .filter(p => p.status === 'verified')
+        .reduce((acc: any[], current) => {
+          if (!acc.find(item => item.phone === current.phone)) {
+            acc.push(current);
+          }
+          return acc;
+        }, []);
+
+      if (customers.length === 0) {
+        alert('No verified customers found to broadcast to.');
+        return;
+      }
+
+      // Generate WhatsApp link for the first customer (or show a list)
+      const msg = `🚀 *NEW PROJECT ALERT!* \n\n*${project.title}*\n\n${project.description}\n\n💰 *Price:* ₹${project.our_price}\n\n🎁 *LOYALTY DISCOUNT:* Since you've worked with us before, get an extra ₹500 OFF on this project!\n\nCheck it out here: ${window.location.origin}/#/projects`;
+      
+      // For simplicity, we open the first one and alert the user
+      customers.forEach((c, index) => {
+        setTimeout(() => {
+          const url = `https://wa.me/91${c.phone.replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`;
+          window.open(url, '_blank');
+        }, index * 2000); // 2 second gap between opens to avoid browser block
+      });
+
+      alert(`Opening WhatsApp for ${customers.length} customers. Please allow popups!`);
+    } catch (e) {
+      alert('Failed to fetch customers.');
+    } finally {
+      setBroadcasting(null);
+    }
+  };
+
   const remove = async (id: number) => { if (confirm('Delete?')) { await ProjectsDB.delete(id); load(); } };
 
   const inputCls = "w-full px-3 py-2.5 bg-white/[0.03] border border-white/[0.06] rounded-lg text-white text-[13px] placeholder-white/20 focus:outline-none focus:border-white/[0.15] transition-all";
@@ -42,7 +84,7 @@ export default function AdminProjects() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div><h2 className="text-xl font-bold text-white">Projects</h2><p className="text-[13px] text-white/30">Manage project catalog.</p></div>
+        <div><h2 className="text-xl font-bold text-white">Projects</h2><p className="text-[13px] text-white/30">Manage project catalog and notify customers.</p></div>
         <button onClick={() => openForm()} className="flex items-center gap-2 px-5 py-2.5 bg-crimson hover:bg-crimson-light text-white text-[13px] font-medium rounded-xl transition-colors">
           <Plus className="w-4 h-4" /> Add Project
         </button>
@@ -61,6 +103,10 @@ export default function AdminProjects() {
                 className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium transition-all ${p.is_trending ? 'bg-gold/10 text-gold' : 'bg-white/[0.03] text-white/20 hover:text-gold'}`}>
                 <TrendingUp className="w-2.5 h-2.5" /> Trending
               </button>
+              <button onClick={() => broadcast(p)} disabled={broadcasting === p.id}
+                className="ml-auto inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 text-[10px] font-medium hover:bg-blue-500/20 transition-all">
+                {broadcasting === p.id ? '...' : '📢 Broadcast'}
+              </button>
             </div>
             <div className="flex items-start justify-between gap-2 mb-1">
               <p className="text-[14px] font-medium text-white line-clamp-1">{p.title}</p>
@@ -68,9 +114,7 @@ export default function AdminProjects() {
             </div>
             <p className="text-[12px] text-white/25 line-clamp-2 mb-3">{p.description}</p>
             <div className="space-y-0.5 p-3 rounded-lg bg-white/[0.02] border border-white/[0.03] mb-3 text-[11px]">
-              <div className="flex justify-between text-white/15"><span>Original</span><span className="line-through">₹{p.original_price.toLocaleString()}</span></div>
-              <div className="flex justify-between text-white/15"><span>Market</span><span className="line-through">₹{p.market_price.toLocaleString()}</span></div>
-              <div className="flex justify-between text-white/60 font-medium"><span>Our Price</span><span className="text-gradient-brand text-[14px] font-bold">₹{p.our_price.toLocaleString()}</span></div>
+              <div className="flex justify-between items-center text-white/60 font-medium"><span>Our Price</span><span className="text-gradient-brand text-[14px] font-bold">₹{p.our_price.toLocaleString()}</span></div>
             </div>
             <div className="flex gap-2">
               <button onClick={() => openForm(p)} className="flex-1 py-2 bg-white/[0.03] text-white/30 hover:text-white hover:bg-white/[0.08] rounded-lg text-[12px] font-medium transition-all flex items-center justify-center gap-1"><Edit2 className="w-3 h-3" /> Edit</button>
@@ -95,7 +139,12 @@ export default function AdminProjects() {
                 <div><label className="block text-[11px] text-white/25 mb-1">Category (Domain)</label><select value={form.category} onChange={e => setForm({...form, category: e.target.value as any})} className={`${inputCls} [&>option]:bg-black`}>{categories.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}</select></div>
                 <div><label className="block text-[11px] text-white/25 mb-1">Type</label><select value={form.year_type} onChange={e => setForm({...form, year_type: e.target.value})} className={`${inputCls} [&>option]:bg-black`}><option value="mini">Mini</option><option value="major">Major</option></select></div>
               </div>
-              <div><label className="block text-[11px] text-white/25 mb-1">Description</label><textarea rows={2} value={form.description} onChange={e => setForm({...form, description: e.target.value})} className={`${inputCls} resize-none`} /></div>
+              <div>
+                <label className="block text-[11px] text-white/25 mb-1 font-bold text-gold">Description (MANDATORY FORMAT)</label>
+                <textarea rows={4} required value={form.description} onChange={e => setForm({...form, description: e.target.value})} 
+                  placeholder="WHAT IT IS: ... &#10;HOW IT'S USEFUL: ..." 
+                  className={`${inputCls} resize-none border-gold/20 focus:border-gold/40`} />
+              </div>
               <div className="grid grid-cols-3 gap-3">
                 <div><label className="block text-[11px] text-white/25 mb-1">Original ₹</label><input type="number" required value={form.original_price || ''} onChange={e => setForm({...form, original_price: +e.target.value})} className={inputCls} /></div>
                 <div><label className="block text-[11px] text-white/25 mb-1">Market ₹</label><input type="number" required value={form.market_price || ''} onChange={e => setForm({...form, market_price: +e.target.value})} className={inputCls} /></div>
