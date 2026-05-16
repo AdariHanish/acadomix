@@ -19,9 +19,12 @@ export default function Testimonials() {
     fetch('/api/reviews')
       .then(res => res.json())
       .then(data => {
-        const fresh = data.filter((r: Review) => r.is_approved);
-        setReviews(fresh);
-      });
+        if (Array.isArray(data)) {
+          const fresh = data.filter((r: Review) => r.is_approved);
+          setReviews(fresh);
+        }
+      })
+      .catch(err => console.error('Reviews fetch failed:', err));
   }, []);
 
   const next = () => {

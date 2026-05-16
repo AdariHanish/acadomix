@@ -14,7 +14,11 @@ async function fetchAPI(endpoint: string, options?: RequestInit) {
   
   // Auto-cache GET requests
   if (!options || options.method === 'GET' || !options.method) {
-    localStorage.setItem(`acadomix_cache_${endpoint}`, JSON.stringify(data));
+    try {
+      localStorage.setItem(`acadomix_cache_${endpoint}`, JSON.stringify(data));
+    } catch (e) {
+      console.warn('Cache storage failed:', e);
+    }
   }
   
   return data;
