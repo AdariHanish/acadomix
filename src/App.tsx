@@ -30,8 +30,9 @@ export default function App() {
         <Route path="/projects" element={<ProjectsPage />} />
 
         {/* Admin Routes */}
-        <Route path="/admin" element={<AdminLogin />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="reviews" element={<AdminReviews />} />
           <Route path="payments" element={<AdminPayments />} />
