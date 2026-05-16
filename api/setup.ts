@@ -97,9 +97,9 @@ export default async function handler(req: any, res: any) {
       `);
     }
 
-    // Insert default projects if empty
+    // Insert default projects if empty or low count
     const [projects]: any = await pool.query("SELECT COUNT(*) as count FROM projects");
-    if (projects[0].count === 0) {
+    if (projects[0].count < 10) {
       const domains = ['website', 'aiml', 'datascience', 'iot', 'research'];
       const bufferProjects = [];
 

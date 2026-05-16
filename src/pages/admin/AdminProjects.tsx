@@ -103,22 +103,27 @@ export default function AdminProjects() {
                 className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium transition-all ${p.is_trending ? 'bg-gold/10 text-gold' : 'bg-white/[0.03] text-white/20 hover:text-gold'}`}>
                 <TrendingUp className="w-2.5 h-2.5" /> Trending
               </button>
-              <button onClick={() => broadcast(p)} disabled={broadcasting === p.id}
-                className="ml-auto inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 text-[10px] font-medium hover:bg-blue-500/20 transition-all">
-                {broadcasting === p.id ? '...' : '📢 Broadcast'}
-              </button>
             </div>
+            
             <div className="flex items-start justify-between gap-2 mb-1">
               <p className="text-[14px] font-medium text-white line-clamp-1">{p.title}</p>
               <span className="px-2 py-0.5 rounded bg-white/[0.04] text-white/20 text-[10px] capitalize flex-shrink-0">{p.category}</span>
             </div>
             <p className="text-[12px] text-white/25 line-clamp-2 mb-3">{p.description}</p>
+            
             <div className="space-y-0.5 p-3 rounded-lg bg-white/[0.02] border border-white/[0.03] mb-3 text-[11px]">
               <div className="flex justify-between items-center text-white/60 font-medium"><span>Our Price</span><span className="text-gradient-brand text-[14px] font-bold">₹{p.our_price.toLocaleString()}</span></div>
             </div>
-            <div className="flex gap-2">
-              <button onClick={() => openForm(p)} className="flex-1 py-2 bg-white/[0.03] text-white/30 hover:text-white hover:bg-white/[0.08] rounded-lg text-[12px] font-medium transition-all flex items-center justify-center gap-1"><Edit2 className="w-3 h-3" /> Edit</button>
-              <button onClick={() => remove(p.id)} className="py-2 px-3 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded-lg transition-all"><Trash2 className="w-3.5 h-3.5" /></button>
+
+            <div className="flex flex-col gap-2">
+              <button onClick={() => broadcast(p)} disabled={broadcasting === p.id}
+                className="w-full py-2.5 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 rounded-lg text-[12px] font-bold transition-all flex items-center justify-center gap-2 border border-blue-500/20">
+                {broadcasting === p.id ? 'Sending...' : '📢 Broadcast to Customers'}
+              </button>
+              <div className="flex gap-2">
+                <button onClick={() => openForm(p)} className="flex-1 py-2 bg-white/[0.03] text-white/30 hover:text-white hover:bg-white/[0.08] rounded-lg text-[12px] font-medium transition-all flex items-center justify-center gap-1"><Edit2 className="w-3 h-3" /> Edit</button>
+                <button onClick={() => remove(p.id)} className="py-2 px-3 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded-lg transition-all"><Trash2 className="w-3.5 h-3.5" /></button>
+              </div>
             </div>
           </motion.div>
         ))}
