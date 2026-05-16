@@ -16,6 +16,7 @@ import AdminProjects from './pages/admin/AdminProjects';
 import AdminLeads from './pages/admin/AdminLeads';
 import AdminAssets from './pages/admin/AdminAssets';
 import AdminSettings from './pages/admin/AdminSettings';
+import ProjectsPage from './pages/ProjectsPage';
 
 
 export default function App() {
@@ -26,6 +27,7 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/reviews" element={<ReviewPage />} />
         <Route path="/payment" element={<PaymentPage />} />
+        <Route path="/projects" element={<ProjectsPage />} />
 
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminLogin />} />

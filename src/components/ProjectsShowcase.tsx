@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { TrendingUp, Star, ArrowRight, Sparkles } from 'lucide-react';
 import { ProjectsDB } from '../utils/storage';
 import { Project } from '../types';
@@ -35,16 +36,26 @@ export default function ProjectsShowcase() {
   const [active, setActive] = useState('all');
   const [showAll, setShowAll] = useState(false);
 
-  const filtered = active === 'all'
-    ? allProjects
-    : allProjects.filter(p => p.category === active);
+  const getShowcaseProjects = (catId: string) => {
+    const projects = catId === 'all' 
+      ? allProjects 
+      : allProjects.filter(p => p.category === catId);
 
-  const displayed = showAll ? filtered : filtered.slice(0, 6);
+    // 1. Trending & Popular
+    const trendingAndPopular = projects.filter(p => p.is_trending && p.is_popular).slice(0, 1);
+    // 2. Popular (not necessarily trending)
+    const onlyPopular = projects.filter(p => p.is_popular && !trendingAndPopular.includes(p)).slice(0, 1);
+    // 3. Normal
+    const normal = projects.filter(p => !p.is_popular && !p.is_trending).slice(0, 1);
+
+    return [...trendingAndPopular, ...onlyPopular, ...normal];
+  };
+
+  const displayed = getShowcaseProjects(active);
   const discount = (o: number, p: number) => Math.round(((o - p) / o) * 100);
 
   const handleCategoryChange = useCallback((catId: string) => {
     setActive(catId);
-    setShowAll(false);
   }, []);
 
   const scrollToContact = () => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
@@ -93,40 +104,21 @@ export default function ProjectsShowcase() {
 
         {/* Count */}
         <p className="text-center text-[10px] sm:text-xs text-white/20 mb-6">
-          {filtered.length} project{filtered.length !== 1 ? 's' : ''} found
-          {active !== 'all' && <span> in <span className="text-crimson">{categories.find(c => c.id === active)?.name}</span></span>}
+          Showing featured projects in {active === 'all' ? 'all domains' : <span className="text-crimson">{categories.find(c => c.id === active)?.name}</span>}
         </p>
 
         {/* Projects Grid or Empty State */}
         {loading ? (
           <AppleLoader />
-        ) : error || filtered.length === 0 ? (
+        ) : error || displayed.length === 0 ? (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-12 sm:py-16">
             <p className="text-3xl sm:text-4xl mb-3">{error ? '⚠️' : '📁'}</p>
             <p className="text-base sm:text-lg text-white/40 font-medium">{error || 'No projects in this category yet'}</p>
-            {error ? (
-              <div className="mt-4 p-4 rounded-xl glass max-w-md mx-auto text-xs text-white/30 text-left">
-                <p className="font-bold text-white/50 mb-2 uppercase">Possible Fixes:</p>
-                <ul className="list-disc pl-4 space-y-1">
-                  <li>Check if <code className="text-crimson">DATABASE_URL</code> is correctly set in Vercel environment variables.</li>
-                  <li>Visit <a href="/api/setup" className="text-gold hover:underline">/api/setup</a> to initialize your database tables.</li>
-                  <li>Ensure your TiDB cluster allows connections from Vercel's IP range.</li>
-                </ul>
-              </div>
-            ) : (
-              <p className="text-xs sm:text-sm text-white/20 mt-2 mb-6">Check back soon or request a custom project!</p>
-            )}
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
               <button onClick={scrollToContact}
                 className="px-6 py-3 bg-crimson hover:bg-crimson-light text-white text-sm font-semibold rounded-full transition-colors btn-glow active:scale-95">
                 Request Custom Project
               </button>
-              {error && (
-                <button onClick={() => window.location.reload()}
-                  className="px-6 py-3 glass hover:bg-white/5 text-white/60 text-sm font-semibold rounded-full transition-colors active:scale-95">
-                  Try Again
-                </button>
-              )}
             </div>
           </motion.div>
         ) : (
@@ -163,7 +155,7 @@ export default function ProjectsShowcase() {
                     <p className="text-[10px] sm:text-xs text-white/20 uppercase tracking-wider mb-1">
                       {project.category} · {project.year_type}
                     </p>
-                    <h3 className="text-card-title text-white mb-2 group-hover:text-gradient transition-all duration-300">
+                    <h3 className="text-card-title text-white mb-2 group-hover:text-gold transition-all duration-300">
                       {project.title}
                     </h3>
                     <p className="text-xs sm:text-sm text-white/30 leading-relaxed mb-4 line-clamp-2">
@@ -181,14 +173,6 @@ export default function ProjectsShowcase() {
 
                     {/* Pricing */}
                     <div className="border-t border-white/5 pt-4 space-y-1">
-                      <div className="flex justify-between text-[10px] sm:text-xs text-white/15">
-                        <span>Original:</span>
-                        <span className="line-through">₹{project.original_price.toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between text-[10px] sm:text-xs text-white/15">
-                        <span>Market:</span>
-                        <span className="line-through">₹{project.market_price.toLocaleString()}</span>
-                      </div>
                       <div className="flex justify-between items-center">
                         <span className="text-xs sm:text-sm text-white/50">Our Price:</span>
                         <span className="text-lg sm:text-xl font-bold text-gradient">₹{project.our_price.toLocaleString()}</span>
@@ -197,7 +181,7 @@ export default function ProjectsShowcase() {
 
                     {/* CTA */}
                     <a
-                      href={`https://wa.me/919515192936?text=${encodeURIComponent(`Hi! I'm interested in "${project.title}" (₹${project.our_price}).`)}`}
+                      href={`https://wa.me/919515192936?text=${encodeURIComponent(`Hi! Acadomix, I’m interested in discussing the project: "${project.title}" (₹${project.our_price}).`)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="mt-4 w-full py-3 bg-gradient-to-r from-crimson to-crimson-dark text-white text-xs sm:text-sm font-semibold rounded-xl flex items-center justify-center gap-2 btn-glow shine active:scale-[0.98] transition-transform"
@@ -211,15 +195,15 @@ export default function ProjectsShowcase() {
           </div>
         )}
 
-        {/* Show More */}
-        {filtered.length > 6 && (
-          <div className="text-center mt-8 sm:mt-10">
-            <button onClick={() => setShowAll(!showAll)}
-              className="px-6 sm:px-8 py-2.5 sm:py-3 glass text-white/60 hover:text-white font-semibold rounded-full transition-all hover:bg-white/5 text-xs sm:text-sm active:scale-95">
-              {showAll ? 'Show Less' : `View All ${filtered.length} Projects`}
-            </button>
-          </div>
-        )}
+        {/* View All Button */}
+        <div className="text-center mt-10 sm:mt-14">
+          <Link
+            to="/projects"
+            className="inline-flex items-center gap-2 px-8 py-3.5 bg-white/5 hover:bg-white/10 text-white font-bold rounded-full border border-white/10 transition-all hover:border-gold/30 active:scale-95"
+          >
+            View All Projects Catalog <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
 
         {/* Custom Project CTA */}
         <motion.div
