@@ -5,14 +5,14 @@ import { ProjectsDB } from '../../utils/storage';
 import { Project } from '../../types';
 
 const categories = [
-  { value: 'mini', label: 'Mini Project' }, { value: 'major', label: 'Major Project' },
-  { value: 'website', label: 'Website' }, { value: 'assignment', label: 'Assignment' },
-  { value: 'research', label: 'Research Paper' }, { value: 'custom', label: 'Custom Project' },
-  { value: 'aiml', label: 'AI/ML' }, { value: 'datascience', label: 'Data Science' },
-  { value: 'iot', label: 'IoT' }, { value: 'plagiarism', label: 'Plagiarism Removal' },
+  { value: 'website', label: 'Web Dev' },
+  { value: 'aiml', label: 'AI/ML' },
+  { value: 'datascience', label: 'Data Science' },
+  { value: 'iot', label: 'IoT' },
+  { value: 'research', label: 'Research' },
 ];
 
-const empty = { title: '', description: '', category: 'mini' as Project['category'], year_type: 'mini', original_price: 0, market_price: 0, our_price: 0, features: '', is_popular: false, is_trending: false };
+const empty = { title: '', description: '', category: 'website' as Project['category'], year_type: 'major', original_price: 0, market_price: 0, our_price: 0, features: '', is_popular: false, is_trending: false };
 
 export default function AdminProjects() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -92,8 +92,8 @@ export default function AdminProjects() {
             <form onSubmit={submit} className="space-y-4">
               <div><label className="block text-[11px] text-white/25 mb-1">Title</label><input type="text" required value={form.title} onChange={e => setForm({...form, title: e.target.value})} className={inputCls} /></div>
               <div className="grid grid-cols-2 gap-3">
-                <div><label className="block text-[11px] text-white/25 mb-1">Category</label><select value={form.category} onChange={e => setForm({...form, category: e.target.value as any})} className={`${inputCls} [&>option]:bg-black`}>{categories.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}</select></div>
-                <div><label className="block text-[11px] text-white/25 mb-1">Year Type</label><input type="text" value={form.year_type} onChange={e => setForm({...form, year_type: e.target.value})} className={inputCls} /></div>
+                <div><label className="block text-[11px] text-white/25 mb-1">Category (Domain)</label><select value={form.category} onChange={e => setForm({...form, category: e.target.value as any})} className={`${inputCls} [&>option]:bg-black`}>{categories.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}</select></div>
+                <div><label className="block text-[11px] text-white/25 mb-1">Type</label><select value={form.year_type} onChange={e => setForm({...form, year_type: e.target.value})} className={`${inputCls} [&>option]:bg-black`}><option value="mini">Mini</option><option value="major">Major</option></select></div>
               </div>
               <div><label className="block text-[11px] text-white/25 mb-1">Description</label><textarea rows={2} value={form.description} onChange={e => setForm({...form, description: e.target.value})} className={`${inputCls} resize-none`} /></div>
               <div className="grid grid-cols-3 gap-3">

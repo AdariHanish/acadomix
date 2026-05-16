@@ -8,11 +8,9 @@ import AppleLoader from './AppleLoader';
 
 const categories = [
   { id: 'all', name: 'All' },
-  { id: 'mini', name: 'Mini' },
-  { id: 'major', name: 'Major' },
-  { id: 'website', name: 'Web' },
+  { id: 'website', name: 'Web Dev' },
   { id: 'aiml', name: 'AI/ML' },
-  { id: 'datascience', name: 'Data' },
+  { id: 'datascience', name: 'Data Science' },
   { id: 'iot', name: 'IoT' },
   { id: 'research', name: 'Research' },
 ];
@@ -20,42 +18,44 @@ const categories = [
 export default function ProjectsShowcase() {
   const [allProjects, setAllProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
-  
   const [error, setError] = useState<string | null>(null);
-  
+  const [activeDomain, setActiveDomain] = useState('all');
+  const [activeType, setActiveType] = useState<'mini' | 'major'>('major');
+
   useEffect(() => {
     ProjectsDB.getAll().then(data => {
       setAllProjects(data);
       setLoading(false);
     }).catch(err => {
-      console.error('Fetch error:', err);
-      setError('Failed to load projects. Please check your database connection.');
+      setError('Failed to load projects.');
       setLoading(false);
     });
   }, []);
-  const [active, setActive] = useState('all');
-  const [showAll, setShowAll] = useState(false);
 
-  const getShowcaseProjects = (catId: string) => {
-    const projects = catId === 'all' 
-      ? allProjects 
-      : allProjects.filter(p => p.category === catId);
+  const getShowcaseProjects = () => {
+    let projects = allProjects;
+    
+    // 1. Filter by Domain
+    if (activeDomain !== 'all') {
+      projects = projects.filter(p => p.category === activeDomain);
+    }
+    
+    // 2. Filter by Type (Mini/Major)
+    projects = projects.filter(p => p.year_type.toLowerCase() === activeType);
 
-    // 1. Trending & Popular
+    // 3. Selection: 1 Trending+Popular, 1 Popular, 1 Normal
     const trendingAndPopular = projects.filter(p => p.is_trending && p.is_popular).slice(0, 1);
-    // 2. Popular (not necessarily trending)
     const onlyPopular = projects.filter(p => p.is_popular && !trendingAndPopular.includes(p)).slice(0, 1);
-    // 3. Normal
     const normal = projects.filter(p => !p.is_popular && !p.is_trending).slice(0, 1);
 
     return [...trendingAndPopular, ...onlyPopular, ...normal];
   };
 
-  const displayed = getShowcaseProjects(active);
+  const displayed = getShowcaseProjects();
   const discount = (o: number, p: number) => Math.round(((o - p) / o) * 100);
 
-  const handleCategoryChange = useCallback((catId: string) => {
-    setActive(catId);
+  const handleDomainChange = useCallback((domId: string) => {
+    setActiveDomain(domId);
   }, []);
 
   const scrollToContact = () => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
@@ -84,14 +84,14 @@ export default function ProjectsShowcase() {
         </motion.div>
 
         {/* Filter Pills — scrollable on mobile */}
-        <div className="mb-8 sm:mb-12 -mx-2 px-2 overflow-x-auto no-scrollbar">
+        <div className="mb-4 sm:mb-6 -mx-2 px-2 overflow-x-auto no-scrollbar">
           <div className="flex gap-1.5 sm:gap-2 justify-center min-w-max mx-auto p-1.5 glass rounded-full">
             {categories.map((cat) => (
               <button
                 key={cat.id}
-                onClick={() => handleCategoryChange(cat.id)}
+                onClick={() => handleDomainChange(cat.id)}
                 className={`px-3 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs font-semibold rounded-full whitespace-nowrap transition-all duration-300 active:scale-95 ${
-                  active === cat.id
+                  activeDomain === cat.id
                     ? 'bg-gradient-to-r from-crimson to-crimson-dark text-white shadow-lg shadow-crimson/30'
                     : 'text-white/40 hover:text-white active:text-crimson hover:bg-white/5'
                 }`}
@@ -102,9 +102,29 @@ export default function ProjectsShowcase() {
           </div>
         </div>
 
+        {/* Type Toggle (Mini/Major) */}
+        <div className="flex justify-center mb-8 sm:mb-10">
+          <div className="flex p-1 bg-white/5 rounded-xl border border-white/10">
+            {(['major', 'mini'] as const).map((type) => (
+              <button
+                key={type}
+                onClick={() => setActiveType(type)}
+                className={`px-6 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${
+                  activeType === type
+                    ? 'bg-white text-black shadow-xl'
+                    : 'text-white/30 hover:text-white/60'
+                }`}
+              >
+                {type}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Count */}
         <p className="text-center text-[10px] sm:text-xs text-white/20 mb-6">
-          Showing featured projects in {active === 'all' ? 'all domains' : <span className="text-crimson">{categories.find(c => c.id === active)?.name}</span>}
+          Showing featured <span className="text-gold uppercase font-bold">{activeType}</span> projects 
+          {activeDomain !== 'all' && <span> in <span className="text-crimson">{categories.find(c => c.id === activeDomain)?.name}</span></span>}
         </p>
 
         {/* Projects Grid or Empty State */}

@@ -10,8 +10,6 @@ import AppleLoader from '../components/AppleLoader';
 
 const categories = [
   { id: 'all', name: 'All Domains' },
-  { id: 'mini', name: 'Mini Projects' },
-  { id: 'major', name: 'Major Projects' },
   { id: 'website', name: 'Web Development' },
   { id: 'aiml', name: 'AI & Machine Learning' },
   { id: 'datascience', name: 'Data Science' },
@@ -22,7 +20,8 @@ const categories = [
 export default function ProjectsPage() {
   const [allProjects, setAllProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
-  const [active, setActive] = useState('all');
+  const [activeDomain, setActiveDomain] = useState('all');
+  const [activeType, setActiveType] = useState<'mini' | 'major'>('major');
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -32,20 +31,23 @@ export default function ProjectsPage() {
     });
   }, []);
 
-  const getFilteredProjects = (catId: string) => {
-    const projects = catId === 'all' 
-      ? allProjects 
-      : allProjects.filter(p => p.category === catId);
+  const getFilteredProjects = () => {
+    let projects = allProjects;
+    
+    // 1. Domain
+    if (activeDomain !== 'all') {
+      projects = projects.filter(p => p.category === activeDomain);
+    }
 
-    // Sorting Logic: 
-    // 1. Trending & Popular
-    // 2. Popular
-    // 3. Normal
+    // 2. Type
+    projects = projects.filter(p => p.year_type.toLowerCase() === activeType);
+
+    // Sorting Logic for the 10 slots:
     const trendingAndPopular = projects.filter(p => p.is_trending && p.is_popular);
-    const onlyPopular = projects.filter(p => p.is_popular && !p.is_trending);
+    const onlyPopular = projects.filter(p => p.is_popular && !trendingAndPopular.includes(p));
     const normal = projects.filter(p => !p.is_popular && !p.is_trending);
 
-    // Mix for the Page (10 Projects)
+    // Mix for the Page (up to 10 Projects)
     return [
       ...trendingAndPopular.slice(0, 3),
       ...onlyPopular.slice(0, 2),
@@ -53,7 +55,7 @@ export default function ProjectsPage() {
     ];
   };
 
-  const displayed = getFilteredProjects(active);
+  const displayed = getFilteredProjects();
   const discount = (o: number, p: number) => Math.round(((o - p) / o) * 100);
 
   return (
@@ -78,13 +80,13 @@ export default function ProjectsPage() {
           </div>
 
           {/* Category Filters */}
-          <div className="flex flex-wrap gap-2 mb-10 p-2 glass rounded-2xl sm:rounded-full">
+          <div className="flex flex-wrap gap-2 mb-4 p-2 glass rounded-2xl sm:rounded-full overflow-x-auto no-scrollbar">
             {categories.map((cat) => (
               <button
                 key={cat.id}
-                onClick={() => setActive(cat.id)}
-                className={`px-4 sm:px-6 py-2 sm:py-2.5 text-xs font-semibold rounded-full transition-all duration-300 ${
-                  active === cat.id
+                onClick={() => setActiveDomain(cat.id)}
+                className={`px-4 sm:px-6 py-2 sm:py-2.5 text-xs font-semibold rounded-full transition-all duration-300 whitespace-nowrap ${
+                  activeDomain === cat.id
                     ? 'bg-gradient-to-r from-gold-dark to-gold text-black shadow-lg shadow-gold/20'
                     : 'text-white/40 hover:text-white hover:bg-white/5'
                 }`}
@@ -92,6 +94,25 @@ export default function ProjectsPage() {
                 {cat.name}
               </button>
             ))}
+          </div>
+
+          {/* Type Toggle (Mini/Major) */}
+          <div className="flex justify-start mb-10">
+            <div className="flex p-1 bg-white/5 rounded-xl border border-white/10">
+              {(['major', 'mini'] as const).map((type) => (
+                <button
+                  key={type}
+                  onClick={() => setActiveType(type)}
+                  className={`px-8 py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${
+                    activeType === type
+                      ? 'bg-white text-black shadow-xl'
+                      : 'text-white/30 hover:text-white/60'
+                  }`}
+                >
+                  {type}
+                </button>
+              ))}
+            </div>
           </div>
 
           {loading ? (

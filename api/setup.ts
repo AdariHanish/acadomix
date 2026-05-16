@@ -100,11 +100,39 @@ export default async function handler(req: any, res: any) {
     // Insert default projects if empty
     const [projects]: any = await pool.query("SELECT COUNT(*) as count FROM projects");
     if (projects[0].count === 0) {
-      const defaults = [
-        ['Face Recognition System', 'Real-time face detection and recognition using Python and OpenCV.', 'aiml', 'major', 8000, 6000, 4500, 'Real-time Detection, Database Storage, Accuracy Metrics', 1, 1],
-        ['E-Commerce Website', 'Full-stack e-commerce platform with React, Node.js and TiDB.', 'website', 'major', 15000, 10000, 7000, 'Product Catalog, Shopping Cart, Secure Checkout', 1, 0]
-      ];
-      for (const p of defaults) {
+      const domains = ['website', 'aiml', 'datascience', 'iot', 'research'];
+      const bufferProjects = [];
+
+      for (const dom of domains) {
+        for (let i = 1; i <= 10; i++) {
+          const isMajor = i <= 5;
+          const type = isMajor ? 'major' : 'mini';
+          const price = isMajor ? 4500 : 1500;
+          const market = price + 3000;
+          const original = price + 5000;
+          
+          // 3-trending+popular, 2-popular, 5-normal
+          let isPop = false;
+          let isTrend = false;
+          if (i <= 3) { isPop = true; isTrend = true; }
+          else if (i <= 5) { isPop = true; }
+
+          bufferProjects.push([
+            `${dom.toUpperCase()} ${type.toUpperCase()} Project #${i}`,
+            `A professional ${type} project in ${dom} domain focusing on high performance and clean code. Perfect for students and beginners.`,
+            dom,
+            type,
+            original,
+            market,
+            price,
+            'Clean Code, Documentation, Full Support, No Plagiarism',
+            isPop ? 1 : 0,
+            isTrend ? 1 : 0
+          ]);
+        }
+      }
+
+      for (const p of bufferProjects) {
         await pool.query(
           `INSERT INTO projects (title, description, category, year_type, original_price, market_price, our_price, features, is_popular, is_trending) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           p
