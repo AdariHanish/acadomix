@@ -22,15 +22,26 @@ export default function ProjectsShowcase() {
   const [activeDomain, setActiveDomain] = useState('all');
   const [activeType, setActiveType] = useState<'mini' | 'major'>('major');
 
-  useEffect(() => {
-    ProjectsDB.getAll().then(data => {
+  const load = async () => {
+    // Instant from cache
+    const cached = ProjectsDB.getAllCached();
+    if (cached.length > 0) {
+      setAllProjects(cached);
+      setLoading(false);
+    }
+
+    // Fresh from DB
+    try {
+      const data = await ProjectsDB.getAll();
       setAllProjects(data);
       setLoading(false);
-    }).catch(err => {
+    } catch (err) {
       setError('Failed to load projects.');
       setLoading(false);
-    });
-  }, []);
+    }
+  };
+
+  useEffect(() => { load(); }, []);
 
   const getShowcaseProjects = () => {
     let projects = allProjects;

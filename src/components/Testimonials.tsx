@@ -10,10 +10,17 @@ export default function Testimonials() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Instant from cache
+    const cached = ReviewsDB.getAllCached();
+    const approved = cached.filter((r: Review) => r.is_approved);
+    if (approved.length > 0) setReviews(approved);
+
+    // Fresh from DB
     fetch('/api/reviews')
       .then(res => res.json())
       .then(data => {
-        setReviews(data.filter((r: Review) => r.is_approved));
+        const fresh = data.filter((r: Review) => r.is_approved);
+        setReviews(fresh);
       });
   }, []);
 

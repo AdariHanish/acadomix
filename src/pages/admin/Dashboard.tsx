@@ -11,20 +11,36 @@ export default function Dashboard() {
 
   useEffect(() => {
     (async () => {
-      const projects = await ProjectsDB.getAll();
-      const reviews = await ReviewsDB.getAll();
-      const payments = await PaymentsDB.getAll();
-      const leads = await LeadsDB.getAll();
-      setStats({
-        totalProjects: projects.length, totalReviews: reviews.length,
-        pendingReviews: reviews.filter(r => !r.is_approved).length,
-        totalPayments: payments.length,
-        pendingPayments: payments.filter(p => p.status === 'pending').length,
-        verifiedPayments: payments.filter(p => p.status === 'verified').length,
-        totalLeads: leads.length, newLeads: leads.filter(l => l.status === 'new').length,
-      });
-      setRecentPayments(payments.slice(-5).reverse());
-      setRecentReviews(reviews.filter(r => !r.is_approved).slice(-5));
+      const cachedProjects = ProjectsDB.getAllCached();
+      const cachedReviews = ReviewsDB.getAllCached();
+      const cachedPayments = PaymentsDB.getAllCached();
+      const cachedLeads = LeadsDB.getAllCached();
+
+      const updateStats = (projects: any[], reviews: any[], payments: any[], leads: any[]) => {
+        setStats({
+          totalProjects: projects.length, 
+          totalReviews: reviews.length,
+          pendingReviews: reviews.filter(r => !r.is_approved).length,
+          totalPayments: payments.length,
+          pendingPayments: payments.filter(p => p.status === 'pending').length,
+          verifiedPayments: payments.filter(p => p.status === 'verified').length,
+          totalLeads: leads.length, 
+          newLeads: leads.filter(l => l.status === 'new').length,
+        });
+        setRecentPayments(payments.slice(-5).reverse());
+        setRecentReviews(reviews.filter(r => !r.is_approved).slice(-5));
+      };
+
+      updateStats(cachedProjects, cachedReviews, cachedPayments, cachedLeads);
+
+      const [projects, reviews, payments, leads] = await Promise.all([
+        ProjectsDB.getAll(),
+        ReviewsDB.getAll(),
+        PaymentsDB.getAll(),
+        LeadsDB.getAll()
+      ]);
+      
+      updateStats(projects, reviews, payments, leads);
     })();
   }, []);
 
