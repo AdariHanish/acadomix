@@ -7,7 +7,12 @@ export default function Hero() {
   return (
     <section id="home" className="relative min-h-[100svh] flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0">
-        <img src="/images/hero-bg.jpg" alt="" className="w-full h-full object-cover opacity-30" />
+        <img 
+          src="/api/assets?asset_name=hero_bg" 
+          alt="" 
+          className="w-full h-full object-cover opacity-30" 
+          onError={(e) => (e.currentTarget.src = '/images/hero-bg.jpg')}
+        />
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black" />
         <div className="absolute inset-0 bg-grid opacity-30" />
       </div>
@@ -20,14 +25,14 @@ export default function Hero() {
 
       <div className="relative z-10 container-responsive text-center pt-20 sm:pt-24">
         {/* Badge */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
           className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-6 sm:mb-8">
           <Sparkles className="w-4 h-4 text-gold" />
           <span className="text-[10px] sm:text-sm text-gold/80 font-medium">#1 Project Partner for Students</span>
         </motion.div>
 
         {/* Headline */}
-        <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.15 }}
+        <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
           className="text-hero text-white mb-4 sm:mb-6">
           Your Projects.
           <br />
@@ -35,7 +40,7 @@ export default function Hero() {
         </motion.h1>
 
         {/* Sub */}
-        <motion.p initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3 }}
+        <motion.p initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
           className="text-body text-white/40 max-w-2xl mx-auto mb-8 sm:mb-10 px-4">
           Mini projects, major projects, research papers, websites — delivered
           with <span className="text-crimson font-semibold">zero plagiarism</span> at
@@ -43,7 +48,7 @@ export default function Hero() {
         </motion.p>
 
         {/* CTAs */}
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.45 }}
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 px-4">
           <button onClick={() => scrollTo('contact')}
             className="w-full sm:w-auto px-8 py-3.5 sm:py-4 bg-gradient-to-r from-crimson via-crimson-dark to-gold-dark text-white text-sm sm:text-lg font-semibold rounded-full btn-glow shine flex items-center justify-center gap-2 active:scale-[0.97] transition-transform">
@@ -56,7 +61,7 @@ export default function Hero() {
         </motion.div>
 
         {/* Stats */}
-        <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.6 }}
+        <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.4 }}
           className="mt-14 sm:mt-20 lg:mt-24">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto px-4">
             {[

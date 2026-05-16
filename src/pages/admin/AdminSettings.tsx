@@ -16,6 +16,8 @@ export default function AdminSettings() {
 
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [uploading, setUploading] = useState<string | null>(null);
+  const [assetTimestamps, setAssetTimestamps] = useState<Record<string, number>>({});
 
   useEffect(() => { SettingsDB.get().then(setSettings); }, []);
 
@@ -130,24 +132,30 @@ export default function AdminSettings() {
                 
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-16 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
-                    <img 
-                      src={`/api/assets?asset_name=${asset.key}&t=${Date.now()}`} 
-                      alt="Preview" 
-                      className="max-w-full max-h-full object-contain"
-                      onError={(e) => (e.currentTarget.src = 'https://via.placeholder.com/150?text=No+Asset')}
-                    />
+                    {uploading === asset.key ? (
+                      <div className="w-5 h-5 border-2 border-crimson border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <img 
+                        src={`/api/assets?asset_name=${asset.key}&t=${assetTimestamps[asset.key] || Date.now()}`} 
+                        alt="Preview" 
+                        className="max-w-full max-h-full object-contain"
+                        onError={(e) => (e.currentTarget.src = 'https://via.placeholder.com/150?text=No+Asset')}
+                      />
+                    )}
                   </div>
                   <label className="flex-1">
                     <div className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs text-white text-center cursor-pointer transition-colors">
-                      Select High Quality Image
+                      {uploading === asset.key ? 'Uploading...' : 'Select High Quality Image'}
                     </div>
                     <input 
                       type="file" 
                       accept="image/*" 
                       className="hidden" 
+                      disabled={!!uploading}
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (!file) return;
+                        setUploading(asset.key);
                         
                         // 🚀 Lightning Fast Compression Logic
                         const reader = new FileReader();
@@ -187,8 +195,19 @@ export default function AdminSettings() {
                                 data: compressedData,
                                 mime_type: 'image/webp'
                               })
-                            }).then(() => {
-                              setSuccess(`${asset.label} uploaded!`);
+                            })
+                            .then(res => res.json())
+                            .then((data) => {
+                              if (data.success) {
+                                setAssetTimestamps(prev => ({ ...prev, [asset.key]: Date.now() }));
+                                setSuccess(`${asset.label} uploaded!`);
+                              } else {
+                                setError('Upload failed. Try a smaller image.');
+                              }
+                            })
+                            .catch(() => setError('Connection error'))
+                            .finally(() => {
+                              setUploading(null);
                               setTimeout(() => setSuccess(null), 3000);
                             });
                           };

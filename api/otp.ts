@@ -26,36 +26,51 @@ export default async function handler(req: any, res: any) {
     const TG_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
     const TG_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
+    let sentTelegram = false;
+    let sentSMS = false;
+
+    // 1. Send to Telegram
     if (TG_TOKEN && TG_CHAT_ID) {
-      const tgMsg = `🔐 Acadomix OTP: ${otp}\nFor phone: ${phone}`;
-      await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: TG_CHAT_ID, text: tgMsg })
-      });
-      console.log('Telegram notification sent');
-      return res.status(200).json({ success: true, message: 'OTP sent via Telegram' });
+      try {
+        const tgMsg = `🔐 Acadomix OTP: ${otp}\nFor phone: ${phone}`;
+        await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: TG_CHAT_ID, text: tgMsg })
+        });
+        sentTelegram = true;
+      } catch (e) {
+        console.error('Telegram fail:', e);
+      }
     }
 
+    // 2. Send to Fast2SMS
     if (FAST2SMS_KEY) {
-      // Using Fast2SMS 'Quick SMS' API
-      const response = await fetch(`https://www.fast2sms.com/dev/bulkV2?authorization=${FAST2SMS_KEY}&route=otp&variables_values=${otp}&numbers=${phone.replace(/\D/g, '')}`);
-      const result = await response.json();
-      
-      if (result.return) {
-        return res.status(200).json({ success: true, message: 'OTP sent via SMS' });
+      try {
+        const response = await fetch(`https://www.fast2sms.com/dev/bulkV2?authorization=${FAST2SMS_KEY}&route=otp&variables_values=${otp}&numbers=${phone.replace(/\D/g, '')}`);
+        const result = await response.json();
+        if (result.return) sentSMS = true;
+      } catch (e) {
+        console.error('SMS fail:', e);
       }
+    }
+
+    if (sentTelegram || sentSMS) {
+      return res.status(200).json({ 
+        success: true, 
+        message: `OTP sent via ${[sentTelegram && 'Telegram', sentSMS && 'SMS'].filter(Boolean).join(' and ')}` 
+      });
     }
 
     // Fallback if no keys are set
     return res.status(200).json({ 
       success: true, 
       message: 'OTP generated (Dev Mode)', 
-      notice: 'To receive free notifications, add TELEGRAM_BOT_TOKEN to Vercel. For SMS, add FAST2SMS_API_KEY.' 
+      notice: 'Check logs or add API keys to Vercel.' 
     });
 
   } catch (error: any) {
     console.error('OTP Send Error:', error);
-    res.status(500).json({ error: 'Failed to process OTP request' });
+    res.status(500).json({ error: 'Failed to send OTP' });
   }
 }
