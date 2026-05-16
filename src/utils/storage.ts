@@ -159,9 +159,9 @@ export const AssetsDB = {
     await fetchAPI('/assets', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ asset_name: assetName, data, mime_type })
+      body: JSON.stringify({ asset_name: assetName, data, mime_type: mimeType })
     });
-    return { id: 0, asset_name: assetName, data, mime_type, updated_at: new Date().toISOString() };
+    return { id: 0, asset_name: assetName, data, mime_type: mimeType, updated_at: new Date().toISOString() };
   },
 };
 
