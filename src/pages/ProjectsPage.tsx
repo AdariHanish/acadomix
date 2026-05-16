@@ -154,15 +154,29 @@ export default function ProjectsPage() {
                         ))}
                       </div>
 
-                      <div className="mt-auto pt-6 border-t border-white/5">
-                        <div className="flex items-end justify-between mb-4">
-                          <div>
-                            <p className="text-[10px] text-white/20 line-through">₹{project.original_price.toLocaleString()}</p>
-                            <p className="text-2xl font-black text-white">₹{project.our_price.toLocaleString()}</p>
+                      <div className="mt-auto pt-6 border-t border-white/5 space-y-3">
+                        <div className="space-y-1">
+                          <div className="flex justify-between text-[10px] text-white/10 uppercase tracking-widest">
+                            <span>Project Value</span>
+                            <span className="line-through">₹{project.original_price.toLocaleString()}</span>
                           </div>
-                          <span className="text-xs font-bold text-green-400 bg-green-400/10 px-2 py-1 rounded-lg">
-                            {discount(project.original_price, project.our_price)}% OFF
-                          </span>
+                          <div className="flex justify-between text-[11px] text-white/30 font-bold uppercase tracking-widest">
+                            <span>Market Price</span>
+                            <span className="line-through decoration-gold/50">₹{project.market_price.toLocaleString()}</span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-end justify-between">
+                          <div>
+                            <p className="text-[10px] text-gold uppercase font-bold tracking-tighter mb-0.5">Acadomix Price</p>
+                            <p className="text-3xl font-black text-white">₹{project.our_price.toLocaleString()}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-[10px] text-green-400 uppercase font-bold tracking-tighter mb-0.5">Your Savings</p>
+                            <span className="text-sm font-black text-green-400 bg-green-400/10 px-3 py-1 rounded-xl border border-green-400/20">
+                              {Math.round(((project.market_price - project.our_price) / project.market_price) * 100)}% OFF
+                            </span>
+                          </div>
                         </div>
                         
                         <a

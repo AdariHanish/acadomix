@@ -192,10 +192,26 @@ export default function ProjectsShowcase() {
                     </div>
 
                     {/* Pricing */}
-                    <div className="border-t border-white/5 pt-4 space-y-1">
-                      <div className="flex justify-between items-center">
-                        <span className="text-xs sm:text-sm text-white/50">Our Price:</span>
-                        <span className="text-lg sm:text-xl font-bold text-gradient">₹{project.our_price.toLocaleString()}</span>
+                    <div className="border-t border-white/5 pt-4 space-y-1.5">
+                      <div className="flex justify-between text-[10px] sm:text-xs text-white/10">
+                        <span>Project Value:</span>
+                        <span className="line-through decoration-white/20">₹{project.original_price.toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between text-[11px] sm:text-xs text-white/30">
+                        <span>Market Price:</span>
+                        <span className="line-through decoration-crimson/30 text-white/40">₹{project.market_price.toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between items-center pt-1">
+                        <div className="flex flex-col">
+                          <span className="text-[10px] text-gold/40 uppercase font-bold tracking-wider">Acadomix Price</span>
+                          <span className="text-xl sm:text-2xl font-black text-gradient">₹{project.our_price.toLocaleString()}</span>
+                        </div>
+                        <div className="flex flex-col items-end">
+                          <span className="text-[10px] text-green-400/50 uppercase font-bold tracking-wider">You Save</span>
+                          <span className="text-xs sm:text-sm font-black text-green-400 bg-green-400/10 px-2 py-0.5 rounded-lg border border-green-400/20">
+                            {Math.round(((project.market_price - project.our_price) / project.market_price) * 100)}% OFF
+                          </span>
+                        </div>
                       </div>
                     </div>
 

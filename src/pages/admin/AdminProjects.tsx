@@ -111,8 +111,13 @@ export default function AdminProjects() {
             </div>
             <p className="text-[12px] text-white/25 line-clamp-2 mb-3">{p.description}</p>
             
-            <div className="space-y-0.5 p-3 rounded-lg bg-white/[0.02] border border-white/[0.03] mb-3 text-[11px]">
-              <div className="flex justify-between items-center text-white/60 font-medium"><span>Our Price</span><span className="text-gradient-brand text-[14px] font-bold">₹{p.our_price.toLocaleString()}</span></div>
+            <div className="space-y-1 p-3 rounded-lg bg-white/[0.02] border border-white/[0.03] mb-3 text-[10px]">
+              <div className="flex justify-between text-white/10"><span>Original Value:</span><span className="line-through">₹{p.original_price.toLocaleString()}</span></div>
+              <div className="flex justify-between text-white/20"><span>Market Price:</span><span className="line-through">₹{p.market_price.toLocaleString()}</span></div>
+              <div className="flex justify-between items-center pt-1 border-t border-white/5 mt-1">
+                <span className="text-white/60 font-bold">Our Price:</span>
+                <span className="text-gradient-brand text-[14px] font-black">₹{p.our_price.toLocaleString()}</span>
+              </div>
             </div>
 
             <div className="flex flex-col gap-2">
