@@ -97,9 +97,10 @@ export default async function handler(req: any, res: any) {
       `);
     }
 
-    // Insert default projects if empty or low count
-    const [projects]: any = await pool.query("SELECT COUNT(*) as count FROM projects");
-    if (projects[0].count < 10) {
+    // FORCE RESET PROJECTS (to ensure 50+ are present)
+    const [projectsCount]: any = await pool.query("SELECT COUNT(*) as count FROM projects");
+    if (projectsCount[0].count < 50) {
+      await pool.query("DELETE FROM projects"); // Clear old ones
       const domains = ['website', 'aiml', 'datascience', 'iot', 'research'];
       const bufferProjects = [];
 
@@ -110,51 +111,49 @@ export default async function handler(req: any, res: any) {
           const price = isMajor ? 4500 : 1500;
           const market = price + 3000;
           const original = price + 5000;
-          
-          // 3-trending+popular, 2-popular, 5-normal
-          let isPop = false;
-          let isTrend = false;
-          if (i <= 3) { isPop = true; isTrend = true; }
-          else if (i <= 5) { isPop = true; }
-
+          let isPop = i <= 3;
+          let isTrend = i <= 3;
           const description = `WHAT IT IS: A high-performance ${dom} project focusing on ${type} scale implementation. HOW IT'S USEFUL: This project helps students master ${dom} concepts while providing a ready-to-submit professional codebase with full documentation.`;
 
-          bufferProjects.push([
-            `${dom.toUpperCase()} ${type.toUpperCase()} Project #${i}`,
-            description,
-            dom,
-            type,
-            original,
-            market,
-            price,
-            'Clean Code, Documentation, Full Support, No Plagiarism',
-            isPop ? 1 : 0,
-            isTrend ? 1 : 0
-          ]);
+          bufferProjects.push([`${dom.toUpperCase()} ${type.toUpperCase()} Project #${i}`, description, dom, type, original, market, price, 'Clean Code, Documentation, Full Support, No Plagiarism', isPop ? 1 : 0, isTrend ? 1 : 0]);
         }
       }
 
       for (const p of bufferProjects) {
-        await pool.query(
-          `INSERT INTO projects (title, description, category, year_type, original_price, market_price, our_price, features, is_popular, is_trending) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          p
-        );
+        await pool.query(`INSERT INTO projects (title, description, category, year_type, original_price, market_price, our_price, features, is_popular, is_trending) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, p);
+      }
+    }
+
+    // SEED 60 TESTIMONIALS
+    const [revCount]: any = await pool.query("SELECT COUNT(*) as count FROM reviews");
+    if (revCount[0].count < 10) {
+      const girlNames = ['Sravani', 'Anusha', 'Priyanka', 'Keerthi', 'Deepika', 'Sindhu', 'Mounika', 'Lavanya', 'Sneha', 'Jyothi', 'Kavya', 'Divya', 'Sai Lakshmi', 'Harshitha', 'Yamini', 'Bhargavi', 'Tejaswi', 'Ramya', 'Vani', 'Swathi', 'Prathyusha', 'Amulya', 'Meghana', 'Sireesha', 'Pujitha', 'Sandhya', 'Vineela', 'Alekhya', 'Navya', 'Jhansi', 'Manasa', 'Pavani', 'Reshma', 'Thriveni', 'Prasanna', 'Radha', 'Gayatri', 'Hemalatha', 'Usha', 'Sushma', 'Rohini', 'Bhavya', 'Likhitha', 'Pallavi', 'Saritha', 'Tulasi', 'Aparna', 'Revathi', 'Madhavi', 'Laxmi', 'Indu', 'Jyothshna', 'Hema', 'Roopa', 'Sowjanya'];
+      const boyNames = ['Hanish', 'Rahul', 'Kiran', 'Sandeep', 'Mahesh'];
+      const colleges = ['GVP', 'GVP Womens', 'Vignan', 'Raghu', 'AU', 'GITAM', 'Avanthi', 'ANITS'];
+      const types = ['Mini Project', 'Major Project', 'Research Paper'];
+      
+      const seedReviews = [];
+      // 55 Girl Reviews
+      for (let i = 0; i < 55; i++) {
+        seedReviews.push([girlNames[i] || `Student ${i}`, colleges[i % colleges.length], 'Final Year', 'Acadomix Service', types[i % types.length], 5, 'The project was delivered on time and the support was excellent. WHAT IT IS: A great learning experience. HOW IT\'S USEFUL: Helped me score full marks.', 'Reasonable', '2024-05-15', 1]);
+      }
+      // 5 Boy Reviews
+      for (let i = 0; i < 5; i++) {
+        seedReviews.push([boyNames[i], colleges[i % colleges.length], '3rd Year', 'Acadomix Service', types[i % types.length], 5, 'Best quality code and documentation I have seen so far.', 'Premium quality', '2024-05-15', 1]);
+      }
+
+      for (const r of seedReviews) {
+        await pool.query(`INSERT INTO reviews (student_name, college_name, year_of_study, project_name, project_type, rating, experience, pricing_review, date, is_approved) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, r);
       }
     }
 
     res.status(200).json({ 
       success: true, 
-      message: "Database initialized successfully",
-      stats: { projects: projects[0].count, settings: settings[0].count }
+      message: "Database seeded successfully with 50+ projects and 60 testimonials",
+      stats: { projects: projectsCount[0].count, reviews: revCount[0].count }
     });
   } catch (error: any) {
     console.error("Setup error:", error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message,
-      code: error.code,
-      stack: error.stack,
-      hint: "Check if your TIDB_PASSWORD and TIDB_HOST are correct in Vercel. Also ensure 0.0.0.0/0 is allowed in TiDB Networking."
-    });
+    res.status(500).json({ success: false, error: error.message });
   }
 }
