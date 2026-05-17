@@ -4,13 +4,38 @@ export function initializeStorage() {
   // Deprecated, no-op since data comes from API now
 }
 
-// Helper to handle API responses
+// In-memory cache to make transactions fraction-of-a-second fast
+const cache: Record<string, { data: any, timestamp: number }> = {};
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+// Helper to handle API responses with caching for GET requests
 async function fetchAPI(endpoint: string, options?: RequestInit) {
+  const isGet = !options || !options.method || options.method === 'GET';
+  
+  if (isGet && cache[endpoint] && Date.now() - cache[endpoint].timestamp < CACHE_DURATION) {
+    return cache[endpoint].data;
+  }
+
   const response = await fetch(`/api${endpoint}`, options);
   if (!response.ok) {
     throw new Error(`API error: ${response.statusText}`);
   }
-  return response.json();
+  
+  const data = await response.json();
+  
+  if (isGet) {
+    cache[endpoint] = { data, timestamp: Date.now() };
+  } else {
+    // Clear cache on mutations to ensure fresh data
+    const baseEndpoint = endpoint.split('?')[0];
+    Object.keys(cache).forEach(key => {
+      if (key.startsWith(baseEndpoint)) {
+        delete cache[key];
+      }
+    });
+  }
+  
+  return data;
 }
 
 // Projects

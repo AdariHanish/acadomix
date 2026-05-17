@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Upload, CheckCircle, AlertCircle, Copy, Check, QrCode, Shield } from 'lucide-react';
 import { PaymentsDB, AssetsDB } from '../utils/storage';
+import { compressImage } from '../utils/image';
 import AppleLoader from '../components/AppleLoader';
 import WhatsAppButton from '../components/WhatsAppButton';
 import { useScrollHoverFix } from '../hooks/useScrollHoverFix';
@@ -24,12 +25,16 @@ export default function PaymentPage() {
     }); 
   }, []);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = () => setScreenshot({ data: reader.result as string, mime_type: file.type, name: file.name });
-      reader.readAsDataURL(file);
+      try {
+        const compressedDataUrl = await compressImage(file, 0.2); // Compress to ~200KB max
+        setScreenshot({ data: compressedDataUrl, mime_type: file.type, name: file.name });
+      } catch (err) {
+        console.error("Compression failed:", err);
+        alert("Failed to process image. Please try a smaller file.");
+      }
     }
   };
 

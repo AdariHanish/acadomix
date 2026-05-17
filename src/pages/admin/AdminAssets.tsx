@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Upload, ImageIcon, QrCode, Check, AlertCircle } from 'lucide-react';
 import { AssetsDB } from '../../utils/storage';
+import { compressImage } from '../../utils/image';
 
 export default function AdminAssets() {
   const [logo, setLogo] = useState<string | null>(null);
@@ -13,18 +14,19 @@ export default function AdminAssets() {
     AssetsDB.get('payment_qr').then(q => { if (q) setQrCode(q.data); });
   }, []);
 
-  const handleUpload = (type: 'logo' | 'payment_qr', e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUpload = async (type: 'logo' | 'payment_qr', e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const data = reader.result as string;
-        await AssetsDB.set(type, data, file.type);
-        type === 'logo' ? setLogo(data) : setQrCode(data);
+      try {
+        const compressedDataUrl = await compressImage(file, 0.2); // Compress to ~200KB
+        await AssetsDB.set(type, compressedDataUrl, file.type);
+        type === 'logo' ? setLogo(compressedDataUrl) : setQrCode(compressedDataUrl);
         setSuccess(`${type === 'logo' ? 'Logo' : 'QR Code'} updated!`);
         setTimeout(() => setSuccess(null), 3000);
-      };
-      reader.readAsDataURL(file);
+      } catch (err) {
+        console.error("Compression failed:", err);
+        alert("Failed to process image.");
+      }
     }
   };
 
