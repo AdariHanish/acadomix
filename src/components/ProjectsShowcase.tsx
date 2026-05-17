@@ -52,7 +52,6 @@ export default function ProjectsShowcase() {
   };
 
   const displayed = getShowcaseProjects();
-  const discount = (o: number, p: number) => Math.round(((o - p) / o) * 100);
 
   const handleDomainChange = useCallback((domId: string) => {
     setActiveDomain(domId);

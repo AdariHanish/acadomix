@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, X, Briefcase } from 'lucide-react';
+import { Star, X } from 'lucide-react';
 import { Review } from '../types';
 
 export default function Testimonials() {
