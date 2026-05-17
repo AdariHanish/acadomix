@@ -175,12 +175,20 @@ export default function ProjectsPage() {
                             <p className="text-[10px] text-gold uppercase font-bold tracking-tighter mb-0.5">Acadomix Price</p>
                             <p className="text-3xl font-black text-white">₹{project.our_price.toLocaleString()}</p>
                           </div>
-                          <div className="text-right">
-                            <p className="text-[10px] text-green-400 uppercase font-bold tracking-tighter mb-0.5">Your Savings</p>
-                            <span className="text-sm font-black text-green-400 bg-green-400/10 px-3 py-1 rounded-xl border border-green-400/20">
-                              {Math.round(((project.market_price - project.our_price) / project.market_price) * 100)}% OFF
-                            </span>
-                          </div>
+                          {(() => {
+                            const discountPercentage = Math.round(((project.market_price - project.our_price) / project.market_price) * 100);
+                            if (discountPercentage > 0 && !isNaN(discountPercentage)) {
+                              return (
+                                <div className="text-right">
+                                  <p className="text-[10px] text-green-400 uppercase font-bold tracking-tighter mb-0.5">Your Savings</p>
+                                  <span className="text-sm font-black text-green-400 bg-green-400/10 px-3 py-1 rounded-xl border border-green-400/20">
+                                    {discountPercentage}% OFF
+                                  </span>
+                                </div>
+                              );
+                            }
+                            return <div />;
+                          })()}
                         </div>
                         
                         <a

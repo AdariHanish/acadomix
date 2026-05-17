@@ -17,10 +17,10 @@
 
 /* ===== CURSOR — Modern ring: gold border + transparent red center ===== */
 *, *::before, *::after {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='8.5' fill='rgba(220,20,60,0.25)' stroke='%23d4a853' stroke-width='1.5'/%3E%3Ccircle cx='10' cy='10' r='2' fill='%23d4a853' fill-opacity='0.9'/%3E%3C/svg%3E") 10 10, auto;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='8.5' fill='rgba(220,20,60,0.4)' stroke='%23d4a853' stroke-width='1.5'/%3E%3C/svg%3E") 10 10, auto;
 }
 a, button, [role="button"], input[type="submit"], select, label, .cursor-pointer {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Ccircle cx='14' cy='14' r='12' fill='rgba(220,20,60,0.3)' stroke='%23d4a853' stroke-width='2'/%3E%3Ccircle cx='14' cy='14' r='3' fill='%23d4a853'/%3E%3C/svg%3E") 14 14, pointer;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Ccircle cx='14' cy='14' r='12' fill='rgba(220,20,60,0.5)' stroke='%23d4a853' stroke-width='2'/%3E%3C/svg%3E") 14 14, pointer;
 }
 
 html {
@@ -143,8 +143,13 @@ body {
   0%, 100% { border-color: rgba(220,20,60,0.3); }
   50% { border-color: rgba(212,168,83,0.5); }
 }
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
 .animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
 .animate-border-glow { animation: border-glow 3s ease infinite; }
+.animate-marquee { animation: marquee 30s linear infinite; }
 
 /* ===== RESPONSIVE TYPOGRAPHY ===== */
 .text-hero { font-size: clamp(2.2rem, 7vw, 5.5rem); line-height: 1.05; letter-spacing: -0.03em; font-weight: 700; }

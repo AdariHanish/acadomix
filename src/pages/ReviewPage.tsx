@@ -16,7 +16,7 @@ const projectTypes = [
 export default function ReviewPage() {
   useScrollHoverFix();
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [totalStudents, setTotalStudents] = useState(1000); // Base count + dynamic
+  const [totalStudents, setTotalStudents] = useState(300); // Base count + dynamic
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -26,36 +26,47 @@ export default function ReviewPage() {
   const [reviewType, setReviewType] = useState<'individual' | 'team'>('individual');
   const [memberCount, setMemberCount] = useState(2);
   const [teamMembers, setTeamMembers] = useState<string[]>(['', '', '', '', '']);
+  const [teamLeadIndex, setTeamLeadIndex] = useState(0);
 
   const [formData, setFormData] = useState({
-    student_name: '', college_name: '', year_of_study: '', project_name: '',
+    student_name: '', phone: '', college_name: '', year_of_study: '', project_name: '',
     project_type: '', experience: '', pricing_review: '', date: new Date().toISOString().split('T')[0],
   });
 
   useEffect(() => { 
     ReviewsDB.getApproved().then(data => {
       setReviews(data);
-      // Sync logic: Base 1000 + actual approved reviews
-      setTotalStudents(1000 + data.length);
+      // Sync logic: Base 300 + actual approved reviews
+      setTotalStudents(300 + data.length);
       setLoading(false);
     }); 
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    let submitName = formData.student_name;
+    let submitTeamMembers = '';
+
+    if (reviewType === 'team') {
+      submitName = teamMembers[teamLeadIndex] || 'Team Lead';
+      submitTeamMembers = teamMembers.slice(0, memberCount).filter((m, i) => i !== teamLeadIndex && m.trim()).join(', ');
+    }
+
     const finalData = {
       ...formData,
+      student_name: submitName,
       rating,
-      team_members: reviewType === 'team' 
-        ? teamMembers.slice(0, memberCount).filter(m => m.trim()).join(', ') 
-        : ''
+      team_members: submitTeamMembers
     };
+    
     await ReviewsDB.add(finalData as any);
     setSubmitted(true);
     setShowForm(false);
-    setFormData({ student_name: '', college_name: '', year_of_study: '', project_name: '', project_type: '', experience: '', pricing_review: '', date: new Date().toISOString().split('T')[0] });
+    setFormData({ student_name: '', phone: '', college_name: '', year_of_study: '', project_name: '', project_type: '', experience: '', pricing_review: '', date: new Date().toISOString().split('T')[0] });
     setRating(5);
     setTeamMembers(['', '', '', '', '']);
+    setTeamLeadIndex(0);
   };
 
   const avg = reviews.length > 0 ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1) : '5.0';
@@ -121,12 +132,12 @@ export default function ReviewPage() {
         {/* Form */}
         {showForm ? (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-2xl mx-auto">
-            <div className="glass-card rounded-2xl sm:rounded-3xl p-5 sm:p-8">
+            <div className="glass-card rounded-2xl sm:rounded-3xl p-5 sm:p-8 border-gold/20 hover:border-gold/40 transition-colors shadow-[0_0_50px_rgba(212,168,83,0.05)]">
               <h2 className="text-lg sm:text-xl font-bold text-white mb-5 sm:mb-6">Share Your Experience ✍️</h2>
               
               <div className="flex gap-2 p-1 bg-white/5 rounded-xl border border-white/5 mb-6">
-                <button onClick={() => setReviewType('individual')} className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${reviewType === 'individual' ? 'bg-white text-black' : 'text-white/30'}`}>INDIVIDUAL</button>
-                <button onClick={() => setReviewType('team')} className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${reviewType === 'team' ? 'bg-white text-black' : 'text-white/30'}`}>TEAM PROJECT</button>
+                <button type="button" onClick={() => setReviewType('individual')} className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${reviewType === 'individual' ? 'bg-gradient-to-r from-crimson to-gold text-white shadow-lg' : 'text-white/30 hover:text-white/60'}`}>INDIVIDUAL</button>
+                <button type="button" onClick={() => setReviewType('team')} className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${reviewType === 'team' ? 'bg-gradient-to-r from-crimson to-gold text-white shadow-lg' : 'text-white/30 hover:text-white/60'}`}>TEAM PROJECT</button>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -135,8 +146,8 @@ export default function ReviewPage() {
                   <label className={labelCls}>Overall Rating</label>
                   <div className="flex items-center gap-2">
                     {[1,2,3,4,5].map(s => (
-                      <button key={s} type="button" onClick={() => setRating(s)} onMouseEnter={() => setHoverRating(s)} onMouseLeave={() => setHoverRating(0)} className="p-1">
-                        <Star className={`w-7 h-7 sm:w-8 sm:h-8 transition-colors ${s <= (hoverRating || rating) ? 'text-gold fill-gold' : 'text-white/15'}`} />
+                      <button key={s} type="button" onClick={() => setRating(s)} onMouseEnter={() => setHoverRating(s)} onMouseLeave={() => setHoverRating(0)} className="p-1 hover:scale-110 transition-transform">
+                        <Star className={`w-7 h-7 sm:w-8 sm:h-8 transition-colors ${s <= (hoverRating || rating) ? 'text-gold fill-gold drop-shadow-[0_0_8px_rgba(212,168,83,0.5)]' : 'text-white/15'}`} />
                       </button>
                     ))}
                     <span className="ml-2 text-sm text-white/30">{rating}/5</span>
@@ -146,32 +157,41 @@ export default function ReviewPage() {
                 {reviewType === 'individual' ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div><label className={labelCls}>Your Name</label><input type="text" required value={formData.student_name} onChange={e => setFormData({...formData, student_name: e.target.value})} placeholder="Full Name" className={inputCls} /></div>
-                    <div><label className={labelCls}>College</label><input type="text" required value={formData.college_name} onChange={e => setFormData({...formData, college_name: e.target.value})} placeholder="GVPCE, Vizag" className={inputCls} /></div>
+                    <div><label className={labelCls}>Phone Number</label><input type="tel" required value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} placeholder="Your Phone Number" className={inputCls} /></div>
+                    <div className="sm:col-span-2"><label className={labelCls}>College</label><input type="text" required value={formData.college_name} onChange={e => setFormData({...formData, college_name: e.target.value})} placeholder="GVPCE, Vizag" className={inputCls} /></div>
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    <div><label className={labelCls}>Primary Contact Person</label><input type="text" required value={formData.student_name} onChange={e => setFormData({...formData, student_name: e.target.value})} placeholder="Lead Name" className={inputCls} /></div>
-                    <div><label className={labelCls}>College</label><input type="text" required value={formData.college_name} onChange={e => setFormData({...formData, college_name: e.target.value})} placeholder="GVPCE, Vizag" className={inputCls} /></div>
-                    
-                    <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
+                    <div className="p-4 rounded-2xl bg-white/5 border border-white/5 relative overflow-hidden">
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-crimson/5 blur-3xl pointer-events-none" />
                       <div className="flex items-center justify-between mb-4">
                         <label className={labelCls}>How many members in team?</label>
-                        <select value={memberCount} onChange={e => setMemberCount(+e.target.value)} className="bg-black border border-white/10 rounded-lg px-2 py-1 text-xs">
+                        <select value={memberCount} onChange={e => setMemberCount(+e.target.value)} className="bg-black border border-white/10 rounded-lg px-2 py-1 text-xs text-white">
                           {[2,3,4,5].map(n => <option key={n} value={n}>{n} Members</option>)}
                         </select>
                       </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="space-y-3">
                         {[...Array(memberCount)].map((_, i) => (
-                          <div key={i}>
-                            <label className="text-[10px] text-white/20 mb-1 block">Member {i + 1} Name</label>
+                          <div key={i} className={`p-3 rounded-xl border transition-all ${i === teamLeadIndex ? 'bg-crimson/10 border-crimson/30' : 'bg-black/50 border-white/5'}`}>
+                            <div className="flex items-center gap-3 mb-2">
+                              <input type="radio" name="teamLead" checked={i === teamLeadIndex} onChange={() => setTeamLeadIndex(i)} className="w-4 h-4 accent-crimson cursor-pointer" />
+                              <label className={`text-xs font-bold ${i === teamLeadIndex ? 'text-crimson' : 'text-white/40'}`}>
+                                {i === teamLeadIndex ? 'Team Lead' : `Member ${i + 1}`}
+                              </label>
+                            </div>
                             <input type="text" required value={teamMembers[i]} onChange={e => {
                               const newMembers = [...teamMembers];
                               newMembers[i] = e.target.value;
                               setTeamMembers(newMembers);
-                            }} className={inputCls} placeholder={`Member ${i+1}`} />
+                            }} className={`${inputCls} py-2 sm:py-2.5`} placeholder={`Enter Name`} />
                           </div>
                         ))}
                       </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div><label className={labelCls}>Team Lead Phone Number</label><input type="tel" required value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} placeholder="Lead's Phone Number" className={inputCls} /></div>
+                      <div><label className={labelCls}>College</label><input type="text" required value={formData.college_name} onChange={e => setFormData({...formData, college_name: e.target.value})} placeholder="GVPCE, Vizag" className={inputCls} /></div>
                     </div>
                   </div>
                 )}

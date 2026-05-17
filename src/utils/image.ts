@@ -33,15 +33,17 @@ export const compressImage = (file: File, maxSizeMB: number = 0.2): Promise<stri
         
         ctx.drawImage(img, 0, 0, width, height);
         
-        // Start with high quality, reduce if needed
-        let quality = 0.9;
-        let dataUrl = canvas.toDataURL(file.type, quality);
-        
         // Ensure it's under maxSizeMB (roughly bytes = base64 length * 0.75)
         const maxBytes = maxSizeMB * 1024 * 1024;
+        const targetType = 'image/webp'; // Webp supports transparency AND quality compression
+        
+        // Start with high quality, reduce if needed
+        let quality = 0.9;
+        let dataUrl = canvas.toDataURL(targetType, quality);
+        
         while (dataUrl.length * 0.75 > maxBytes && quality > 0.1) {
           quality -= 0.1;
-          dataUrl = canvas.toDataURL(file.type, quality);
+          dataUrl = canvas.toDataURL(targetType, quality);
         }
 
         resolve(dataUrl);

@@ -171,9 +171,17 @@ export default function ProjectsShowcase() {
                         <Star className="w-3 h-3" /> Normal
                       </span>
                     )}
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-500/15 text-green-400 text-[10px] sm:text-xs font-semibold">
-                      {Math.round(((project.market_price - project.our_price) / project.market_price) * 100)}% OFF
-                    </span>
+                    {(() => {
+                      const discountPercentage = Math.round(((project.market_price - project.our_price) / project.market_price) * 100);
+                      if (discountPercentage > 0 && !isNaN(discountPercentage)) {
+                        return (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-500/15 text-green-400 text-[10px] sm:text-xs font-semibold">
+                            {discountPercentage}% OFF
+                          </span>
+                        );
+                      }
+                      return null;
+                    })()}
                   </div>
 
                   <div className="p-4 sm:p-5">
@@ -211,12 +219,20 @@ export default function ProjectsShowcase() {
                           <span className="text-[10px] text-gold/40 uppercase font-bold tracking-wider">Acadomix Price</span>
                           <span className="text-xl sm:text-2xl font-black text-gradient">₹{project.our_price.toLocaleString()}</span>
                         </div>
-                        <div className="flex flex-col items-end">
-                          <span className="text-[10px] text-green-400/50 uppercase font-bold tracking-wider">You Save</span>
-                          <span className="text-xs sm:text-sm font-black text-green-400 bg-green-400/10 px-2 py-0.5 rounded-lg border border-green-400/20">
-                            {Math.round(((project.market_price - project.our_price) / project.market_price) * 100)}% OFF
-                          </span>
-                        </div>
+                        {(() => {
+                          const discountPercentage = Math.round(((project.market_price - project.our_price) / project.market_price) * 100);
+                          if (discountPercentage > 0 && !isNaN(discountPercentage)) {
+                            return (
+                              <div className="flex flex-col items-end">
+                                <span className="text-[10px] text-green-400/50 uppercase font-bold tracking-wider">You Save</span>
+                                <span className="text-xs sm:text-sm font-black text-green-400 bg-green-400/10 px-2 py-0.5 rounded-lg border border-green-400/20">
+                                  {discountPercentage}% OFF
+                                </span>
+                              </div>
+                            );
+                          }
+                          return <div />;
+                        })()}
                       </div>
                     </div>
 
