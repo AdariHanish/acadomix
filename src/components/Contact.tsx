@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Send, Phone, Mail, MapPin, Clock, CheckCircle, MessageCircle, ArrowRight } from 'lucide-react';
 import { LeadsDB } from '../utils/storage';
+import StudentDiscountModal from './StudentDiscountModal';
 
 export default function Contact() {
   const [formData, setFormData] = useState({ name: '', college: '', branch: '', project_domain: '', budget: '', deadline: '', phone: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
+  const [showDiscount, setShowDiscount] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -106,14 +108,19 @@ export default function Contact() {
               <p className="text-green-400/40 text-[10px] sm:text-xs mt-0.5">Instant response guaranteed</p>
             </a>
 
-            <div className="glass-card rounded-2xl p-4 sm:p-5 text-center animate-border-glow border-gold/20">
+            <button
+              onClick={() => setShowDiscount(true)}
+              className="glass-card rounded-2xl p-4 sm:p-5 text-center animate-border-glow border-gold/20 w-full group hover:border-gold/50 transition-all active:scale-[0.98]"
+            >
               <p className="text-xl sm:text-2xl mb-1">🎓</p>
               <p className="text-gold text-xs sm:text-sm font-semibold">Student Discount</p>
               <p className="text-white/30 text-[10px] sm:text-xs mt-1">Show college ID → Get <span className="text-gradient font-bold">10% OFF</span></p>
-              <a href="#" className="inline-flex items-center gap-1 text-[10px] sm:text-xs text-crimson mt-2 hover:text-gold active:text-white transition-colors">
+              <span className="inline-flex items-center gap-1 text-[10px] sm:text-xs text-crimson mt-2 group-hover:text-gold transition-colors">
                 Claim Now <ArrowRight className="w-3 h-3" />
-              </a>
-            </div>
+              </span>
+            </button>
+
+            <StudentDiscountModal isOpen={showDiscount} onClose={() => setShowDiscount(false)} />
           </motion.div>
         </div>
       </div>

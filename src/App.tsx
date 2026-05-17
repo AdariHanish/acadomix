@@ -1,6 +1,7 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AppleLoader from './components/AppleLoader';
+import ImageLightbox from './components/ImageLightbox';
 
 // Lazy loaded Pages
 const HomePage = React.lazy(() => import('./pages/HomePage'));
@@ -20,6 +21,19 @@ const AdminAssets = React.lazy(() => import('./pages/admin/AdminAssets'));
 const AdminSettings = React.lazy(() => import('./pages/admin/AdminSettings'));
 
 export default function App() {
+  const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
+  const [lightboxAlt, setLightboxAlt] = useState('');
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      setLightboxSrc(detail.src);
+      setLightboxAlt(detail.alt || '');
+    };
+    window.addEventListener('open-lightbox', handler);
+    return () => window.removeEventListener('open-lightbox', handler);
+  }, []);
+
   return (
     <HashRouter>
       <Suspense fallback={<div className="h-screen w-screen flex items-center justify-center bg-black"><AppleLoader /></div>}>
@@ -46,6 +60,9 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
+
+      {/* Global Image Lightbox */}
+      <ImageLightbox src={lightboxSrc} alt={lightboxAlt} onClose={() => setLightboxSrc(null)} />
     </HashRouter>
   );
 }

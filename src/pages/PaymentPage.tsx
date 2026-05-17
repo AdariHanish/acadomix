@@ -7,6 +7,7 @@ import { compressImage } from '../utils/image';
 import AppleLoader from '../components/AppleLoader';
 import WhatsAppButton from '../components/WhatsAppButton';
 import { useScrollHoverFix } from '../hooks/useScrollHoverFix';
+import { ClickableImage } from '../components/ImageLightbox';
 
 export default function PaymentPage() {
   useScrollHoverFix();
@@ -97,7 +98,7 @@ export default function PaymentPage() {
                 {loadingQr ? (
                   <AppleLoader />
                 ) : qrCode ? (
-                  <img src={qrCode} alt="UPI QR Code" className="w-48 h-48 object-contain" />
+                  <ClickableImage src={qrCode} alt="UPI QR Code" className="w-48 h-48 object-contain" />
                 ) : (
                   <div className="text-center">
                     <QrCode className="w-12 h-12 text-black/20 mx-auto mb-2" />
@@ -155,7 +156,7 @@ export default function PaymentPage() {
                   <label className={labelCls}>Payment Screenshot</label>
                   {screenshot ? (
                     <div className="relative rounded-xl overflow-hidden border border-white/10">
-                      <img src={screenshot.data} alt="Screenshot" className="w-full max-h-44 object-contain bg-white/5" />
+                      <ClickableImage src={screenshot.data} alt="Payment Screenshot" className="w-full max-h-44 object-contain bg-white/5" />
                       <button type="button" onClick={() => setScreenshot(null)} className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/70 text-white/60 flex items-center justify-center text-xs hover:text-white">✕</button>
                     </div>
                   ) : (

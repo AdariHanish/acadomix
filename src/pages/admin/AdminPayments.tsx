@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Check, X, Trash2, Eye, Clock, CheckCircle, AlertCircle, Phone, Mail, Download } from 'lucide-react';
 import { PaymentsDB } from '../../utils/storage';
 import { Payment } from '../../types';
+import { ClickableImage } from '../../components/ImageLightbox';
 
 export default function AdminPayments() {
   const [payments, setPayments] = useState<Payment[]>([]);
@@ -39,8 +40,8 @@ export default function AdminPayments() {
             <motion.div key={p.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
               className="rounded-xl bg-surface-1 border border-border p-5">
               <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                <div className="w-16 h-16 rounded-lg overflow-hidden bg-white/[0.03] flex-shrink-0 cursor-pointer" onClick={() => setSelected(p)}>
-                  <img src={p.screenshot_data} alt="" className="w-full h-full object-cover hover:scale-110 transition-transform" />
+                <div className="w-16 h-16 rounded-lg overflow-hidden bg-white/[0.03] flex-shrink-0">
+                  <ClickableImage src={p.screenshot_data} alt="Payment screenshot" className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2 mb-1">
@@ -82,7 +83,9 @@ export default function AdminPayments() {
               <p className="text-[16px] font-bold text-white">Payment Details</p>
               <button onClick={() => setSelected(null)} className="p-1.5 hover:bg-white/[0.05] rounded-lg"><X className="w-4 h-4 text-white/30" /></button>
             </div>
-            <div className="rounded-xl overflow-hidden bg-white/[0.02] mb-5"><img src={selected.screenshot_data} alt="" className="w-full max-h-[350px] object-contain" /></div>
+            <div className="rounded-xl overflow-hidden bg-white/[0.02] mb-5">
+              <ClickableImage src={selected.screenshot_data} alt="Payment Screenshot" className="w-full max-h-[350px] object-contain" />
+            </div>
             <div className="grid grid-cols-2 gap-4 mb-5 text-[13px]">
               <div><p className="text-[11px] text-white/20 uppercase mb-0.5">Name</p><p className="text-white/70">{selected.student_name}</p></div>
               <div><p className="text-[11px] text-white/20 uppercase mb-0.5">Amount</p><p className="text-xl font-bold text-white">₹{selected.amount.toLocaleString()}</p></div>
