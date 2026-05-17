@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { LayoutDashboard, Star, CreditCard, FolderOpen, Settings, LogOut, Menu, X, Users, ImageIcon, UserCheck } from 'lucide-react';
-import { AdminAuth } from '../../utils/storage';
+import { AdminAuth, AssetsDB } from '../../utils/storage';
 
 const navItems = [
   { path: '/admin/dashboard', icon: <LayoutDashboard className="w-[18px] h-[18px]" />, label: 'Dashboard' },
@@ -19,6 +19,13 @@ export default function AdminLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [logoSrc, setLogoSrc] = useState('/images/logo-placeholder.png');
+
+  useEffect(() => {
+    AssetsDB.get('logo').then(logo => {
+      if (logo) setLogoSrc(logo.data);
+    });
+  }, []);
 
   // Check auth on every route change — if not logged in, redirect to login
   useEffect(() => {
@@ -68,8 +75,8 @@ export default function AdminLayout() {
         <div className="flex flex-col h-full">
           <div className="p-5 border-b border-border">
             <Link to="/" onClick={handleExternalNav} className="flex items-center gap-2">
-              <img src="/images/logo-placeholder.png" alt="Acadomix" className="w-7 h-7 rounded-lg" />
-              <span className="text-[14px] font-semibold text-white/80">Acado<span className="text-gradient">mix</span></span>
+              <img src={logoSrc} alt="Acadomix" className="w-8 h-8 rounded-lg object-contain border border-gold/15" />
+              <span className="text-[14px] font-black tracking-wider text-gradient uppercase">ACADOMIX</span>
             </Link>
             <p className="text-[10px] text-white/20 mt-1 uppercase tracking-widest">Admin Panel</p>
           </div>

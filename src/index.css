@@ -90,34 +90,41 @@ body {
 }
 
 .glass-nav {
-  background: rgba(10,10,10,0.78);
-  backdrop-filter: blur(50px) saturate(200%);
-  -webkit-backdrop-filter: blur(50px) saturate(200%);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+  background: linear-gradient(
+    90deg,
+    rgba(220, 20, 60, 0.15) 0%,
+    rgba(150, 10, 30, 0.22) 40%,
+    rgba(180, 140, 50, 0.22) 60%,
+    rgba(212, 168, 83, 0.15) 100%
+  ) !important;
+  backdrop-filter: blur(35px) saturate(250%) brightness(0.92);
+  -webkit-backdrop-filter: blur(35px) saturate(250%) brightness(0.92);
+  border-bottom: 1px solid rgba(212, 168, 83, 0.2);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
 }
 
 /* ===== PREMIUM NAVBAR — Red/Gold Glassy ===== */
 .navbar-gold {
   background: linear-gradient(
-    135deg,
-    rgba(30, 5, 5, 0.88) 0%,
-    rgba(18, 8, 2, 0.92) 40%,
-    rgba(12, 6, 0, 0.90) 70%,
-    rgba(25, 8, 3, 0.88) 100%
-  );
-  backdrop-filter: blur(60px) saturate(220%) brightness(1.05);
-  -webkit-backdrop-filter: blur(60px) saturate(220%) brightness(1.05);
+    90deg,
+    rgba(220, 20, 60, 0.15) 0%,
+    rgba(150, 10, 30, 0.22) 40%,
+    rgba(180, 140, 50, 0.22) 60%,
+    rgba(212, 168, 83, 0.15) 100%
+  ) !important;
+  backdrop-filter: blur(35px) saturate(250%) brightness(0.92);
+  -webkit-backdrop-filter: blur(35px) saturate(250%) brightness(0.92);
   /* Top shimmer line: crimson → gold → crimson */
   border-top: 1.5px solid transparent;
-  border-bottom: 1px solid rgba(212, 168, 83, 0.18);
+  border-bottom: 1px solid rgba(212, 168, 83, 0.2) !important;
   background-clip: padding-box;
   box-shadow:
-    0 1px 0 0 rgba(212, 168, 83, 0.25) inset,
-    0 -1px 0 0 rgba(220, 20, 60, 0.15) inset,
-    0 8px 40px rgba(220, 20, 60, 0.08),
-    0 2px 16px rgba(212, 168, 83, 0.06);
-  position: relative;
+    0 1px 0 0 rgba(212, 168, 83, 0.12) inset,
+    0 -1px 0 0 rgba(220, 20, 60, 0.08) inset,
+    0 8px 40px rgba(0, 0, 0, 0.5),
+    0 2px 16px rgba(212, 168, 83, 0.03);
+  position: fixed !important;
+  top: 0; left: 0; right: 0;
 }
 .navbar-gold::before {
   content: '';
@@ -238,3 +245,26 @@ body {
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 *:focus-visible { outline: 2px solid rgba(220,20,60,0.5); outline-offset: 2px; }
+
+/* ===== PREMIUM DYNAMIC SMOOTH OVERRIDES (Apple & Glassy feel) ===== */
+.glass-card, .card-hover, button, a, img, input, select, textarea, .modal-content {
+  transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ===== CUSTOM SMOOTH CRIMSON/GOLD SCROLLBARS ===== */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.95);
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #dc143c, #d4a853);
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #ff3355, #f0c56e);
+}
+

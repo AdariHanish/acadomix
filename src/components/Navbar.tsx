@@ -92,16 +92,25 @@ export default function Navbar() {
       <div className="container-responsive">
         <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Logo */}
-          <Link
-            to="/"
-            onClick={() => { AdminAuth.logout(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-            className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 group"
-          >
-            <img src={logoSrc} alt="Acadomix" className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl object-contain group-active:scale-90 transition-transform shadow-lg shadow-crimson/20" />
-            <span className="hidden min-[400px]:inline text-base sm:text-lg font-black tracking-tight">
-              <span className="text-white">Acado</span><span className="text-gradient">mix</span>
-            </span>
-          </Link>
+          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+            <img
+              src={logoSrc}
+              alt="Acadomix Logo"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                window.dispatchEvent(new CustomEvent('open-lightbox', { detail: { src: logoSrc, alt: 'Acadomix Logo' } }));
+              }}
+              className="h-11 w-11 sm:h-13 sm:w-13 rounded-2xl object-contain cursor-pointer active:scale-95 transition-transform shadow-lg shadow-crimson/20 border border-gold/30 hover:border-gold transition-colors"
+            />
+            <Link
+              to="/"
+              onClick={() => { AdminAuth.logout(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              className="hidden min-[400px]:inline text-lg sm:text-xl md:text-2xl font-black tracking-[0.15em] text-gradient uppercase active:scale-95 transition-transform"
+            >
+              ACADOMIX
+            </Link>
+          </div>
 
           {/* Nav Links */}
           <nav className="flex items-center gap-0 sm:gap-0.5 overflow-x-auto no-scrollbar mx-1 sm:mx-3 flex-1 justify-center">

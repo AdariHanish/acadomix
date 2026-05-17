@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lock, ArrowLeft, Eye, EyeOff, AlertCircle, CheckCircle, ArrowRight, Shield, Smartphone, KeyRound } from 'lucide-react';
 import { AdminAuth, SettingsDB } from '../../utils/storage';
+import { Spinner } from '../../components/Spinner';
 
 type Mode = 'login' | 'phone' | 'otp' | 'reset';
 
@@ -12,6 +13,7 @@ export default function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [mode, setMode] = useState<Mode>('login');
+  const [submitting, setSubmitting] = useState(false);
 
   // Always clear admin auth when login page mounts
   // This ensures back-button always asks for password
@@ -41,9 +43,15 @@ export default function AdminLogin() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
+    // Smooth 350ms delay for premium spinner feel
+    await new Promise(resolve => setTimeout(resolve, 350));
+    
     if (await AdminAuth.login(password)) {
+      setSubmitting(false);
       navigate('/admin/dashboard');
     } else {
+      setSubmitting(false);
       setError('Invalid password.');
       setPassword('');
     }
@@ -52,18 +60,27 @@ export default function AdminLogin() {
   const ADMIN_PHONE = '9515192936';
 
   const handleSendOtp = async () => {
+    setSubmitting(true);
     // Generate 6-digit OTP
     const code = String(Math.floor(100000 + Math.random() * 900000));
     setGeneratedOtp(code);
     setError('');
 
     try {
+      await new Promise(resolve => setTimeout(resolve, 300));
       // Call the OTP API to send SMS
       const response = await fetch('/api/otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone: ADMIN_PHONE, otp: code })
       });
+      
+      if (!response.ok) {
+        const text = await response.text();
+        setError(`Server error (${response.status}): ${text.slice(0, 80) || 'Check API gateway status.'}`);
+        return;
+      }
+
       const result = await response.json();
 
       if (result.success) {
@@ -74,8 +91,11 @@ export default function AdminLogin() {
       } else {
         setError(result.error || 'Failed to send OTP. Please try again.');
       }
-    } catch (err) {
-      setError('Connection error. Please check your internet and try again.');
+    } catch (err: any) {
+      console.error(err);
+      setError(`Network error: ${err.message || 'Please check your internet connection.'}`);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -95,7 +115,9 @@ export default function AdminLogin() {
     if (newPassword !== confirmNewPassword) { setError('Passwords do not match'); return; }
     if (newPassword.length < 4) { setError('Minimum 4 characters'); return; }
 
+    setSubmitting(true);
     try {
+      await new Promise(resolve => setTimeout(resolve, 300));
       // Fetch current settings first, then merge in the new password
       const currentSettings = await SettingsDB.get();
       await SettingsDB.update({ ...currentSettings, admin_password: newPassword });
@@ -111,6 +133,8 @@ export default function AdminLogin() {
       }, 3000);
     } catch {
       setError('Failed to reset password. Please try again.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -188,8 +212,8 @@ export default function AdminLogin() {
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
-                <button type="submit" className="w-full py-3.5 bg-crimson hover:bg-crimson-light text-white text-sm font-semibold rounded-xl transition-colors btn-glow">
-                  Login
+                <button type="submit" disabled={submitting} className="w-full py-3.5 bg-crimson hover:bg-crimson-light text-white text-sm font-semibold rounded-xl transition-colors btn-glow flex items-center justify-center gap-2">
+                  {submitting ? <Spinner size="sm" color="white" /> : 'Login'}
                 </button>
                 <button type="button" onClick={() => { setMode('phone'); setError(''); }}
                   className="w-full py-2 text-sm text-white/30 hover:text-crimson transition-colors flex items-center justify-center gap-1.5">
@@ -207,9 +231,9 @@ export default function AdminLogin() {
                   <p className="text-sm text-white/60 mb-1">We'll send an OTP to your registered mobile</p>
                   <p className="text-lg font-bold text-white tracking-wider">{MASKED_PHONE}</p>
                 </div>
-                <button onClick={handleSendOtp}
+                <button onClick={handleSendOtp} disabled={submitting}
                   className="w-full py-3.5 bg-gold hover:bg-gold-light text-black text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-2">
-                  Send OTP <ArrowRight className="w-4 h-4" />
+                  {submitting ? <Spinner size="sm" color="white" /> : <span>Send OTP <ArrowRight className="w-4 h-4 inline-block align-middle ml-1" /></span>}
                 </button>
                 <button type="button" onClick={() => { setMode('login'); setError(''); }}
                   className="w-full py-2 text-sm text-white/30 hover:text-white/50 transition-colors flex items-center justify-center gap-1.5">
@@ -234,9 +258,9 @@ export default function AdminLogin() {
                   </div>
                 </div>
 
-                <button type="submit" disabled={otp.length !== 6}
+                <button type="submit" disabled={otp.length !== 6 || submitting}
                   className="w-full py-3.5 bg-crimson hover:bg-crimson-light disabled:opacity-40 disabled:hover:bg-crimson text-white text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-2">
-                  Verify OTP <ArrowRight className="w-4 h-4" />
+                  {submitting ? <Spinner size="sm" color="white" /> : <span>Verify OTP <ArrowRight className="w-4 h-4 inline-block align-middle ml-1" /></span>}
                 </button>
 
                 {/* Resend */}
@@ -280,8 +304,8 @@ export default function AdminLogin() {
                   </button>
                 </div>
 
-                <button type="submit" className="w-full py-3.5 bg-crimson hover:bg-crimson-light text-white text-sm font-semibold rounded-xl transition-colors btn-glow">
-                  Reset Password
+                <button type="submit" disabled={submitting} className="w-full py-3.5 bg-crimson hover:bg-crimson-light text-white text-sm font-semibold rounded-xl transition-colors btn-glow flex items-center justify-center gap-2">
+                  {submitting ? <Spinner size="sm" color="white" /> : 'Reset Password'}
                 </button>
 
                 <button type="button" onClick={() => { setMode('login'); setError(''); setNewPassword(''); setConfirmNewPassword(''); setOtp(''); setOtpSent(false); }}

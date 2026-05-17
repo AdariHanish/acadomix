@@ -8,14 +8,17 @@ import AppleLoader from '../components/AppleLoader';
 import WhatsAppButton from '../components/WhatsAppButton';
 import { useScrollHoverFix } from '../hooks/useScrollHoverFix';
 import { ClickableImage } from '../components/ImageLightbox';
+import { Spinner } from '../components/Spinner';
 
 export default function PaymentPage() {
   useScrollHoverFix();
   const [qrCode, setQrCode] = useState<string | null>(null);
+  const [logoSrc, setLogoSrc] = useState('/images/logo-placeholder.png');
   const [submitted, setSubmitted] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
   const [formData, setFormData] = useState({ student_name: '', phone: '', email: '', project_name: '', amount: '' });
   const [screenshot, setScreenshot] = useState<{ data: string; mime_type: string; name: string } | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const [loadingQr, setLoadingQr] = useState(true);
 
@@ -24,6 +27,9 @@ export default function PaymentPage() {
       if (qr) setQrCode(qr.data); 
       setLoadingQr(false);
     }); 
+    AssetsDB.get('logo').then(logo => {
+      if (logo) setLogoSrc(logo.data);
+    });
   }, []);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,10 +48,29 @@ export default function PaymentPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!screenshot) { alert('Please upload payment screenshot'); return; }
-    await PaymentsDB.add({ student_name: formData.student_name, phone: formData.phone, email: formData.email, project_name: formData.project_name, amount: parseFloat(formData.amount), screenshot_data: screenshot.data, mime_type: screenshot.mime_type });
-    setSubmitted(true);
-    setFormData({ student_name: '', phone: '', email: '', project_name: '', amount: '' });
-    setScreenshot(null);
+    
+    setSubmitting(true);
+    try {
+      // 600ms simulated buffer for satisfying visual loader confirmation
+      await new Promise(resolve => setTimeout(resolve, 600));
+      await PaymentsDB.add({ 
+        student_name: formData.student_name, 
+        phone: formData.phone, 
+        email: formData.email, 
+        project_name: formData.project_name, 
+        amount: parseFloat(formData.amount), 
+        screenshot_data: screenshot.data, 
+        mime_type: screenshot.mime_type 
+      });
+      setSubmitted(true);
+      setFormData({ student_name: '', phone: '', email: '', project_name: '', amount: '' });
+      setScreenshot(null);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to submit transaction confirmation. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const copyText = (text: string, label: string) => { navigator.clipboard.writeText(text); setCopied(label); setTimeout(() => setCopied(null), 2000); };
@@ -61,8 +86,8 @@ export default function PaymentPage() {
             <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Home</span>
           </Link>
           <Link to="/" className="flex items-center gap-2">
-            <img src="/images/logo-placeholder.png" alt="Acadomix" className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg" />
-            <span className="text-sm sm:text-base font-bold text-white/80">Acado<span className="text-gradient">mix</span></span>
+            <img src={logoSrc} alt="Acadomix" className="h-8 w-8 rounded-lg object-contain border border-gold/15" />
+            <span className="text-base font-black tracking-widest text-gradient uppercase">ACADOMIX</span>
           </Link>
           <Link to="/admin" className="p-2 text-white/30 hover:text-crimson transition-colors">
             <Shield className="w-4 h-4" />
@@ -169,8 +194,8 @@ export default function PaymentPage() {
                   )}
                 </div>
 
-                <button type="submit" className="w-full py-3.5 sm:py-4 bg-gradient-to-r from-crimson to-crimson-dark text-white text-sm sm:text-base font-semibold rounded-xl btn-glow shine flex items-center justify-center gap-2">
-                  <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" /> Submit Confirmation
+                <button type="submit" disabled={submitting} className="w-full py-3.5 sm:py-4 bg-gradient-to-r from-crimson to-crimson-dark text-white text-sm sm:text-base font-semibold rounded-xl btn-glow shine flex items-center justify-center gap-2">
+                  {submitting ? <Spinner size="sm" color="white" /> : <span><CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 inline ml-1 mr-1" /> Submit Confirmation</span>}
                 </button>
               </form>
 

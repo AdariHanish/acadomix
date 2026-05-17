@@ -4,47 +4,47 @@ import { X, Layers } from 'lucide-react';
 
 const tech = [
   // Frontend
-  { name: 'React', color: '#61DAFB', category: 'Frontend' },
-  { name: 'Next.js', color: '#ffffff', category: 'Frontend' },
-  { name: 'Vue.js', color: '#41B883', category: 'Frontend' },
-  { name: 'TypeScript', color: '#3178C6', category: 'Frontend' },
-  { name: 'Tailwind CSS', color: '#06B6D4', category: 'Frontend' },
-  { name: 'Flutter', color: '#02569B', category: 'Frontend' },
+  { name: 'React', color: '#61DAFB', category: 'Frontend', slug: 'react' },
+  { name: 'Next.js', color: '#FFFFFF', category: 'Frontend', slug: 'nextdotjs' },
+  { name: 'Vue.js', color: '#41B883', category: 'Frontend', slug: 'vuedotjs' },
+  { name: 'TypeScript', color: '#3178C6', category: 'Frontend', slug: 'typescript' },
+  { name: 'Tailwind CSS', color: '#06B6D4', category: 'Frontend', slug: 'tailwindcss' },
+  { name: 'Flutter', color: '#02569B', category: 'Frontend', slug: 'flutter' },
   // Backend
-  { name: 'Node.js', color: '#339933', category: 'Backend' },
-  { name: 'Python', color: '#3776AB', category: 'Backend' },
-  { name: 'Django', color: '#092E20', category: 'Backend' },
-  { name: 'Java', color: '#ED8B00', category: 'Backend' },
-  { name: 'Spring Boot', color: '#6DB33F', category: 'Backend' },
-  { name: 'FastAPI', color: '#009688', category: 'Backend' },
+  { name: 'Node.js', color: '#339933', category: 'Backend', slug: 'nodedotjs' },
+  { name: 'Python', color: '#3776AB', category: 'Backend', slug: 'python' },
+  { name: 'Django', color: '#092E20', category: 'Backend', slug: 'django' },
+  { name: 'Java', color: '#ED8B00', category: 'Backend', slug: 'oracle' },
+  { name: 'Spring Boot', color: '#6DB33F', category: 'Backend', slug: 'springboot' },
+  { name: 'FastAPI', color: '#009688', category: 'Backend', slug: 'fastapi' },
   // AI / ML
-  { name: 'TensorFlow', color: '#FF6F00', category: 'AI / ML' },
-  { name: 'PyTorch', color: '#EE4C2C', category: 'AI / ML' },
-  { name: 'OpenCV', color: '#5C3EE8', category: 'AI / ML' },
-  { name: 'Scikit-learn', color: '#F89939', category: 'AI / ML' },
-  { name: 'Pandas', color: '#150458', category: 'AI / ML' },
-  { name: 'NLTK', color: '#3ECF8E', category: 'AI / ML' },
+  { name: 'TensorFlow', color: '#FF6F00', category: 'AI / ML', slug: 'tensorflow' },
+  { name: 'PyTorch', color: '#EE4C2C', category: 'AI / ML', slug: 'pytorch' },
+  { name: 'OpenCV', color: '#5C3EE8', category: 'AI / ML', slug: 'opencv' },
+  { name: 'Scikit-learn', color: '#F89939', category: 'AI / ML', slug: 'scikitlearn' },
+  { name: 'Pandas', color: '#150458', category: 'AI / ML', slug: 'pandas' },
+  { name: 'NLTK', color: '#3ECF8E', category: 'AI / ML', slug: 'python' },
   // Database
-  { name: 'MySQL', color: '#4479A1', category: 'Database' },
-  { name: 'MongoDB', color: '#47A248', category: 'Database' },
-  { name: 'Firebase', color: '#FFCA28', category: 'Database' },
-  { name: 'PostgreSQL', color: '#336791', category: 'Database' },
-  { name: 'Redis', color: '#DC382D', category: 'Database' },
-  { name: 'SQLite', color: '#003B57', category: 'Database' },
+  { name: 'MySQL', color: '#4479A1', category: 'Database', slug: 'mysql' },
+  { name: 'MongoDB', color: '#47A248', category: 'Database', slug: 'mongodb' },
+  { name: 'Firebase', color: '#FFCA28', category: 'Database', slug: 'firebase' },
+  { name: 'PostgreSQL', color: '#336791', category: 'Database', slug: 'postgresql' },
+  { name: 'Redis', color: '#DC382D', category: 'Database', slug: 'redis' },
+  { name: 'SQLite', color: '#003B57', category: 'Database', slug: 'sqlite' },
   // Cloud / DevOps
-  { name: 'AWS', color: '#FF9900', category: 'Cloud / DevOps' },
-  { name: 'Docker', color: '#2496ED', category: 'Cloud / DevOps' },
-  { name: 'GitHub Actions', color: '#2088FF', category: 'Cloud / DevOps' },
-  { name: 'Vercel', color: '#ffffff', category: 'Cloud / DevOps' },
+  { name: 'AWS', color: '#FF9900', category: 'Cloud / DevOps', slug: 'amazonwebservices' },
+  { name: 'Docker', color: '#2496ED', category: 'Cloud / DevOps', slug: 'docker' },
+  { name: 'GitHub Actions', color: '#2088FF', category: 'Cloud / DevOps', slug: 'githubactions' },
+  { name: 'Vercel', color: '#FFFFFF', category: 'Cloud / DevOps', slug: 'vercel' },
   // IoT / Hardware
-  { name: 'Arduino', color: '#00979D', category: 'IoT / Hardware' },
-  { name: 'Raspberry Pi', color: '#A22846', category: 'IoT / Hardware' },
-  { name: 'ESP32', color: '#E7352C', category: 'IoT / Hardware' },
-  { name: 'MQTT', color: '#660066', category: 'IoT / Hardware' },
+  { name: 'Arduino', color: '#00979D', category: 'IoT / Hardware', slug: 'arduino' },
+  { name: 'Raspberry Pi', color: '#A22846', category: 'IoT / Hardware', slug: 'raspberrypi' },
+  { name: 'ESP32', color: '#E7352C', category: 'IoT / Hardware', slug: 'espressif' },
+  { name: 'MQTT', color: '#660066', category: 'IoT / Hardware', slug: 'hivemq' },
   // Tools
-  { name: 'WordPress', color: '#21759B', category: 'Tools' },
-  { name: 'Figma', color: '#F24E1E', category: 'Tools' },
-  { name: 'Postman', color: '#FF6C37', category: 'Tools' },
+  { name: 'WordPress', color: '#21759B', category: 'Tools', slug: 'wordpress' },
+  { name: 'Figma', color: '#F24E1E', category: 'Tools', slug: 'figma' },
+  { name: 'Postman', color: '#FF6C37', category: 'Tools', slug: 'postman' },
 ];
 
 const marqueeItems = tech.slice(0, 16);
@@ -57,20 +57,15 @@ export default function TechStack() {
   const filtered = activeCategory === 'All' ? tech : tech.filter(t => t.category === activeCategory);
 
   return (
-    <section className="relative py-10 sm:py-14 lg:py-16 overflow-hidden">
-      <div className="gold-divider mb-10 sm:mb-14" />
-      <div className="container-responsive mb-6 sm:mb-8 flex flex-col sm:flex-row items-center justify-between gap-3">
-        <p className="text-[10px] sm:text-xs text-gold/40 uppercase tracking-widest">Technologies We Master</p>
-        <button
-          onClick={() => setShowAll(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gold/25 bg-gold/5 text-gold/70 hover:bg-gold/10 hover:border-gold/50 hover:text-gold text-[11px] sm:text-xs font-semibold transition-all active:scale-95 group"
-        >
-          <Layers className="w-3.5 h-3.5 group-hover:rotate-12 transition-transform" />
-          View All {tech.length} Technologies
-        </button>
+    <section className="relative py-12 sm:py-16 overflow-hidden">
+      <div className="gold-divider mb-10" />
+      
+      {/* Title Centered at Top */}
+      <div className="container-responsive mb-10 text-center">
+        <p className="text-[10px] sm:text-xs text-gold/40 uppercase tracking-[0.25em] font-black">Technologies We Master</p>
       </div>
 
-      {/* Marquee strip */}
+      {/* Scrolling Marquee Animation */}
       <div className="relative">
         <div className="absolute left-0 top-0 bottom-0 w-12 sm:w-24 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-12 sm:w-24 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none" />
@@ -80,16 +75,42 @@ export default function TechStack() {
           className="flex gap-2 sm:gap-3"
         >
           {[...marqueeItems, ...marqueeItems].map((t, i) => (
-            <div key={i} className="flex-shrink-0 glass-card rounded-full px-3 sm:px-5 py-2 sm:py-2.5 flex items-center gap-1.5 sm:gap-2">
-              <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: t.color }} />
+            <div key={i} className="flex-shrink-0 glass-card rounded-full px-3 sm:px-5 py-2 sm:py-2.5 flex items-center gap-1.5 sm:gap-2 border border-white/[0.04]">
+              {/* Dynamic Crisp Brand Mask Icon in exact brand color */}
+              <div
+                className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0"
+                style={{
+                  backgroundColor: t.color,
+                  WebkitMaskImage: `url(https://cdn.jsdelivr.net/npm/simple-icons@11.12.0/icons/${t.slug}.svg)`,
+                  maskImage: `url(https://cdn.jsdelivr.net/npm/simple-icons@11.12.0/icons/${t.slug}.svg)`,
+                  WebkitMaskRepeat: 'no-repeat',
+                  maskRepeat: 'no-repeat',
+                  WebkitMaskPosition: 'center',
+                  maskPosition: 'center',
+                  WebkitMaskSize: 'contain',
+                  maskSize: 'contain',
+                }}
+              />
               <span className="text-[10px] sm:text-xs text-white/35 font-medium whitespace-nowrap">{t.name}</span>
             </div>
           ))}
         </motion.div>
       </div>
-      <div className="gold-divider mt-10 sm:mt-14" />
 
-      {/* VIEW ALL MODAL */}
+      {/* Button below scrolling animation, centered */}
+      <div className="flex justify-center mt-10">
+        <button
+          onClick={() => setShowAll(true)}
+          className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full border border-gold/25 bg-gold/5 text-gold/70 hover:bg-gold/10 hover:border-gold/50 hover:text-gold text-xs sm:text-sm font-semibold transition-all active:scale-95 group shadow-lg shadow-crimson/5"
+        >
+          <Layers className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+          View All Technologies
+        </button>
+      </div>
+
+      <div className="gold-divider mt-12" />
+
+      {/* VIEW ALL POPUP */}
       <AnimatePresence>
         {showAll && (
           <motion.div
@@ -152,7 +173,7 @@ export default function TechStack() {
                 ))}
               </div>
 
-              {/* Tech Grid */}
+              {/* Tech Grid with Real Brand Logos */}
               <div className="flex-1 overflow-y-auto p-6 sm:p-8 relative z-10">
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
                   {filtered.map((t, i) => (
@@ -178,12 +199,29 @@ export default function TechStack() {
                         e.currentTarget.style.boxShadow = 'inset 0 1px 0 rgba(255,255,255,0.04)';
                       }}
                     >
-                      {/* Color dot */}
+                      {/* Dynamic Crisp Genuine Brand SVG Mask Icon instead of simple circle */}
                       <div
-                        className="w-10 h-10 rounded-2xl flex items-center justify-center text-lg transition-transform group-hover:scale-110"
-                        style={{ background: `${t.color}22`, border: `1.5px solid ${t.color}50` }}
+                        className="w-12 h-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110"
+                        style={{
+                          background: `${t.color}15`,
+                          border: `1.5px solid ${t.color}35`,
+                        }}
                       >
-                        <div className="w-4 h-4 rounded-full" style={{ backgroundColor: t.color, boxShadow: `0 0 12px ${t.color}80` }} />
+                        <div
+                          className="w-6 h-6 flex-shrink-0 transition-transform group-hover:rotate-[5deg]"
+                          style={{
+                            backgroundColor: t.color,
+                            WebkitMaskImage: `url(https://cdn.jsdelivr.net/npm/simple-icons@11.12.0/icons/${t.slug}.svg)`,
+                            maskImage: `url(https://cdn.jsdelivr.net/npm/simple-icons@11.12.0/icons/${t.slug}.svg)`,
+                            WebkitMaskRepeat: 'no-repeat',
+                            maskRepeat: 'no-repeat',
+                            WebkitMaskPosition: 'center',
+                            maskPosition: 'center',
+                            WebkitMaskSize: 'contain',
+                            maskSize: 'contain',
+                            filter: `drop-shadow(0 0 4px ${t.color}50)`,
+                          }}
+                        />
                       </div>
                       <div className="text-center">
                         <p className="text-white/80 font-bold text-xs sm:text-sm leading-tight">{t.name}</p>

@@ -1,4 +1,4 @@
-import pool from './db';
+// Removed unused pool import to make handler dependency-free and prevent database connection boot crashes.
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {

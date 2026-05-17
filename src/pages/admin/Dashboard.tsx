@@ -3,14 +3,17 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FolderOpen, Star, CreditCard, Users, Clock, CheckCircle, AlertCircle, ArrowRight } from 'lucide-react';
 import { ReviewsDB, PaymentsDB, ProjectsDB, LeadsDB } from '../../utils/storage';
+import { SpinnerOverlay } from '../../components/Spinner';
 
 export default function Dashboard() {
   const [stats, setStats] = useState({ totalProjects: 0, pendingReviews: 0, totalReviews: 0, pendingPayments: 0, verifiedPayments: 0, totalPayments: 0, newLeads: 0, totalLeads: 0 });
   const [recentPayments, setRecentPayments] = useState<any[]>([]);
   const [recentReviews, setRecentReviews] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
+      setLoading(true);
       const projects = await ProjectsDB.getAll();
       const reviews = await ReviewsDB.getAll();
       const payments = await PaymentsDB.getAll();
@@ -25,6 +28,7 @@ export default function Dashboard() {
       });
       setRecentPayments(payments.slice(-5).reverse());
       setRecentReviews(reviews.filter(r => !r.is_approved).slice(-5));
+      setLoading(false);
     })();
   }, []);
 
@@ -34,6 +38,10 @@ export default function Dashboard() {
     { title: 'Pending Payments', value: stats.pendingPayments, sub: `${stats.verifiedPayments} verified`, icon: <CreditCard className="w-5 h-5" />, link: '/admin/payments', color: 'text-crimson' },
     { title: 'New Leads', value: stats.newLeads, sub: `of ${stats.totalLeads}`, icon: <Users className="w-5 h-5" />, link: '/admin/leads', color: 'text-green-400' },
   ];
+
+  if (loading) {
+    return <SpinnerOverlay label="Aggregating database summaries..." />;
+  }
 
   return (
     <div className="space-y-6">
