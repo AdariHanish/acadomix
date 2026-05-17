@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Edit2, Trash2, Star, TrendingUp, X, Save } from 'lucide-react';
+import { Plus, Edit2, Trash2, Star, TrendingUp, X, Save, Search } from 'lucide-react';
 import { ProjectsDB } from '../../utils/storage';
 import { Project } from '../../types';
+import { SpinnerOverlay } from '../../components/Spinner';
 
 const categories = [
   { value: 'website', label: 'Web Dev' },
@@ -16,12 +17,31 @@ const empty = { title: '', description: '', category: 'website' as Project['cate
 
 export default function AdminProjects() {
   const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Project | null>(null);
   const [form, setForm] = useState(empty);
+  const [search, setSearch] = useState('');
 
   useEffect(() => { load(); }, []);
-  const load = () => ProjectsDB.getAll().then(setProjects);
+  const load = () => {
+    setLoading(true);
+    ProjectsDB.getAll().then(data => {
+      setProjects(data);
+      setLoading(false);
+    });
+  };
+
+  const filteredProjects = useMemo(() => {
+    if (!search.trim()) return projects;
+    const q = search.toLowerCase();
+    return projects.filter(p =>
+      p.title.toLowerCase().includes(q) ||
+      p.description.toLowerCase().includes(q) ||
+      p.category.toLowerCase().includes(q) ||
+      (p.features && p.features.toLowerCase().includes(q))
+    );
+  }, [projects, search]);
 
   const openForm = (p?: Project) => {
     if (p) { setEditing(p); setForm({ title: p.title, description: p.description, category: p.category, year_type: p.year_type, original_price: p.original_price, market_price: p.market_price, our_price: p.our_price, features: p.features, is_popular: p.is_popular, is_trending: p.is_trending }); }
@@ -90,8 +110,23 @@ export default function AdminProjects() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {projects.map(p => (
+      {/* Search Input */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-white/20" />
+        <input
+          type="text"
+          placeholder="Search projects by title, description, category or features..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          className="w-full pl-10 pr-4 py-2.5 bg-white/[0.03] border border-border rounded-xl text-[13px] text-white placeholder-white/20 focus:outline-none focus:border-crimson/30 transition-colors"
+        />
+      </div>
+
+      {loading ? (
+        <SpinnerOverlay label="Loading project catalog..." />
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredProjects.length > 0 ? filteredProjects.map(p => (
           <motion.div key={p.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
             className="rounded-xl bg-surface-1 border border-border p-5">
             <div className="flex gap-1.5 mb-3">
@@ -131,8 +166,11 @@ export default function AdminProjects() {
               </div>
             </div>
           </motion.div>
-        ))}
-      </div>
+          )) : (
+            <p className="text-center py-12 text-white/15 text-[13px] col-span-full">No projects found</p>
+          )}
+        </div>
+      )}
 
       {showForm && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" onClick={() => setShowForm(false)}>

@@ -142,7 +142,7 @@ export default function PaymentPage() {
                 <div><label className={labelCls}>Full Name</label><input type="text" required value={formData.student_name} onChange={e => setFormData({...formData, student_name: e.target.value})} placeholder="John Doe" className={inputCls} /></div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><label className={labelCls}>Phone</label><input type="tel" required value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} placeholder="+91 XXXXX" className={inputCls} /></div>
+                  <div><label className={labelCls}>Phone</label><input type="text" inputMode="numeric" pattern="[0-9]{10}" required value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value.replace(/\D/g, '').slice(0, 10)})} placeholder="10-digit phone number" className={inputCls} /></div>
                   <div><label className={labelCls}>Email</label><input type="email" required value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="you@email.com" className={inputCls} /></div>
                 </div>
 

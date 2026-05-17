@@ -1,26 +1,85 @@
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X, Layers } from 'lucide-react';
 
 const tech = [
-  { name: 'React', color: '#61DAFB' }, { name: 'Next.js', color: '#ffffff' }, { name: 'Python', color: '#3776AB' },
-  { name: 'Java', color: '#ED8B00' }, { name: 'Node.js', color: '#339933' }, { name: 'Flutter', color: '#02569B' },
-  { name: 'Django', color: '#092E20' }, { name: 'MongoDB', color: '#47A248' }, { name: 'MySQL', color: '#4479A1' },
-  { name: 'Firebase', color: '#FFCA28' }, { name: 'TensorFlow', color: '#FF6F00' }, { name: 'AWS', color: '#FF9900' },
-  { name: 'Docker', color: '#2496ED' }, { name: 'TypeScript', color: '#3178C6' }, { name: 'Tailwind', color: '#06B6D4' },
-  { name: 'WordPress', color: '#21759B' },
+  // Frontend
+  { name: 'React', color: '#61DAFB', category: 'Frontend' },
+  { name: 'Next.js', color: '#ffffff', category: 'Frontend' },
+  { name: 'Vue.js', color: '#41B883', category: 'Frontend' },
+  { name: 'TypeScript', color: '#3178C6', category: 'Frontend' },
+  { name: 'Tailwind CSS', color: '#06B6D4', category: 'Frontend' },
+  { name: 'Flutter', color: '#02569B', category: 'Frontend' },
+  // Backend
+  { name: 'Node.js', color: '#339933', category: 'Backend' },
+  { name: 'Python', color: '#3776AB', category: 'Backend' },
+  { name: 'Django', color: '#092E20', category: 'Backend' },
+  { name: 'Java', color: '#ED8B00', category: 'Backend' },
+  { name: 'Spring Boot', color: '#6DB33F', category: 'Backend' },
+  { name: 'FastAPI', color: '#009688', category: 'Backend' },
+  // AI / ML
+  { name: 'TensorFlow', color: '#FF6F00', category: 'AI / ML' },
+  { name: 'PyTorch', color: '#EE4C2C', category: 'AI / ML' },
+  { name: 'OpenCV', color: '#5C3EE8', category: 'AI / ML' },
+  { name: 'Scikit-learn', color: '#F89939', category: 'AI / ML' },
+  { name: 'Pandas', color: '#150458', category: 'AI / ML' },
+  { name: 'NLTK', color: '#3ECF8E', category: 'AI / ML' },
+  // Database
+  { name: 'MySQL', color: '#4479A1', category: 'Database' },
+  { name: 'MongoDB', color: '#47A248', category: 'Database' },
+  { name: 'Firebase', color: '#FFCA28', category: 'Database' },
+  { name: 'PostgreSQL', color: '#336791', category: 'Database' },
+  { name: 'Redis', color: '#DC382D', category: 'Database' },
+  { name: 'SQLite', color: '#003B57', category: 'Database' },
+  // Cloud / DevOps
+  { name: 'AWS', color: '#FF9900', category: 'Cloud / DevOps' },
+  { name: 'Docker', color: '#2496ED', category: 'Cloud / DevOps' },
+  { name: 'GitHub Actions', color: '#2088FF', category: 'Cloud / DevOps' },
+  { name: 'Vercel', color: '#ffffff', category: 'Cloud / DevOps' },
+  // IoT / Hardware
+  { name: 'Arduino', color: '#00979D', category: 'IoT / Hardware' },
+  { name: 'Raspberry Pi', color: '#A22846', category: 'IoT / Hardware' },
+  { name: 'ESP32', color: '#E7352C', category: 'IoT / Hardware' },
+  { name: 'MQTT', color: '#660066', category: 'IoT / Hardware' },
+  // Tools
+  { name: 'WordPress', color: '#21759B', category: 'Tools' },
+  { name: 'Figma', color: '#F24E1E', category: 'Tools' },
+  { name: 'Postman', color: '#FF6C37', category: 'Tools' },
 ];
 
+const marqueeItems = tech.slice(0, 16);
+const categories = [...new Set(tech.map(t => t.category))];
+
 export default function TechStack() {
+  const [showAll, setShowAll] = useState(false);
+  const [activeCategory, setActiveCategory] = useState('All');
+
+  const filtered = activeCategory === 'All' ? tech : tech.filter(t => t.category === activeCategory);
+
   return (
     <section className="relative py-10 sm:py-14 lg:py-16 overflow-hidden">
       <div className="gold-divider mb-10 sm:mb-14" />
-      <div className="container-responsive mb-6 sm:mb-8 text-center">
+      <div className="container-responsive mb-6 sm:mb-8 flex flex-col sm:flex-row items-center justify-between gap-3">
         <p className="text-[10px] sm:text-xs text-gold/40 uppercase tracking-widest">Technologies We Master</p>
+        <button
+          onClick={() => setShowAll(true)}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gold/25 bg-gold/5 text-gold/70 hover:bg-gold/10 hover:border-gold/50 hover:text-gold text-[11px] sm:text-xs font-semibold transition-all active:scale-95 group"
+        >
+          <Layers className="w-3.5 h-3.5 group-hover:rotate-12 transition-transform" />
+          View All {tech.length} Technologies
+        </button>
       </div>
+
+      {/* Marquee strip */}
       <div className="relative">
         <div className="absolute left-0 top-0 bottom-0 w-12 sm:w-24 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-12 sm:w-24 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none" />
-        <motion.div animate={{ x: ['0%', '-50%'] }} transition={{ duration: 35, repeat: Infinity, ease: 'linear' }} className="flex gap-2 sm:gap-3">
-          {[...tech, ...tech].map((t, i) => (
+        <motion.div
+          animate={{ x: ['0%', '-50%'] }}
+          transition={{ duration: 35, repeat: Infinity, ease: 'linear' }}
+          className="flex gap-2 sm:gap-3"
+        >
+          {[...marqueeItems, ...marqueeItems].map((t, i) => (
             <div key={i} className="flex-shrink-0 glass-card rounded-full px-3 sm:px-5 py-2 sm:py-2.5 flex items-center gap-1.5 sm:gap-2">
               <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: t.color }} />
               <span className="text-[10px] sm:text-xs text-white/35 font-medium whitespace-nowrap">{t.name}</span>
@@ -29,6 +88,115 @@ export default function TechStack() {
         </motion.div>
       </div>
       <div className="gold-divider mt-10 sm:mt-14" />
+
+      {/* VIEW ALL MODAL */}
+      <AnimatePresence>
+        {showAll && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-2xl flex items-center justify-center p-4"
+            onClick={e => { if (e.target === e.currentTarget) setShowAll(false); }}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: 'spring', damping: 22 }}
+              className="w-full max-w-4xl max-h-[90vh] flex flex-col rounded-[36px] overflow-hidden relative"
+              style={{
+                background: 'linear-gradient(135deg, rgba(30,5,5,0.96) 0%, rgba(18,8,2,0.98) 50%, rgba(25,8,3,0.96) 100%)',
+                border: '1px solid rgba(212,168,83,0.25)',
+                boxShadow: '0 0 80px rgba(220,20,60,0.12), 0 0 40px rgba(212,168,83,0.08), inset 0 1px 0 rgba(212,168,83,0.3)',
+              }}
+            >
+              {/* Shimmer top border */}
+              <div className="absolute top-0 left-0 right-0 h-[1.5px] pointer-events-none z-10"
+                style={{ background: 'linear-gradient(90deg, transparent, rgba(220,20,60,0.7) 20%, rgba(212,168,83,1) 50%, rgba(220,20,60,0.7) 80%, transparent)' }}
+              />
+              {/* BG orbs */}
+              <div className="absolute -top-20 -right-20 w-60 h-60 bg-crimson/8 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-gold/6 rounded-full blur-3xl pointer-events-none" />
+
+              {/* Header */}
+              <div className="flex items-center justify-between p-6 sm:p-8 border-b border-gold/10 relative z-10">
+                <div>
+                  <h3 className="text-xl sm:text-2xl font-black text-white">
+                    Technologies <span className="text-gradient">We Master</span>
+                  </h3>
+                  <p className="text-white/30 text-xs sm:text-sm mt-1">{tech.length} technologies across {categories.length} domains</p>
+                </div>
+                <button
+                  onClick={() => setShowAll(false)}
+                  className="w-10 h-10 rounded-2xl flex items-center justify-center bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition-all"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Category Tabs */}
+              <div className="flex gap-2 px-6 sm:px-8 py-4 overflow-x-auto no-scrollbar border-b border-gold/10 relative z-10">
+                {['All', ...categories].map(cat => (
+                  <button
+                    key={cat}
+                    onClick={() => setActiveCategory(cat)}
+                    className={`flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+                      activeCategory === cat
+                        ? 'bg-gradient-to-r from-crimson to-gold text-white shadow-lg shadow-crimson/20'
+                        : 'bg-white/5 text-white/30 hover:text-white/60 hover:bg-white/10'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+
+              {/* Tech Grid */}
+              <div className="flex-1 overflow-y-auto p-6 sm:p-8 relative z-10">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
+                  {filtered.map((t, i) => (
+                    <motion.div
+                      key={t.name}
+                      initial={{ opacity: 0, scale: 0.85 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: i * 0.03 }}
+                      className="flex flex-col items-center gap-3 p-4 rounded-2xl group transition-all cursor-default"
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 100%)',
+                        border: '1px solid rgba(212,168,83,0.1)',
+                        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)',
+                      }}
+                      onMouseEnter={e => {
+                        e.currentTarget.style.background = `linear-gradient(135deg, ${t.color}15 0%, ${t.color}05 100%)`;
+                        e.currentTarget.style.borderColor = `${t.color}40`;
+                        e.currentTarget.style.boxShadow = `0 0 20px ${t.color}15, inset 0 1px 0 ${t.color}20`;
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 100%)';
+                        e.currentTarget.style.borderColor = 'rgba(212,168,83,0.1)';
+                        e.currentTarget.style.boxShadow = 'inset 0 1px 0 rgba(255,255,255,0.04)';
+                      }}
+                    >
+                      {/* Color dot */}
+                      <div
+                        className="w-10 h-10 rounded-2xl flex items-center justify-center text-lg transition-transform group-hover:scale-110"
+                        style={{ background: `${t.color}22`, border: `1.5px solid ${t.color}50` }}
+                      >
+                        <div className="w-4 h-4 rounded-full" style={{ backgroundColor: t.color, boxShadow: `0 0 12px ${t.color}80` }} />
+                      </div>
+                      <div className="text-center">
+                        <p className="text-white/80 font-bold text-xs sm:text-sm leading-tight">{t.name}</p>
+                        <p className="text-white/20 text-[9px] sm:text-[10px] uppercase tracking-wider mt-0.5">{t.category}</p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

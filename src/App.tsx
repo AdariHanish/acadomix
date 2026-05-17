@@ -17,6 +17,7 @@ const AdminReviews = React.lazy(() => import('./pages/admin/AdminReviews'));
 const AdminPayments = React.lazy(() => import('./pages/admin/AdminPayments'));
 const AdminProjects = React.lazy(() => import('./pages/admin/AdminProjects'));
 const AdminLeads = React.lazy(() => import('./pages/admin/AdminLeads'));
+const AdminCustomers = React.lazy(() => import('./pages/admin/AdminCustomers'));
 const AdminAssets = React.lazy(() => import('./pages/admin/AdminAssets'));
 const AdminSettings = React.lazy(() => import('./pages/admin/AdminSettings'));
 
@@ -30,8 +31,33 @@ export default function App() {
       setLightboxSrc(detail.src);
       setLightboxAlt(detail.alt || '');
     };
+    
+    const handleGlobalImageClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'IMG') {
+        const img = target as HTMLImageElement;
+        
+        // Exclude tiny icons, logo placeholders, or explicitly excluded items
+        const isExcluded = 
+          img.classList.contains('no-lightbox') || 
+          img.closest('.no-lightbox') ||
+          img.src.includes('logo-placeholder') ||
+          (img.width > 0 && img.width < 45) || 
+          (img.height > 0 && img.height < 45);
+
+        if (!isExcluded && img.src) {
+          setLightboxSrc(img.src);
+          setLightboxAlt(img.alt || 'Zoomed Image');
+        }
+      }
+    };
+
     window.addEventListener('open-lightbox', handler);
-    return () => window.removeEventListener('open-lightbox', handler);
+    window.addEventListener('click', handleGlobalImageClick);
+    return () => {
+      window.removeEventListener('open-lightbox', handler);
+      window.removeEventListener('click', handleGlobalImageClick);
+    };
   }, []);
 
   return (
@@ -52,6 +78,7 @@ export default function App() {
             <Route path="payments" element={<AdminPayments />} />
             <Route path="projects" element={<AdminProjects />} />
             <Route path="leads" element={<AdminLeads />} />
+            <Route path="customers" element={<AdminCustomers />} />
             <Route path="assets" element={<AdminAssets />} />
             <Route path="settings" element={<AdminSettings />} />
           </Route>

@@ -10,7 +10,11 @@ export default function Contact() {
   const [showDiscount, setShowDiscount] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    let val = e.target.value;
+    if (e.target.name === 'phone') {
+      val = val.replace(/\D/g, '').slice(0, 10);
+    }
+    setFormData({ ...formData, [e.target.name]: val });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -51,7 +55,7 @@ export default function Contact() {
               <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div><label className={labelCls}>Full Name</label><input type="text" name="name" value={formData.name} onChange={handleChange} required placeholder="John Doe" className={inputCls} /></div>
-                  <div><label className={labelCls}>Phone / WhatsApp</label><input type="tel" name="phone" value={formData.phone} onChange={handleChange} required placeholder="+91 XXXXX XXXXX" className={inputCls} /></div>
+                  <div><label className={labelCls}>Phone / WhatsApp</label><input type="text" inputMode="numeric" pattern="[0-9]{10}" name="phone" value={formData.phone} onChange={handleChange} required placeholder="10-digit number" className={inputCls} /></div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div><label className={labelCls}>College</label><input type="text" name="college" value={formData.college} onChange={handleChange} required placeholder="Your College" className={inputCls} /></div>

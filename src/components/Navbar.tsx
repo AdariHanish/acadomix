@@ -87,21 +87,19 @@ export default function Navbar() {
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
-      className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${
-        scrolled ? 'glass-nav' : 'bg-transparent'
-      }`}
+      className="fixed top-0 inset-x-0 z-50 transition-all duration-500 navbar-gold"
     >
       <div className="container-responsive">
-        <div className="flex items-center justify-between h-12 sm:h-14">
+        <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Logo */}
           <Link
             to="/"
             onClick={() => { AdminAuth.logout(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 group"
           >
-            <img src={logoSrc} alt="Acadomix" className="h-6 w-6 sm:h-7 sm:w-7 rounded-lg object-contain group-active:scale-90 transition-transform" />
-            <span className="hidden min-[400px]:inline text-[13px] sm:text-sm font-bold tracking-tight text-white/90">
-              Acado<span className="text-gradient">mix</span>
+            <img src={logoSrc} alt="Acadomix" className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl object-contain group-active:scale-90 transition-transform shadow-lg shadow-crimson/20" />
+            <span className="hidden min-[400px]:inline text-base sm:text-lg font-black tracking-tight">
+              <span className="text-white">Acado</span><span className="text-gradient">mix</span>
             </span>
           </Link>
 

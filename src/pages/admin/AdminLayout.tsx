@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { LayoutDashboard, Star, CreditCard, FolderOpen, Settings, LogOut, Menu, X, Users, ImageIcon } from 'lucide-react';
+import { LayoutDashboard, Star, CreditCard, FolderOpen, Settings, LogOut, Menu, X, Users, ImageIcon, UserCheck } from 'lucide-react';
 import { AdminAuth } from '../../utils/storage';
 
 const navItems = [
@@ -10,6 +10,7 @@ const navItems = [
   { path: '/admin/payments', icon: <CreditCard className="w-[18px] h-[18px]" />, label: 'Payments' },
   { path: '/admin/projects', icon: <FolderOpen className="w-[18px] h-[18px]" />, label: 'Projects' },
   { path: '/admin/leads', icon: <Users className="w-[18px] h-[18px]" />, label: 'Leads' },
+  { path: '/admin/customers', icon: <UserCheck className="w-[18px] h-[18px]" />, label: 'Customers' },
   { path: '/admin/assets', icon: <ImageIcon className="w-[18px] h-[18px]" />, label: 'Assets' },
   { path: '/admin/settings', icon: <Settings className="w-[18px] h-[18px]" />, label: 'Settings' },
 ];

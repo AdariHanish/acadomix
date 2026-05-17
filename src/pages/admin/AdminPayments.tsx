@@ -1,22 +1,32 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Check, X, Trash2, Eye, Clock, CheckCircle, AlertCircle, Phone, Mail, Download } from 'lucide-react';
+import { Check, X, Trash2, Eye, Clock, CheckCircle, AlertCircle, Phone, Mail, Download, Search } from 'lucide-react';
 import { PaymentsDB } from '../../utils/storage';
 import { Payment } from '../../types';
 import { ClickableImage } from '../../components/ImageLightbox';
+import { SpinnerOverlay } from '../../components/Spinner';
 
 export default function AdminPayments() {
   const [payments, setPayments] = useState<Payment[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'pending' | 'verified' | 'rejected'>('all');
   const [selected, setSelected] = useState<Payment | null>(null);
+  const [search, setSearch] = useState('');
 
   useEffect(() => { load(); }, []);
-  const load = () => PaymentsDB.getAll().then(setPayments);
+  const load = () => { setLoading(true); PaymentsDB.getAll().then(data => { setPayments(data); setLoading(false); }); };
   const verify = async (id: number) => { await PaymentsDB.updateStatus(id, 'verified'); load(); setSelected(null); };
   const reject = async (id: number) => { await PaymentsDB.updateStatus(id, 'rejected'); load(); setSelected(null); };
   const remove = async (id: number) => { if (confirm('Delete?')) { await PaymentsDB.delete(id); load(); setSelected(null); } };
 
-  const filtered = payments.filter(p => filter === 'all' || p.status === filter);
+  const filtered = useMemo(() => {
+    let p = payments.filter(p => filter === 'all' || p.status === filter);
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      p = p.filter(p => p.student_name.toLowerCase().includes(q) || p.project_name.toLowerCase().includes(q) || p.phone.includes(q) || p.email.toLowerCase().includes(q));
+    }
+    return p;
+  }, [payments, filter, search]);
   const badge = (s: Payment['status']) => s === 'pending' ? { icon: <Clock className="w-3 h-3" />, cls: 'bg-gold/10 text-gold' } : s === 'verified' ? { icon: <CheckCircle className="w-3 h-3" />, cls: 'bg-green-500/10 text-green-400' } : { icon: <AlertCircle className="w-3 h-3" />, cls: 'bg-red-500/10 text-red-400' };
 
   return (
@@ -33,12 +43,27 @@ export default function AdminPayments() {
         </div>
       </div>
 
-      <div className="space-y-3">
-        {filtered.length > 0 ? filtered.map(p => {
-          const b = badge(p.status);
-          return (
-            <motion.div key={p.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-              className="rounded-xl bg-surface-1 border border-border p-5">
+      {/* Search Input */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-white/20" />
+        <input
+          type="text"
+          placeholder="Search by student name, project, email or phone..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          className="w-full pl-10 pr-4 py-2.5 bg-white/[0.03] border border-border rounded-xl text-[13px] text-white placeholder-white/20 focus:outline-none focus:border-crimson/30 transition-colors"
+        />
+      </div>
+
+      {loading ? (
+        <SpinnerOverlay label="Loading payments..." />
+      ) : (
+        <div className="space-y-3">
+          {filtered.length > 0 ? filtered.map(p => {
+            const b = badge(p.status);
+            return (
+              <motion.div key={p.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                className="rounded-xl bg-surface-1 border border-border p-5">
               <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                 <div className="w-16 h-16 rounded-lg overflow-hidden bg-white/[0.03] flex-shrink-0">
                   <ClickableImage src={p.screenshot_data} alt="Payment screenshot" className="w-full h-full object-cover" />
@@ -72,7 +97,8 @@ export default function AdminPayments() {
             </motion.div>
           );
         }) : <p className="text-center py-12 text-white/15 text-[13px]">No {filter !== 'all' ? filter : ''} payments</p>}
-      </div>
+        </div>
+      )}
 
       {selected && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" onClick={() => setSelected(null)}>

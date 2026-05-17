@@ -7,6 +7,15 @@ import { Review } from '../types';
 import AppleLoader from '../components/AppleLoader';
 import WhatsAppButton from '../components/WhatsAppButton';
 import { useScrollHoverFix } from '../hooks/useScrollHoverFix';
+import DateInput from '../components/DateInput';
+
+const getTodayFormatted = () => {
+  const now = new Date();
+  const d = String(now.getDate()).padStart(2, '0');
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const y = now.getFullYear();
+  return `${d}/${m}/${y}`;
+};
 
 const projectTypes = [
   'Mini Project', 'Major Project', 'Website Development', 'Mobile App',
@@ -30,7 +39,7 @@ export default function ReviewPage() {
 
   const [formData, setFormData] = useState({
     student_name: '', phone: '', college_name: '', year_of_study: '', project_name: '',
-    project_type: '', experience: '', pricing_review: '', date: new Date().toISOString().split('T')[0],
+    project_type: '', experience: '', pricing_review: '', date: getTodayFormatted(),
   });
 
   useEffect(() => { 
@@ -53,17 +62,25 @@ export default function ReviewPage() {
       submitTeamMembers = teamMembers.slice(0, memberCount).filter((m, i) => i !== teamLeadIndex && m.trim()).join(', ');
     }
 
+    // Convert DD/MM/YYYY to YYYY-MM-DD for database persistence
+    let dbDate = formData.date;
+    const parts = formData.date.split('/');
+    if (parts.length === 3 && parts[2].length === 4) {
+      dbDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+
     const finalData = {
       ...formData,
       student_name: submitName,
       rating,
+      date: dbDate,
       team_members: submitTeamMembers
     };
     
     await ReviewsDB.add(finalData as any);
     setSubmitted(true);
     setShowForm(false);
-    setFormData({ student_name: '', phone: '', college_name: '', year_of_study: '', project_name: '', project_type: '', experience: '', pricing_review: '', date: new Date().toISOString().split('T')[0] });
+    setFormData({ student_name: '', phone: '', college_name: '', year_of_study: '', project_name: '', project_type: '', experience: '', pricing_review: '', date: getTodayFormatted() });
     setRating(5);
     setTeamMembers(['', '', '', '', '']);
     setTeamLeadIndex(0);
@@ -157,7 +174,7 @@ export default function ReviewPage() {
                 {reviewType === 'individual' ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div><label className={labelCls}>Your Name</label><input type="text" required value={formData.student_name} onChange={e => setFormData({...formData, student_name: e.target.value})} placeholder="Full Name" className={inputCls} /></div>
-                    <div><label className={labelCls}>Phone Number</label><input type="tel" required value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} placeholder="Your Phone Number" className={inputCls} /></div>
+                    <div><label className={labelCls}>Phone Number</label><input type="text" inputMode="numeric" pattern="[0-9]{10}" required value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value.replace(/\D/g, '').slice(0, 10)})} placeholder="10-digit Phone Number" className={inputCls} /></div>
                     <div className="sm:col-span-2"><label className={labelCls}>College</label><input type="text" required value={formData.college_name} onChange={e => setFormData({...formData, college_name: e.target.value})} placeholder="GVPCE, Vizag" className={inputCls} /></div>
                   </div>
                 ) : (
@@ -190,7 +207,7 @@ export default function ReviewPage() {
                     </div>
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div><label className={labelCls}>Team Lead Phone Number</label><input type="tel" required value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} placeholder="Lead's Phone Number" className={inputCls} /></div>
+                      <div><label className={labelCls}>Team Lead Phone Number</label><input type="text" inputMode="numeric" pattern="[0-9]{10}" required value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value.replace(/\D/g, '').slice(0, 10)})} placeholder="Lead's Phone Number" className={inputCls} /></div>
                       <div><label className={labelCls}>College</label><input type="text" required value={formData.college_name} onChange={e => setFormData({...formData, college_name: e.target.value})} placeholder="GVPCE, Vizag" className={inputCls} /></div>
                     </div>
                   </div>
@@ -203,7 +220,7 @@ export default function ReviewPage() {
                       <option>1st Year</option><option>2nd Year</option><option>3rd Year</option><option>4th Year</option><option>PG/M.Tech</option><option>Working Professional</option>
                     </select>
                   </div>
-                  <div><label className={labelCls}>Completion Date</label><input type="date" required value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} className={inputCls} /></div>
+                  <div><label className={labelCls}>Completion Date</label><DateInput required value={formData.date} onChange={val => setFormData({...formData, date: val})} className={inputCls} /></div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
