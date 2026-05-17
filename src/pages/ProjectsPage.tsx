@@ -140,6 +140,11 @@ export default function ProjectsPage() {
                           <TrendingUp className="w-3 h-3" /> Trending
                         </span>
                       )}
+                      {(!project.is_popular && !project.is_trending) && (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/10 text-white/60 text-[10px] font-bold uppercase tracking-wider">
+                          <Star className="w-3 h-3" /> Normal
+                        </span>
+                      )}
                     </div>
 
                     <div className="p-6 flex flex-col flex-1">

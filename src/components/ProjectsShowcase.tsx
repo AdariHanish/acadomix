@@ -166,8 +166,13 @@ export default function ProjectsShowcase() {
                         <TrendingUp className="w-3 h-3" /> Trending
                       </span>
                     )}
+                    {(!project.is_popular && !project.is_trending) && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/10 text-white/60 text-[10px] sm:text-xs font-semibold">
+                        <Star className="w-3 h-3" /> Normal
+                      </span>
+                    )}
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-500/15 text-green-400 text-[10px] sm:text-xs font-semibold">
-                      {discount(project.original_price, project.our_price)}% OFF
+                      {Math.round(((project.market_price - project.our_price) / project.market_price) * 100)}% OFF
                     </span>
                   </div>
 
