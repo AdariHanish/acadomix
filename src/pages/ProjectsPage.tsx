@@ -56,7 +56,6 @@ export default function ProjectsPage() {
   };
 
   const displayed = getFilteredProjects();
-  const discount = (o: number, p: number) => Math.round(((o - p) / o) * 100);
 
   return (
     <div className="bg-black min-h-screen text-white">

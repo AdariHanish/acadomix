@@ -64,6 +64,7 @@ export default function Navbar() {
   }, [isHome]);
 
   const scrollTo = (id: string) => {
+    AdminAuth.logout();
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
 
@@ -95,7 +96,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link
             to="/"
-            onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            onClick={() => { AdminAuth.logout(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 group"
           >
             <img src={logoSrc} alt="Acadomix" className="h-6 w-6 sm:h-7 sm:w-7 rounded-lg object-contain group-active:scale-90 transition-transform" />
@@ -120,6 +121,7 @@ export default function Navbar() {
               <Link
                 key={link.name}
                 to={link.href}
+                onClick={() => AdminAuth.logout()}
                 className={navItemClass(location.pathname === link.href)}
               >
                 {link.name}

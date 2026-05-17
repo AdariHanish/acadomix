@@ -14,7 +14,7 @@ export default function PaymentPage() {
   const [copied, setCopied] = useState<string | null>(null);
   const [formData, setFormData] = useState({ student_name: '', phone: '', email: '', project_name: '', amount: '' });
   const [screenshot, setScreenshot] = useState<{ data: string; mime_type: string; name: string } | null>(null);
-  const [error, setError] = useState<string | null>(null);
+
   const [loadingQr, setLoadingQr] = useState(true);
 
   useEffect(() => { 

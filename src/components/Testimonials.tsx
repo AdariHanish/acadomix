@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Star, Quote, X, GraduationCap } from 'lucide-react';
 import { Review } from '../types';
@@ -7,24 +7,13 @@ export default function Testimonials() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showAll, setShowAll] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Instant from cache
-    const cached = ReviewsDB.getAllCached();
-    const approved = cached.filter((r: Review) => r.is_approved);
-    if (approved.length > 0) setReviews(approved);
-
-    // Fresh from DB
     fetch('/api/reviews')
       .then(res => res.json())
       .then(data => {
-        if (Array.isArray(data)) {
-          const fresh = data.filter((r: Review) => r.is_approved);
-          setReviews(fresh);
-        }
-      })
-      .catch(err => console.error('Reviews fetch failed:', err));
+        setReviews(data.filter((r: Review) => r.is_approved));
+      });
   }, []);
 
   const next = () => {

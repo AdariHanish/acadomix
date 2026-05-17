@@ -4,37 +4,18 @@ export function initializeStorage() {
   // Deprecated, no-op since data comes from API now
 }
 
-// Helper to handle API responses with caching
+// Helper to handle API responses
 async function fetchAPI(endpoint: string, options?: RequestInit) {
   const response = await fetch(`/api${endpoint}`, options);
   if (!response.ok) {
     throw new Error(`API error: ${response.statusText}`);
   }
-  const data = await response.json();
-  
-  // Auto-cache GET requests
-  if (!options || options.method === 'GET' || !options.method) {
-    try {
-      localStorage.setItem(`acadomix_cache_${endpoint}`, JSON.stringify(data));
-    } catch (e) {
-      console.warn('Cache storage failed:', e);
-    }
-  }
-  
-  return data;
-}
-
-function getCache(endpoint: string) {
-  try {
-    const data = localStorage.getItem(`acadomix_cache_${endpoint}`);
-    return data ? JSON.parse(data) : null;
-  } catch { return null; }
+  return response.json();
 }
 
 // Projects
 export const ProjectsDB = {
   getAll: async (): Promise<Project[]> => fetchAPI('/projects'),
-  getAllCached: (): Project[] => getCache('/projects') || [],
   getPopular: async (): Promise<Project[]> => {
     const projects = await fetchAPI('/projects');
     return projects.filter((p: Project) => p.is_popular);
@@ -68,7 +49,6 @@ export const ProjectsDB = {
 // Reviews
 export const ReviewsDB = {
   getAll: async (): Promise<Review[]> => fetchAPI('/reviews'),
-  getAllCached: (): Review[] => getCache('/reviews') || [],
   getApproved: async (): Promise<Review[]> => {
     const reviews = await fetchAPI('/reviews');
     return reviews.filter((r: Review) => r.is_approved);
@@ -104,7 +84,6 @@ export const ReviewsDB = {
 // Payments
 export const PaymentsDB = {
   getAll: async (): Promise<Payment[]> => fetchAPI('/payments'),
-  getAllCached: (): Payment[] => getCache('/payments') || [],
   getPending: async (): Promise<Payment[]> => {
     const payments = await fetchAPI('/payments');
     return payments.filter((p: Payment) => p.status === 'pending');
@@ -132,7 +111,6 @@ export const PaymentsDB = {
 // Leads
 export const LeadsDB = {
   getAll: async (): Promise<Lead[]> => fetchAPI('/leads'),
-  getAllCached: (): Lead[] => getCache('/leads') || [],
   add: async (lead: Omit<Lead, 'id' | 'created_at' | 'status'>): Promise<Lead> => 
     fetchAPI('/leads', {
       method: 'POST',

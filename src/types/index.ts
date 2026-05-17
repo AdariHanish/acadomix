@@ -49,6 +49,7 @@ export interface Review {
   year_of_study: string;
   project_name: string;
   project_type: string;
+  team_members?: string;
   rating: number;
   experience: string;
   pricing_review: string;

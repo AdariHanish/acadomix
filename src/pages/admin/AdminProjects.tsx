@@ -21,15 +21,7 @@ export default function AdminProjects() {
   const [form, setForm] = useState(empty);
 
   useEffect(() => { load(); }, []);
-  const load = async () => {
-    // Instant from cache
-    const cached = ProjectsDB.getAllCached();
-    if (cached.length > 0) setProjects(cached);
-
-    // Fresh from DB
-    const projects = await ProjectsDB.getAll();
-    setProjects(projects);
-  };
+  const load = () => ProjectsDB.getAll().then(setProjects);
 
   const openForm = (p?: Project) => {
     if (p) { setEditing(p); setForm({ title: p.title, description: p.description, category: p.category, year_type: p.year_type, original_price: p.original_price, market_price: p.market_price, our_price: p.our_price, features: p.features, is_popular: p.is_popular, is_trending: p.is_trending }); }

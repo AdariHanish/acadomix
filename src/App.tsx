@@ -1,50 +1,51 @@
+import React, { Suspense } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { initializeStorage } from './utils/storage';
+import AppleLoader from './components/AppleLoader';
 
-// Pages
-import HomePage from './pages/HomePage';
-import ReviewPage from './pages/ReviewPage';
-import PaymentPage from './pages/PaymentPage';
+// Lazy loaded Pages
+const HomePage = React.lazy(() => import('./pages/HomePage'));
+const ReviewPage = React.lazy(() => import('./pages/ReviewPage'));
+const PaymentPage = React.lazy(() => import('./pages/PaymentPage'));
+const ProjectsPage = React.lazy(() => import('./pages/ProjectsPage'));
 
-// Admin Pages
-import AdminLogin from './pages/admin/AdminLogin';
-import AdminLayout from './pages/admin/AdminLayout';
-import Dashboard from './pages/admin/Dashboard';
-import AdminReviews from './pages/admin/AdminReviews';
-import AdminPayments from './pages/admin/AdminPayments';
-import AdminProjects from './pages/admin/AdminProjects';
-import AdminLeads from './pages/admin/AdminLeads';
-import AdminAssets from './pages/admin/AdminAssets';
-import AdminSettings from './pages/admin/AdminSettings';
-import ProjectsPage from './pages/ProjectsPage';
-
+// Lazy loaded Admin Pages
+const AdminLogin = React.lazy(() => import('./pages/admin/AdminLogin'));
+const AdminLayout = React.lazy(() => import('./pages/admin/AdminLayout'));
+const Dashboard = React.lazy(() => import('./pages/admin/Dashboard'));
+const AdminReviews = React.lazy(() => import('./pages/admin/AdminReviews'));
+const AdminPayments = React.lazy(() => import('./pages/admin/AdminPayments'));
+const AdminProjects = React.lazy(() => import('./pages/admin/AdminProjects'));
+const AdminLeads = React.lazy(() => import('./pages/admin/AdminLeads'));
+const AdminAssets = React.lazy(() => import('./pages/admin/AdminAssets'));
+const AdminSettings = React.lazy(() => import('./pages/admin/AdminSettings'));
 
 export default function App() {
   return (
     <HashRouter>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<HomePage />} />
-        <Route path="/reviews" element={<ReviewPage />} />
-        <Route path="/payment" element={<PaymentPage />} />
-        <Route path="/projects" element={<ProjectsPage />} />
+      <Suspense fallback={<div className="h-screen w-screen flex items-center justify-center bg-black"><AppleLoader /></div>}>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<HomePage />} />
+          <Route path="/reviews" element={<ReviewPage />} />
+          <Route path="/payment" element={<PaymentPage />} />
+          <Route path="/projects" element={<ProjectsPage />} />
 
-        {/* Admin Routes */}
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<Navigate to="dashboard" replace />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="reviews" element={<AdminReviews />} />
-          <Route path="payments" element={<AdminPayments />} />
-          <Route path="projects" element={<AdminProjects />} />
-          <Route path="leads" element={<AdminLeads />} />
-          <Route path="assets" element={<AdminAssets />} />
-          <Route path="settings" element={<AdminSettings />} />
-        </Route>
+          {/* Admin Routes */}
+          <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="reviews" element={<AdminReviews />} />
+            <Route path="payments" element={<AdminPayments />} />
+            <Route path="projects" element={<AdminProjects />} />
+            <Route path="leads" element={<AdminLeads />} />
+            <Route path="assets" element={<AdminAssets />} />
+            <Route path="settings" element={<AdminSettings />} />
+          </Route>
 
-        {/* Catch all */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+          {/* Catch all */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
     </HashRouter>
   );
 }
