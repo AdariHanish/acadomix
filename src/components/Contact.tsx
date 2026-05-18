@@ -90,7 +90,7 @@ export default function Contact() {
               <div className="space-y-3">
                 {[
                   { icon: <Phone className="w-4 h-4" />, label: 'Call / WhatsApp', value: '+91 88974 92936', href: 'tel:+918897492936', color: 'group-hover:text-gold' },
-                  { icon: <Mail className="w-4 h-4" />, label: 'Email', value: 'acadomix@gmail.com', href: `mailto:acadomix@gmail.com?subject=${encodeURIComponent('Project Collaboration')}&body=${encodeURIComponent("Hi! Acadomix, I'm interested in discussing a project collaboration with you.")}`, color: 'group-hover:text-crimson' },
+                  { icon: <Mail className="w-4 h-4" />, label: 'Email', value: 'acadomix@gmail.com', href: `https://mail.google.com/mail/?view=cm&fs=1&to=acadomix@gmail.com&su=${encodeURIComponent('Project Collaboration')}&body=${encodeURIComponent("Hi! Acadomix, I'm interested in discussing a project collaboration with you.")}`, target: '_blank', color: 'group-hover:text-crimson' },
                   { icon: <MapPin className="w-4 h-4" />, label: 'Office', value: '65-5-259, VUDA Colony, Vizag - 530011', href: 'https://maps.google.com/?q=VUDA+Colony+Visakhapatnam', color: 'group-hover:text-gold' },
                   { icon: <Clock className="w-4 h-4" />, label: 'Hours', value: 'Mon - Sat: 9 AM - 9 PM', href: '#', color: 'group-hover:text-crimson' },
                 ].map((c, i) => (

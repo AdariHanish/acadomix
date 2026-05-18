@@ -69,18 +69,9 @@ export default function Navbar() {
   };
 
   const navItemClass = (isActive: boolean) =>
-    `relative flex-shrink-0 px-2 sm:px-3 py-1.5 text-[10px] sm:text-[13px] font-medium whitespace-nowrap transition-colors duration-200 active:scale-95 group ${
-      isActive ? 'text-gold' : 'text-white/50 hover:text-white/80'
+    `relative flex-shrink-0 px-4 py-1.5 sm:px-5 sm:py-2 mx-1 text-[11px] sm:text-[13px] font-medium whitespace-nowrap transition-all duration-300 active:scale-95 group rounded-full glass-card flex items-center justify-center ${
+      isActive ? 'border-gold text-white shadow-[0_0_15px_rgba(255,215,0,0.2)]' : 'border-white/10 text-white/70 hover:text-white hover:border-gold/50'
     }`;
-
-  // Gold animated underline
-  const Underline = ({ active }: { active: boolean }) => (
-    <span className={`absolute bottom-0 left-1/2 h-[2px] rounded-full transition-all duration-400 ease-out ${
-      active
-        ? 'w-3/4 -translate-x-1/2 bg-gradient-to-r from-crimson via-gold to-crimson'
-        : 'w-0 -translate-x-1/2 bg-gradient-to-r from-gold to-crimson group-hover:w-3/4'
-    }`} />
-  );
 
   return (
     <motion.header
@@ -113,7 +104,7 @@ export default function Navbar() {
           </div>
 
           {/* Nav Links */}
-          <nav className="flex items-center gap-0 sm:gap-0.5 overflow-x-auto no-scrollbar mx-1 sm:mx-3 flex-1 justify-center">
+          <nav className="flex items-center overflow-x-auto hide-scrollbar mx-1 sm:mx-3 flex-1 justify-start sm:justify-center px-2 py-2">
             {sectionLinks.map((link) => (
               <button
                 key={link.name}
@@ -121,7 +112,6 @@ export default function Navbar() {
                 className={navItemClass(activeSection === link.id)}
               >
                 {link.name}
-                <Underline active={activeSection === link.id} />
               </button>
             ))}
             {routeLinks.map((link) => (
@@ -132,7 +122,6 @@ export default function Navbar() {
                 className={navItemClass(location.pathname === link.href)}
               >
                 {link.name}
-                <Underline active={location.pathname === link.href} />
               </Link>
             ))}
           </nav>

@@ -55,7 +55,7 @@ export default function Footer() {
               <a href="tel:+918897492936" className="flex items-center gap-2 text-white/25 hover:text-gold active:text-crimson transition-colors">
                 <Phone className="w-3 h-3 flex-shrink-0" /> +91 88974 92936
               </a>
-              <a href={`mailto:acadomix@gmail.com?subject=${encodeURIComponent('Project Collaboration')}&body=${encodeURIComponent("Hi! Acadomix, I'm interested in discussing a project collaboration with you.")}`} className="flex items-center gap-2 text-white/25 hover:text-gold active:text-crimson transition-colors">
+              <a href={`https://mail.google.com/mail/?view=cm&fs=1&to=acadomix@gmail.com&su=${encodeURIComponent('Project Collaboration')}&body=${encodeURIComponent("Hi! Acadomix, I'm interested in discussing a project collaboration with you.")}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-white/25 hover:text-gold active:text-crimson transition-colors">
                 <Mail className="w-3 h-3 flex-shrink-0" /> acadomix@gmail.com
               </a>
               <p className="flex items-start gap-2 text-white/25">
@@ -93,7 +93,7 @@ export default function Footer() {
           </p>
           <div className="flex items-center gap-2">
             <a href={`https://wa.me/918897492936?text=${encodeURIComponent('Hi! Acadomix, I’m interested in discussing a project collaboration with you.')}`} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full glass flex items-center justify-center text-white/25 hover:text-green-400 active:bg-green-500/10 transition-all text-xs">💬</a>
-            <a href={`mailto:acadomix@gmail.com?subject=${encodeURIComponent('Project Collaboration')}&body=${encodeURIComponent("Hi! Acadomix, I'm interested in discussing a project collaboration with you.")}`} className="w-8 h-8 rounded-full glass flex items-center justify-center text-white/25 hover:text-gold active:bg-gold/10 transition-all"><Mail className="w-3.5 h-3.5" /></a>
+            <a href={`https://mail.google.com/mail/?view=cm&fs=1&to=acadomix@gmail.com&su=${encodeURIComponent('Project Collaboration')}&body=${encodeURIComponent("Hi! Acadomix, I'm interested in discussing a project collaboration with you.")}`} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full glass flex items-center justify-center text-white/25 hover:text-gold active:bg-gold/10 transition-all"><Mail className="w-3.5 h-3.5" /></a>
             <Link to="/admin" onClick={() => AdminAuth.logout()} className="w-8 h-8 rounded-full glass flex items-center justify-center text-white/25 hover:text-crimson active:bg-crimson/10 transition-all"><Shield className="w-3.5 h-3.5" /></Link>
           </div>
         </div>
