@@ -253,8 +253,8 @@ body {
 
 /* ===== CUSTOM SMOOTH CRIMSON/GOLD SCROLLBARS ===== */
 ::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+  width: 4px;
+  height: 4px;
 }
 ::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.95);
@@ -302,19 +302,18 @@ footer {
 
 /* Custom extremely thin and beautiful scrollbar for header menu */
 .small-header-scrollbar::-webkit-scrollbar {
-  height: 3px !important;
+  height: 0px !important;
+  display: none !important;
 }
 .small-header-scrollbar::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.2) !important;
-  border-radius: 9999px !important;
+  background: transparent !important;
 }
 .small-header-scrollbar::-webkit-scrollbar-thumb {
-  background: linear-gradient(90deg, #dc143c, #d4a853) !important;
-  border-radius: 9999px !important;
+  background: transparent !important;
 }
 .small-header-scrollbar {
-  scrollbar-width: thin !important;
-  scrollbar-color: #d4a853 rgba(0,0,0,0.2) !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 
 /* Touch screen glow activation for glass-cards */
