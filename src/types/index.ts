@@ -32,6 +32,7 @@ export interface Project {
 export interface Payment {
   id: number;
   student_name: string;
+  college?: string;
   phone: string;
   email: string;
   project_name: string;

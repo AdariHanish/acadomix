@@ -46,6 +46,7 @@ export default async function handler(req: any, res: any) {
       `CREATE TABLE IF NOT EXISTS payments (
           id INT AUTO_INCREMENT PRIMARY KEY,
           student_name VARCHAR(255) NOT NULL,
+          college VARCHAR(255),
           phone VARCHAR(20),
           email VARCHAR(255),
           project_name VARCHAR(255),
@@ -100,6 +101,16 @@ export default async function handler(req: any, res: any) {
         if (err.code !== 'ER_DUP_FIELDNAME' && err.errno !== 1060) {
           console.error(`Error adding column ${col.name}:`, err);
         }
+      }
+    }
+
+    // Add college column to payments if it doesn't exist
+    try {
+      await pool.query('ALTER TABLE payments ADD COLUMN college VARCHAR(255) AFTER student_name');
+      console.log('Column college added successfully to payments table.');
+    } catch (err: any) {
+      if (err.code !== 'ER_DUP_FIELDNAME' && err.errno !== 1060) {
+        console.error('Error adding college to payments:', err);
       }
     }
 

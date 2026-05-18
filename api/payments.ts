@@ -10,14 +10,15 @@ export default async function handler(req: any, res: any) {
     }
   } else if (req.method === 'POST') {
     try {
-      const { student_name, phone, email, project_name, amount, screenshot_data, mime_type } = req.body;
+      const { student_name, college, phone, email, project_name, amount, screenshot_data, mime_type } = req.body;
       const [result]: any = await pool.query(
-        `INSERT INTO payments (student_name, phone, email, project_name, amount, screenshot_data, mime_type)
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [student_name, phone, email, project_name, amount, screenshot_data, mime_type]
+        `INSERT INTO payments (student_name, college, phone, email, project_name, amount, screenshot_data, mime_type)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [student_name, college, phone, email, project_name, amount, screenshot_data, mime_type]
       );
       res.status(201).json({ id: result.insertId, ...req.body, status: 'pending' });
     } catch (error) {
+      console.error(error);
       res.status(500).json({ error: 'Failed to create payment' });
     }
   } else if (req.method === 'PUT') {

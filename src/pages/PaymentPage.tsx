@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Upload, CheckCircle, AlertCircle, Copy, Check, QrCode, Shield } from 'lucide-react';
-import { PaymentsDB, AssetsDB } from '../utils/storage';
+import { PaymentsDB, AssetsDB, SettingsDB } from '../utils/storage';
 import { compressImage } from '../utils/image';
 import AppleLoader from '../components/AppleLoader';
 import WhatsAppButton from '../components/WhatsAppButton';
@@ -16,9 +16,11 @@ export default function PaymentPage() {
   const [logoSrc, setLogoSrc] = useState('/images/logo-placeholder.png');
   const [submitted, setSubmitted] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
-  const [formData, setFormData] = useState({ student_name: '', phone: '', email: '', project_name: '', amount: '' });
+  const [formData, setFormData] = useState({ student_name: '', college: '', phone: '', email: '', project_name: '', amount: '' });
   const [screenshot, setScreenshot] = useState<{ data: string; mime_type: string; name: string } | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [adminPhone, setAdminPhone] = useState('9515192936');
+  const [whatsappUrl, setWhatsappUrl] = useState<string | null>(null);
 
   const [loadingQr, setLoadingQr] = useState(true);
 
@@ -29,6 +31,11 @@ export default function PaymentPage() {
     }); 
     AssetsDB.get('logo').then(logo => {
       if (logo) setLogoSrc(logo.data);
+    });
+    SettingsDB.get().then(settings => {
+      if (settings && settings.admin_phone) {
+        setAdminPhone(settings.admin_phone);
+      }
     });
   }, []);
 
@@ -53,8 +60,9 @@ export default function PaymentPage() {
     try {
       // 600ms simulated buffer for satisfying visual loader confirmation
       await new Promise(resolve => setTimeout(resolve, 600));
-      await PaymentsDB.add({ 
+      const response = await PaymentsDB.add({ 
         student_name: formData.student_name, 
+        college: formData.college,
         phone: formData.phone, 
         email: formData.email, 
         project_name: formData.project_name, 
@@ -62,8 +70,20 @@ export default function PaymentPage() {
         screenshot_data: screenshot.data, 
         mime_type: screenshot.mime_type 
       });
+
+      const cleanPhone = adminPhone.replace(/\D/g, '');
+      const fullPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
+      const screenshotLink = `${window.location.origin}/api/payment-screenshot?id=${response.id}`;
+      const messageText = `hello iam "${formData.student_name}" from ${formData.college} has done a payment of rupees ${formData.amount} and the link of the image of the screenshot he uploaded is ${screenshotLink}`;
+      const url = `https://wa.me/${fullPhone}?text=${encodeURIComponent(messageText)}`;
+      
+      setWhatsappUrl(url);
       setSubmitted(true);
-      setFormData({ student_name: '', phone: '', email: '', project_name: '', amount: '' });
+      
+      // Auto open whatsapp link
+      window.open(url, '_blank');
+      
+      setFormData({ student_name: '', college: '', phone: '', email: '', project_name: '', amount: '' });
       setScreenshot(null);
     } catch (err) {
       console.error(err);
@@ -108,7 +128,17 @@ export default function PaymentPage() {
             className="max-w-xl mx-auto mb-10 p-5 sm:p-6 rounded-2xl glass-card text-center border border-green-500/20">
             <CheckCircle className="w-10 h-10 sm:w-12 sm:h-12 text-green-400 mx-auto mb-3" />
             <p className="text-base sm:text-lg font-semibold text-white">Payment Submitted! 🎉</p>
-            <p className="text-sm text-white/40 mt-1">We'll verify and contact you within 24 hours.</p>
+            <p className="text-sm text-white/40 mt-1 mb-4">Please make sure the pre-filled WhatsApp confirmation message is sent to speed up verification.</p>
+            {whatsappUrl && (
+              <a 
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-green-600 hover:bg-green-500 active:scale-95 text-white font-bold rounded-xl transition-all shadow-lg shadow-green-600/20 w-full"
+              >
+                💬 Send WhatsApp Confirmation
+              </a>
+            )}
           </motion.div>
         )}
 
@@ -164,7 +194,10 @@ export default function PaymentPage() {
             <div className="glass-card rounded-2xl sm:rounded-3xl p-5 sm:p-6 lg:p-8">
               <h2 className="text-base sm:text-lg font-bold text-white mb-5 sm:mb-6">📤 Upload Payment Confirmation</h2>
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div><label className={labelCls}>Full Name</label><input type="text" required value={formData.student_name} onChange={e => setFormData({...formData, student_name: e.target.value})} placeholder="John Doe" className={inputCls} /></div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div><label className={labelCls}>Full Name</label><input type="text" required value={formData.student_name} onChange={e => setFormData({...formData, student_name: e.target.value})} placeholder="John Doe" className={inputCls} /></div>
+                  <div><label className={labelCls}>College Name</label><input type="text" required value={formData.college} onChange={e => setFormData({...formData, college: e.target.value})} placeholder="Vignan University" className={inputCls} /></div>
+                </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div><label className={labelCls}>Phone</label><input type="text" inputMode="numeric" pattern="[0-9]{10}" required value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value.replace(/\D/g, '').slice(0, 10)})} placeholder="10-digit phone number" className={inputCls} /></div>

@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Star, Send, ArrowLeft, CheckCircle, Calendar, GraduationCap, Briefcase, Quote, Shield } from 'lucide-react';
-import { ReviewsDB } from '../utils/storage';
+import { ReviewsDB, AssetsDB } from '../utils/storage';
 import { Review } from '../types';
+import LazyImage from '../components/LazyImage';
 import AppleLoader from '../components/AppleLoader';
 import WhatsAppButton from '../components/WhatsAppButton';
 import { useScrollHoverFix } from '../hooks/useScrollHoverFix';
@@ -28,6 +29,13 @@ export default function ReviewPage() {
   const [totalStudents, setTotalStudents] = useState(300); // Base count + dynamic
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [logoSrc, setLogoSrc] = useState(() => {
+    try {
+      return localStorage.getItem('acadomix_cached_logo') || '/images/logo-placeholder.png';
+    } catch {
+      return '/images/logo-placeholder.png';
+    }
+  });
   const [submitted, setSubmitted] = useState(false);
   const [rating, setRating] = useState(5);
   const [hoverRating, setHoverRating] = useState(0);
@@ -49,6 +57,16 @@ export default function ReviewPage() {
       setTotalStudents(300 + data.length);
       setLoading(false);
     }); 
+    AssetsDB.get('logo').then(logo => {
+      if (logo) {
+        setLogoSrc(logo.data);
+        try {
+          localStorage.setItem('acadomix_cached_logo', logo.data);
+        } catch (e) {
+          console.warn('Failed to cache logo:', e);
+        }
+      }
+    });
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -99,7 +117,7 @@ export default function ReviewPage() {
             <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Home</span>
           </Link>
           <Link to="/" className="flex items-center gap-2">
-            <img src="/api/assets?asset_name=logo" alt="Acadomix" className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg" />
+            <LazyImage src={logoSrc} alt="Acadomix" spinnerSize="sm" className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg" />
             <span className="text-sm sm:text-base font-bold text-white/80">Acado<span className="text-gradient">mix</span></span>
           </Link>
           <div className="flex items-center gap-2">
