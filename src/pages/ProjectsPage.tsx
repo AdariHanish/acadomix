@@ -42,17 +42,12 @@ export default function ProjectsPage() {
     // 2. Type
     projects = projects.filter(p => p.year_type.toLowerCase() === activeType);
 
-    // Sorting Logic for the 10 slots:
+    // Sort: Trending+Popular first, then Popular, then Normal — show ALL
     const trendingAndPopular = projects.filter(p => p.is_trending && p.is_popular);
     const onlyPopular = projects.filter(p => p.is_popular && !trendingAndPopular.includes(p));
     const normal = projects.filter(p => !p.is_popular && !p.is_trending);
 
-    // Mix for the Page (up to 10 Projects)
-    return [
-      ...trendingAndPopular.slice(0, 3),
-      ...onlyPopular.slice(0, 2),
-      ...normal.slice(0, 5)
-    ];
+    return [...trendingAndPopular, ...onlyPopular, ...normal];
   };
 
   const displayed = getFilteredProjects();
@@ -73,26 +68,32 @@ export default function ProjectsPage() {
                 Project <span className="text-gradient">Catalog</span>
               </h1>
               <p className="text-sm sm:text-base text-white/30 max-w-xl">
-                Browse our collection of premium projects for each domain, specifically curated for students.
+                Browse our complete collection of <span className="text-gold font-bold">{allProjects.length}</span> premium projects across all domains.
               </p>
             </div>
           </div>
 
           {/* Category Filters */}
           <div className="flex flex-wrap gap-2 mb-4 p-2 glass rounded-2xl sm:rounded-full overflow-x-auto no-scrollbar">
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setActiveDomain(cat.id)}
-                className={`px-4 sm:px-6 py-2 sm:py-2.5 text-xs font-semibold rounded-full transition-all duration-300 whitespace-nowrap ${
-                  activeDomain === cat.id
-                    ? 'bg-gradient-to-r from-gold-dark to-gold text-black shadow-lg shadow-gold/20'
-                    : 'text-white/40 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                {cat.name}
-              </button>
-            ))}
+            {categories.map((cat) => {
+              const count = cat.id === 'all' ? allProjects.length : allProjects.filter(p => p.category === cat.id).length;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setActiveDomain(cat.id)}
+                  className={`px-4 sm:px-6 py-2 sm:py-2.5 text-xs font-semibold rounded-full transition-all duration-300 whitespace-nowrap flex items-center gap-1.5 ${
+                    activeDomain === cat.id
+                      ? 'bg-gradient-to-r from-gold-dark to-gold text-black shadow-lg shadow-gold/20'
+                      : 'text-white/40 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  {cat.name}
+                  <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full ${
+                    activeDomain === cat.id ? 'bg-black/20 text-black/70' : 'bg-white/10 text-white/30'
+                  }`}>{count}</span>
+                </button>
+              );
+            })}
           </div>
 
           {/* Type Toggle (Mini/Major) */}

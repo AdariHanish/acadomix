@@ -32,7 +32,7 @@ export default function ProjectsShowcase() {
     });
   }, []);
 
-  const getShowcaseProjects = () => {
+  const getShowcaseData = () => {
     let projects = allProjects;
     
     // 1. Filter by Domain
@@ -43,15 +43,21 @@ export default function ProjectsShowcase() {
     // 2. Filter by Type (Mini/Major)
     projects = projects.filter(p => p.year_type.toLowerCase() === activeType);
 
-    // 3. Selection: 1 Trending+Popular, 1 Popular, 1 Normal
-    const trendingAndPopular = projects.filter(p => p.is_trending && p.is_popular).slice(0, 1);
-    const onlyPopular = projects.filter(p => p.is_popular && !trendingAndPopular.includes(p)).slice(0, 1);
-    const normal = projects.filter(p => !p.is_popular && !p.is_trending).slice(0, 1);
+    const totalCount = projects.length;
 
-    return [...trendingAndPopular, ...onlyPopular, ...normal];
+    // 3. Selection: Grab exactly 2 projects to display
+    const trendingAndPopular = projects.filter(p => p.is_trending && p.is_popular);
+    const onlyPopular = projects.filter(p => p.is_popular && !trendingAndPopular.includes(p));
+    const normal = projects.filter(p => !p.is_popular && !p.is_trending);
+
+    const allSorted = [...trendingAndPopular, ...onlyPopular, ...normal];
+    const displayed = allSorted.slice(0, 2);
+    const remainingCount = totalCount - displayed.length;
+
+    return { displayed, remainingCount };
   };
 
-  const displayed = getShowcaseProjects();
+  const { displayed, remainingCount } = getShowcaseData();
 
   const handleDomainChange = useCallback((domId: string) => {
     setActiveDomain(domId);
@@ -85,19 +91,27 @@ export default function ProjectsShowcase() {
         {/* Filter Pills — scrollable on mobile */}
         <div className="mb-4 sm:mb-6 -mx-2 px-2 overflow-x-auto no-scrollbar">
           <div className="flex gap-1.5 sm:gap-2 justify-center min-w-max mx-auto p-1.5 glass rounded-full">
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => handleDomainChange(cat.id)}
-                className={`px-3 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs font-semibold rounded-full whitespace-nowrap transition-all duration-300 active:scale-95 ${
-                  activeDomain === cat.id
-                    ? 'bg-gradient-to-r from-crimson to-crimson-dark text-white shadow-lg shadow-crimson/30'
-                    : 'text-white/40 hover:text-white active:text-crimson hover:bg-white/5'
-                }`}
-              >
-                {cat.name}
-              </button>
-            ))}
+            {categories.map((cat) => {
+              const count = cat.id === 'all' ? allProjects.length : allProjects.filter(p => p.category === cat.id).length;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => handleDomainChange(cat.id)}
+                  className={`px-3 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs font-semibold rounded-full whitespace-nowrap transition-all duration-300 active:scale-95 flex items-center gap-1 ${
+                    activeDomain === cat.id
+                      ? 'bg-gradient-to-r from-crimson to-crimson-dark text-white shadow-lg shadow-crimson/30'
+                      : 'text-white/40 hover:text-white active:text-crimson hover:bg-white/5'
+                  }`}
+                >
+                  {cat.name}
+                  {count > 0 && (
+                    <span className={`text-[8px] sm:text-[9px] font-black px-1 py-0.5 rounded-full leading-none ${
+                      activeDomain === cat.id ? 'bg-white/20 text-white' : 'bg-white/10 text-white/30'
+                    }`}>{count > 9 ? `${count}` : count}</span>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -247,6 +261,30 @@ export default function ProjectsShowcase() {
                   </div>
                 </motion.div>
               ))}
+
+              {/* +X More Projects Card */}
+              {remainingCount > 0 && (
+                <motion.div
+                  layout
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.35, delay: displayed.length * 0.04 }}
+                  className="glass-card rounded-2xl sm:rounded-3xl overflow-hidden group flex flex-col justify-center items-center text-center p-8 border border-gold/20 hover:border-gold/50 cursor-pointer"
+                  onClick={() => window.scrollTo(0, 0)}
+                >
+                  <Link to="/projects" className="flex flex-col items-center justify-center w-full h-full">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-crimson/20 to-gold/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-500 shadow-lg shadow-crimson/10 border border-gold/20">
+                      <span className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-br from-crimson to-gold">+{remainingCount}</span>
+                    </div>
+                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-gold transition-colors">More Projects</h3>
+                    <p className="text-sm text-white/40 mb-6 px-4">Explore the full catalog of {activeDomain === 'all' ? 'all domains' : categories.find(c => c.id === activeDomain)?.name} projects</p>
+                    <span className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 group-hover:bg-white/10 text-white font-bold rounded-full border border-white/10 transition-all active:scale-95">
+                      View All <ArrowRight className="w-4 h-4" />
+                    </span>
+                  </Link>
+                </motion.div>
+              )}
             </AnimatePresence>
           </div>
         )}

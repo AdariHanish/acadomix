@@ -45,9 +45,7 @@ export default function Footer() {
                 src={logoSrc} 
                 alt="Acadomix" 
                 className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl object-contain border border-gold/20 group-active:scale-90 transition-transform shadow-lg shadow-crimson/10"
-                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden'); }}
               />
-              <span className="hidden w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-crimson to-gold flex items-center justify-center text-white font-black text-lg flex-shrink-0">A</span>
               <span className="text-lg sm:text-xl font-black tracking-[0.2em] text-gradient uppercase">ACADOMIX</span>
             </Link>
             <p className="text-[10px] sm:text-sm text-white/25 leading-relaxed max-w-xs mb-4">
