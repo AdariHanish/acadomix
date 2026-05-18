@@ -12,6 +12,7 @@ interface Props {
 export default function StudentDiscountModal({ isOpen, onClose }: Props) {
   const [idCard, setIdCard] = useState<string | null>(null);
   const [idCardName, setIdCardName] = useState('');
+  const [studentName, setStudentName] = useState('');
   const [sending, setSending] = useState(false);
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,6 +24,10 @@ export default function StudentDiscountModal({ isOpen, onClose }: Props) {
   };
 
   const handleClaim = async () => {
+    if (!studentName.trim()) {
+      alert('Please enter your name first!');
+      return;
+    }
     if (!idCard) {
       alert('Please upload your college ID card first!');
       return;
@@ -30,8 +35,9 @@ export default function StudentDiscountModal({ isOpen, onClose }: Props) {
     setSending(true);
 
     try {
-      // 1. Generate a unique asset name for this student's ID card
-      const uniqueAssetName = `studentid_${Date.now()}`;
+      // 1. Generate a unique asset name for this student's ID card (including their name)
+      const sanitizedName = studentName.replace(/[^a-zA-Z0-9 ]/g, '').trim();
+      const uniqueAssetName = `studentid_${sanitizedName}_${Date.now()}`;
       
       // 2. Parse the MIME type
       const mimeMatch = idCard.match(/^data:(image\/[a-zA-Z+.-]+);base64,/);
@@ -46,6 +52,7 @@ export default function StudentDiscountModal({ isOpen, onClose }: Props) {
       // 5. Build WhatsApp message with EXACT user-requested text
       const msg = encodeURIComponent(
         `Hi Acadomix! I want to claim the 10% Student Discount. I am sending my college ID card for verification below. Please apply the discount on my next project!\n\n` +
+        `👤 Name: ${studentName}\n` +
         `📎 College ID Card: ${publicUrl}`
       );
       
@@ -100,6 +107,18 @@ export default function StudentDiscountModal({ isOpen, onClose }: Props) {
             </div>
 
             <div className="relative z-10 space-y-4">
+              {/* Name Input */}
+              <label className="block">
+                <span className="block text-xs text-white/30 uppercase tracking-wider mb-2 font-medium">Full Name</span>
+                <input
+                  type="text"
+                  value={studentName}
+                  onChange={(e) => setStudentName(e.target.value)}
+                  placeholder="Enter your full name"
+                  className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold/50 transition-colors"
+                />
+              </label>
+
               {/* ID Card Upload */}
               <label className="block">
                 <span className="block text-xs text-white/30 uppercase tracking-wider mb-2 font-medium">Upload College ID Card</span>

@@ -20,6 +20,7 @@ const AdminLeads = React.lazy(() => import('./pages/admin/AdminLeads'));
 const AdminCustomers = React.lazy(() => import('./pages/admin/AdminCustomers'));
 const AdminAssets = React.lazy(() => import('./pages/admin/AdminAssets'));
 const AdminSettings = React.lazy(() => import('./pages/admin/AdminSettings'));
+const AdminIDCards = React.lazy(() => import('./pages/admin/AdminIDCards'));
 
 export default function App() {
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
@@ -80,6 +81,7 @@ export default function App() {
             <Route path="leads" element={<AdminLeads />} />
             <Route path="customers" element={<AdminCustomers />} />
             <Route path="assets" element={<AdminAssets />} />
+            <Route path="id-cards" element={<AdminIDCards />} />
             <Route path="settings" element={<AdminSettings />} />
           </Route>
 

@@ -44,6 +44,21 @@ export default async function handler(req: any, res: any) {
       console.error('Asset upload error:', error);
       res.status(500).json({ error: 'Failed to update asset' });
     }
+  } else if (req.method === 'DELETE') {
+    try {
+      const { asset_name } = req.query;
+      
+      if (!asset_name) {
+        return res.status(400).json({ error: 'asset_name is required' });
+      }
+      
+      await pool.query('DELETE FROM app_assets WHERE asset_name = ?', [asset_name]);
+      
+      res.status(200).json({ success: true });
+    } catch (error) {
+      console.error('Asset delete error:', error);
+      res.status(500).json({ error: 'Failed to delete asset' });
+    }
   } else {
     res.setHeader('Allow', ['GET', 'PUT']);
     res.status(405).end(`Method ${req.method} Not Allowed`);

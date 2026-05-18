@@ -158,6 +158,9 @@ export const LeadsDB = {
 
 // App Assets
 export const AssetsDB = {
+  getAll: async (): Promise<AppAsset[]> => {
+    return fetchAPI(`/assets`);
+  },
   get: async (assetName: string): Promise<AppAsset | undefined> => {
     const assets = await fetchAPI(`/assets?asset_name=${assetName}`);
     return assets.length > 0 ? assets[0] : undefined;
@@ -170,6 +173,10 @@ export const AssetsDB = {
     });
     return { id: 0, asset_name: assetName, data, mime_type: mimeType, updated_at: new Date().toISOString() };
   },
+  delete: async (assetName: string): Promise<boolean> => {
+    await fetchAPI(`/assets?asset_name=${assetName}`, { method: 'DELETE' });
+    return true;
+  }
 };
 
 // Settings
