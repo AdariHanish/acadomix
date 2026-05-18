@@ -83,6 +83,25 @@ export default async function handler(req: any, res: any) {
       await pool.query(schema);
     }
 
+    // 🚀 Dynamic Schema Migrations for existing databases
+    const columns = [
+      { name: 'company_tagline', type: "VARCHAR(255) DEFAULT 'Coding Your Ideas'" },
+      { name: 'office_location_text', type: "VARCHAR(255) DEFAULT '65-5-259, VUDA Colony, Vizag - 530011'" },
+      { name: 'office_location_link', type: "TEXT" }
+    ];
+
+    for (const col of columns) {
+      try {
+        await pool.query(`ALTER TABLE site_settings ADD COLUMN ${col.name} ${col.type}`);
+        console.log(`Column ${col.name} added successfully.`);
+      } catch (err: any) {
+        // E.g. Duplicate column name error (code 'ER_DUP_FIELDNAME' / '1060') - safe to ignore
+        if (err.code !== 'ER_DUP_FIELDNAME' && err.errno !== 1060) {
+          console.error(`Error adding column ${col.name}:`, err);
+        }
+      }
+    }
+
     // Insert default settings if empty
     const [settings]: any = await pool.query("SELECT COUNT(*) as count FROM site_settings");
     if (settings[0].count === 0) {
@@ -90,10 +109,13 @@ export default async function handler(req: any, res: any) {
         INSERT INTO site_settings (
             mini_project_price, major_project_price, custom_project_price,
             research_paper_price, plagiarism_removal_price, admin_password,
-            security_question, security_answer
+            security_question, security_answer, company_tagline, 
+            office_location_text, office_location_link
         ) VALUES (
             '1500', '4500', '4500', '3000', '500', '1234',
-            'What is your nick name?', 'lovely'
+            'What is your nick name?', 'lovely', 'Coding Your Ideas',
+            '65-5-259, VUDA Colony, Vizag - 530011',
+            'https://maps.google.com/?q=VUDA+Colony+Visakhapatnam'
         )
       `);
     }

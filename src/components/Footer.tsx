@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUp, Heart, Phone, Mail, MapPin, Shield } from 'lucide-react';
-import { AdminAuth, AssetsDB } from '../utils/storage';
+import { AdminAuth, AssetsDB, SettingsDB } from '../utils/storage';
 
 const footerLinks = {
   Services: [
@@ -24,12 +24,23 @@ const footerLinks = {
 export default function Footer() {
   const scrollTo = (id: string) => { AdminAuth.logout(); document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }); };
   const [logoSrc, setLogoSrc] = useState('/images/logo-placeholder.png');
+  const [tagline, setTagline] = useState('Coding Your Ideas');
+  const [locationText, setLocationText] = useState('65-5-259, VUDA Colony, Vizag - 530011');
+  const [locationLink, setLocationLink] = useState('https://maps.google.com/?q=VUDA+Colony+Visakhapatnam');
 
   useEffect(() => {
     AssetsDB.get('logo').then(logo => {
       if (logo?.data) setLogoSrc(logo.data);
     }).catch(() => {
       // Silently keep placeholder if API unavailable
+    });
+    
+    SettingsDB.get().then(settings => {
+      if (settings?.company_tagline) setTagline(settings.company_tagline);
+      if (settings?.office_location_text) setLocationText(settings.office_location_text);
+      if (settings?.office_location_link) setLocationLink(settings.office_location_link);
+    }).catch(() => {
+      // Keep defaults
     });
   }, []);
 
@@ -40,13 +51,16 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 sm:gap-8 mb-10 sm:mb-14">
           {/* Brand */}
           <div className="col-span-2 md:col-span-2 lg:col-span-2">
-            <Link to="/" onClick={() => { AdminAuth.logout(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="inline-flex items-center gap-2.5 mb-3 sm:mb-5 group">
+            <Link to="/" onClick={() => { AdminAuth.logout(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="inline-flex items-start gap-2.5 mb-3 sm:mb-5 group">
               <img 
                 src={logoSrc} 
                 alt="Acadomix" 
-                className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl object-contain border border-gold/20 group-active:scale-90 transition-transform shadow-lg shadow-crimson/10"
+                className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl object-contain border border-gold/20 group-active:scale-90 transition-transform shadow-lg shadow-crimson/10 mt-1"
               />
-              <span className="text-lg sm:text-xl font-black tracking-[0.2em] text-gradient uppercase">ACADOMIX</span>
+              <div className="flex flex-col items-start">
+                <span className="text-lg sm:text-xl font-black tracking-[0.2em] text-gradient uppercase leading-none">ACADOMIX</span>
+                <span className="text-[7px] sm:text-[9px] font-semibold text-gold/60 tracking-[0.05em] uppercase mt-1.5 leading-none">{tagline}</span>
+              </div>
             </Link>
             <p className="text-[10px] sm:text-sm text-white/25 leading-relaxed max-w-xs mb-4">
               Your trusted partner for academic projects. Student-friendly prices, expert delivery.
@@ -58,9 +72,9 @@ export default function Footer() {
               <a href={`https://mail.google.com/mail/?view=cm&fs=1&to=acadomix@gmail.com&su=${encodeURIComponent('Project Collaboration')}&body=${encodeURIComponent("Hi! Acadomix, I'm interested in discussing a project collaboration with you.")}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-white/25 hover:text-gold active:text-crimson transition-colors">
                 <Mail className="w-3 h-3 flex-shrink-0" /> acadomix@gmail.com
               </a>
-              <p className="flex items-start gap-2 text-white/25">
-                <MapPin className="w-3 h-3 flex-shrink-0 mt-0.5" /> VUDA Colony, Vizag - 530011
-              </p>
+              <a href={locationLink} target="_blank" rel="noopener noreferrer" className="flex items-start gap-2 text-white/25 hover:text-gold active:text-crimson transition-colors">
+                <MapPin className="w-3 h-3 flex-shrink-0 mt-0.5" /> {locationText}
+              </a>
             </div>
           </div>
 

@@ -75,4 +75,7 @@ export interface SiteSettings {
   admin_password: string;
   security_question: string;
   security_answer: string;
+  company_tagline?: string;
+  office_location_text?: string;
+  office_location_link?: string;
 }

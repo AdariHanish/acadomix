@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Shield } from 'lucide-react';
-import { AssetsDB, AdminAuth } from '../utils/storage';
+import { AssetsDB, AdminAuth, SettingsDB } from '../utils/storage';
 
 const sectionLinks = [
   { name: 'Services', id: 'services' },
@@ -29,9 +29,14 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', fn);
   }, []);
 
+  const [tagline, setTagline] = useState('Coding Your Ideas');
+
   useEffect(() => {
     AssetsDB.get('logo').then(logo => {
       if (logo) setLogoSrc(logo.data);
+    });
+    SettingsDB.get().then(settings => {
+      if (settings?.company_tagline) setTagline(settings.company_tagline);
     });
   }, []);
 
@@ -106,9 +111,14 @@ export default function Navbar() {
             <Link
               to="/"
               onClick={() => { AdminAuth.logout(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-              className="hidden min-[400px]:inline text-lg sm:text-xl md:text-2xl font-black tracking-[0.15em] text-gradient uppercase active:scale-95 transition-transform"
+              className="hidden min-[400px]:flex flex-col items-start active:scale-95 transition-transform"
             >
-              ACADOMIX
+              <span className="text-lg sm:text-xl md:text-2xl font-black tracking-[0.15em] text-gradient uppercase leading-none">
+                ACADOMIX
+              </span>
+              <span className="text-[7px] sm:text-[9px] md:text-[10px] font-semibold text-gold/60 tracking-[0.05em] uppercase leading-none mt-1">
+                {tagline}
+              </span>
             </Link>
           </div>
 

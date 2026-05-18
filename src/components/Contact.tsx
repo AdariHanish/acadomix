@@ -1,13 +1,23 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Send, Phone, Mail, MapPin, Clock, CheckCircle, MessageCircle, ArrowRight } from 'lucide-react';
-import { LeadsDB } from '../utils/storage';
+import { LeadsDB, SettingsDB } from '../utils/storage';
 import StudentDiscountModal from './StudentDiscountModal';
 
 export default function Contact() {
   const [formData, setFormData] = useState({ name: '', college: '', branch: '', project_domain: '', budget: '', deadline: '', phone: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
   const [showDiscount, setShowDiscount] = useState(false);
+
+  const [locationText, setLocationText] = useState('65-5-259, VUDA Colony, Vizag - 530011');
+  const [locationLink, setLocationLink] = useState('https://maps.google.com/?q=VUDA+Colony+Visakhapatnam');
+
+  useEffect(() => {
+    SettingsDB.get().then(settings => {
+      if (settings?.office_location_text) setLocationText(settings.office_location_text);
+      if (settings?.office_location_link) setLocationLink(settings.office_location_link);
+    }).catch(() => {});
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     let val = e.target.value;
@@ -91,7 +101,7 @@ export default function Contact() {
                 {[
                   { icon: <Phone className="w-4 h-4" />, label: 'Call / WhatsApp', value: '+91 88974 92936', href: 'tel:+918897492936', color: 'group-hover:text-gold' },
                   { icon: <Mail className="w-4 h-4" />, label: 'Email', value: 'acadomix@gmail.com', href: `https://mail.google.com/mail/?view=cm&fs=1&to=acadomix@gmail.com&su=${encodeURIComponent('Project Collaboration')}&body=${encodeURIComponent("Hi! Acadomix, I'm interested in discussing a project collaboration with you.")}`, target: '_blank', color: 'group-hover:text-crimson' },
-                  { icon: <MapPin className="w-4 h-4" />, label: 'Office', value: '65-5-259, VUDA Colony, Vizag - 530011', href: 'https://maps.google.com/?q=VUDA+Colony+Visakhapatnam', color: 'group-hover:text-gold' },
+                  { icon: <MapPin className="w-4 h-4" />, label: 'Office', value: locationText, href: locationLink, color: 'group-hover:text-gold' },
                   { icon: <Clock className="w-4 h-4" />, label: 'Hours', value: 'Mon - Sat: 9 AM - 9 PM', href: '#', color: 'group-hover:text-crimson' },
                 ].map((c, i) => (
                   <a key={i} href={c.href} target={c.href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" className="flex items-start gap-2.5 sm:gap-3 group active:bg-white/5 rounded-lg p-1 -m-1 transition-colors">

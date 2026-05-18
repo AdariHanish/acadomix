@@ -9,6 +9,9 @@ export default function AdminSettings() {
     mini_project_price: '1500', major_project_price: '4500', custom_project_price: '4500',
     research_paper_price: '3000', plagiarism_removal_price: '500',
     admin_password: '', security_question: '', security_answer: '',
+    company_tagline: 'Coding Your Ideas',
+    office_location_text: '65-5-259, VUDA Colony, Vizag - 530011',
+    office_location_link: 'https://maps.google.com/?q=VUDA+Colony+Visakhapatnam',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [newPassword, setNewPassword] = useState('');
@@ -32,6 +35,15 @@ export default function AdminSettings() {
     setSuccess('Pricing updated!'); setTimeout(() => setSuccess(null), 3000);
   };
 
+  const saveCompanyInfo = async () => {
+    await SettingsDB.update({
+      company_tagline: settings.company_tagline,
+      office_location_text: settings.office_location_text,
+      office_location_link: settings.office_location_link,
+    });
+    setSuccess('Company details updated!'); setTimeout(() => setSuccess(null), 3000);
+  };
+
   const changePassword = async () => {
     if (!newPassword || !confirmPassword) { setError('Fill both fields'); return; }
     if (newPassword !== confirmPassword) { setError('Passwords don\'t match'); return; }
@@ -53,25 +65,50 @@ export default function AdminSettings() {
       {error && <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="p-3 rounded-xl bg-red-500/[0.06] border border-red-500/[0.12] flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-red-400" /><p className="text-red-400 text-sm">{error}</p></motion.div>}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        {/* Pricing */}
-        <div className="glass-card rounded-2xl p-6">
-          <p className="text-base font-semibold text-white mb-5">💰 Base Pricing</p>
-          <div className="space-y-3">
-            {[
-              { key: 'mini_project_price', label: 'Mini Project (₹)' },
-              { key: 'major_project_price', label: 'Major Project (₹)' },
-              { key: 'custom_project_price', label: 'Custom Project (₹)' },
-              { key: 'research_paper_price', label: 'Research Paper (₹)' },
-              { key: 'plagiarism_removal_price', label: 'Plagiarism Removal (₹)' },
-            ].map(item => (
-              <div key={item.key}>
-                <label className="block text-xs text-white/25 mb-1">{item.label}</label>
-                <input type="number" value={(settings as any)[item.key]} onChange={e => setSettings({ ...settings, [item.key]: e.target.value })} className={inputCls} />
+        {/* Base Pricing & Company Details */}
+        <div className="space-y-5">
+          {/* Pricing */}
+          <div className="glass-card rounded-2xl p-6">
+            <p className="text-base font-semibold text-white mb-5">💰 Base Pricing</p>
+            <div className="space-y-3">
+              {[
+                { key: 'mini_project_price', label: 'Mini Project (₹)' },
+                { key: 'major_project_price', label: 'Major Project (₹)' },
+                { key: 'custom_project_price', label: 'Custom Project (₹)' },
+                { key: 'research_paper_price', label: 'Research Paper (₹)' },
+                { key: 'plagiarism_removal_price', label: 'Plagiarism Removal (₹)' },
+              ].map(item => (
+                <div key={item.key}>
+                  <label className="block text-xs text-white/25 mb-1">{item.label}</label>
+                  <input type="number" value={(settings as any)[item.key]} onChange={e => setSettings({ ...settings, [item.key]: e.target.value })} className={inputCls} />
+                </div>
+              ))}
+              <button onClick={savePricing} className="w-full py-3 bg-gold hover:bg-gold-light text-black text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-2 mt-2">
+                <Save className="w-4 h-4" /> Save Pricing
+              </button>
+            </div>
+          </div>
+
+          {/* Company Details */}
+          <div className="glass-card rounded-2xl p-6">
+            <p className="text-base font-semibold text-white mb-5">🏢 Company Details</p>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs text-white/25 mb-1">Company Tagline</label>
+                <input type="text" value={settings.company_tagline || ''} onChange={e => setSettings({ ...settings, company_tagline: e.target.value })} placeholder="e.g. Coding Your Ideas" className={inputCls} />
               </div>
-            ))}
-            <button onClick={savePricing} className="w-full py-3 bg-gold hover:bg-gold-light text-black text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-2 mt-2">
-              <Save className="w-4 h-4" /> Save Pricing
-            </button>
+              <div>
+                <label className="block text-xs text-white/25 mb-1">Office Location Text</label>
+                <textarea value={settings.office_location_text || ''} onChange={e => setSettings({ ...settings, office_location_text: e.target.value })} placeholder="e.g. VUDA Colony, Vizag - 530011" className={`${inputCls} h-20 resize-none`} />
+              </div>
+              <div>
+                <label className="block text-xs text-white/25 mb-1">Google Maps Redirect Link</label>
+                <input type="text" value={settings.office_location_link || ''} onChange={e => setSettings({ ...settings, office_location_link: e.target.value })} placeholder="https://maps.google.com/..." className={inputCls} />
+              </div>
+              <button onClick={saveCompanyInfo} className="w-full py-3 bg-gold hover:bg-gold-light text-black text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-2 mt-2">
+                <Save className="w-4 h-4" /> Save Company Details
+              </button>
+            </div>
           </div>
         </div>
 
@@ -136,7 +173,7 @@ export default function AdminSettings() {
                       <div className="w-5 h-5 border-2 border-crimson border-t-transparent rounded-full animate-spin" />
                     ) : (
                       <img 
-                        src={`/api/assets?asset_name=${asset.key}&t=${assetTimestamps[asset.key] || Date.now()}`} 
+                        src={`/api/assets?asset_name=${asset.key}&raw=true&t=${assetTimestamps[asset.key] || Date.now()}`} 
                         alt="Preview" 
                         className="max-w-full max-h-full object-contain"
                         onError={(e) => (e.currentTarget.src = 'https://via.placeholder.com/150?text=No+Asset')}
