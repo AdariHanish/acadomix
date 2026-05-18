@@ -87,7 +87,8 @@ export default async function handler(req: any, res: any) {
     const columns = [
       { name: 'company_tagline', type: "VARCHAR(255) DEFAULT 'Coding Your Ideas'" },
       { name: 'office_location_text', type: "VARCHAR(255) DEFAULT '65-5-259, VUDA Colony, Vizag - 530011'" },
-      { name: 'office_location_link', type: "TEXT" }
+      { name: 'office_location_link', type: "TEXT" },
+      { name: 'admin_phone', type: "VARCHAR(20) DEFAULT '9515192936'" }
     ];
 
     for (const col of columns) {
@@ -110,12 +111,13 @@ export default async function handler(req: any, res: any) {
             mini_project_price, major_project_price, custom_project_price,
             research_paper_price, plagiarism_removal_price, admin_password,
             security_question, security_answer, company_tagline, 
-            office_location_text, office_location_link
+            office_location_text, office_location_link, admin_phone
         ) VALUES (
             '1500', '4500', '4500', '3000', '500', '1234',
             'What is your nick name?', 'lovely', 'Coding Your Ideas',
             '65-5-259, VUDA Colony, Vizag - 530011',
-            'https://maps.google.com/?q=VUDA+Colony+Visakhapatnam'
+            'https://maps.google.com/?q=VUDA+Colony+Visakhapatnam',
+            '9515192936'
         )
       `);
     }

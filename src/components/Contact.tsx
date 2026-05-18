@@ -19,6 +19,25 @@ export default function Contact() {
     }).catch(() => {});
   }, []);
 
+  useEffect(() => {
+    const handleSelect = (e: CustomEvent<string>) => {
+      setFormData(prev => ({ ...prev, project_domain: e.detail }));
+      
+      // Delay slightly to let layout adjust, then scroll smoothly
+      setTimeout(() => {
+        const contactEl = document.getElementById('contact');
+        if (contactEl) {
+          contactEl.scrollIntoView({ behavior: 'smooth' });
+          // Focus the project domain dropdown to draw user attention
+          const selectEl = contactEl.querySelector('select[name="project_domain"]') as HTMLSelectElement | null;
+          if (selectEl) selectEl.focus();
+        }
+      }, 50);
+    };
+    window.addEventListener('select-service' as any, handleSelect);
+    return () => window.removeEventListener('select-service' as any, handleSelect);
+  }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     let val = e.target.value;
     if (e.target.name === 'phone') {
@@ -74,7 +93,7 @@ export default function Contact() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                   <div><label className={labelCls}>Project Type</label>
                     <select name="project_domain" value={formData.project_domain} onChange={handleChange} required className={`${inputCls} [&>option]:bg-surface-2`}>
-                      <option value="">Select</option><option>Mini Project</option><option>Major Project</option><option>Website</option><option>Research Paper</option><option>Assignment</option><option>IoT Project</option><option>Custom</option>
+                      <option value="">Select</option><option>Mini Project</option><option>Major Project</option><option>Website</option><option>Research Paper</option><option>Assignment</option><option>IoT Project</option><option>Plagiarism Removal</option><option>Custom</option>
                     </select>
                   </div>
                   <div><label className={labelCls}>Budget</label>

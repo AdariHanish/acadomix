@@ -12,6 +12,7 @@ export default function AdminSettings() {
     company_tagline: 'Coding Your Ideas',
     office_location_text: '65-5-259, VUDA Colony, Vizag - 530011',
     office_location_link: 'https://maps.google.com/?q=VUDA+Colony+Visakhapatnam',
+    admin_phone: '9515192936',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [newPassword, setNewPassword] = useState('');
@@ -42,6 +43,15 @@ export default function AdminSettings() {
       office_location_link: settings.office_location_link,
     });
     setSuccess('Company details updated!'); setTimeout(() => setSuccess(null), 3000);
+  };
+
+  const saveRecoveryPhone = async () => {
+    if (!settings.admin_phone || settings.admin_phone.length < 10) {
+      setError('Recovery mobile must be exactly 10 digits');
+      return;
+    }
+    await SettingsDB.update({ admin_phone: settings.admin_phone });
+    setSuccess('Recovery mobile updated!'); setError(null); setTimeout(() => setSuccess(null), 3000);
   };
 
   const changePassword = async () => {
@@ -141,8 +151,28 @@ export default function AdminSettings() {
             
             <div className="p-4 rounded-xl glass text-center">
               <p className="text-xs text-white/30 uppercase tracking-wider mb-1">Registered Mobile</p>
-              <p className="text-lg font-bold text-white/80 tracking-wider">9515****36</p>
+              <p className="text-lg font-bold text-white/80 tracking-wider">
+                {settings.admin_phone && settings.admin_phone.length >= 10
+                  ? `${settings.admin_phone.slice(0, 4)}****${settings.admin_phone.slice(-2)}`
+                  : settings.admin_phone || '9515****36'}
+              </p>
               <p className="text-xs text-white/20 mt-2">OTP will be sent to this number for password reset</p>
+            </div>
+
+            <div className="space-y-3 mt-4">
+              <div>
+                <label className="block text-xs text-white/25 mb-1">Update Recovery Mobile</label>
+                <input 
+                  type="text" 
+                  value={settings.admin_phone || ''} 
+                  onChange={e => setSettings({ ...settings, admin_phone: e.target.value.replace(/\D/g, '').slice(0, 10) })} 
+                  placeholder="e.g. 9515192936" 
+                  className={inputCls} 
+                />
+              </div>
+              <button onClick={saveRecoveryPhone} className="w-full py-3 bg-crimson hover:bg-crimson-light text-white text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-2">
+                <Save className="w-4 h-4" /> Save Recovery Mobile
+              </button>
             </div>
 
             <div className="mt-4 p-3 rounded-lg bg-gold/[0.06] border border-gold/[0.1]">

@@ -17,23 +17,21 @@ const routeLinks = [
 ];
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('');
-  const [logoSrc, setLogoSrc] = useState('/images/logo-placeholder.png');
+  const [logoSrc, setLogoSrc] = useState(() => {
+    return localStorage.getItem('acadomix_cached_logo') || '/images/logo-placeholder.png';
+  });
   const location = useLocation();
   const isHome = location.pathname === '/';
-
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 30);
-    window.addEventListener('scroll', fn, { passive: true });
-    return () => window.removeEventListener('scroll', fn);
-  }, []);
 
   const [tagline, setTagline] = useState('Coding Your Ideas');
 
   useEffect(() => {
     AssetsDB.get('logo').then(logo => {
-      if (logo) setLogoSrc(logo.data);
+      if (logo) {
+        setLogoSrc(logo.data);
+        localStorage.setItem('acadomix_cached_logo', logo.data);
+      }
     });
     SettingsDB.get().then(settings => {
       if (settings?.company_tagline) setTagline(settings.company_tagline);
@@ -116,7 +114,7 @@ export default function Navbar() {
               <span className="text-lg sm:text-xl md:text-2xl font-black tracking-[0.15em] text-gradient uppercase leading-none">
                 ACADOMIX
               </span>
-              <span className="text-[7px] sm:text-[9px] md:text-[10px] font-semibold text-gold/60 tracking-[0.05em] uppercase leading-none mt-1">
+              <span className="text-[7px] sm:text-[9px] md:text-[10px] font-extrabold text-gradient tracking-[0.05em] uppercase leading-none mt-1">
                 {tagline}
               </span>
             </Link>

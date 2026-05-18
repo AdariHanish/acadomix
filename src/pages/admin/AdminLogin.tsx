@@ -30,8 +30,17 @@ export default function AdminLogin() {
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [resetSuccess, setResetSuccess] = useState(false);
 
-  // In production, use this with SMS API: const ADMIN_PHONE = '9515192936';
-  const MASKED_PHONE = '9515****36';
+  const [adminPhone, setAdminPhone] = useState('9515192936');
+
+  useEffect(() => {
+    SettingsDB.get().then(settings => {
+      if (settings?.admin_phone) setAdminPhone(settings.admin_phone);
+    }).catch(() => {});
+  }, []);
+
+  const MASKED_PHONE = adminPhone.length >= 10
+    ? `${adminPhone.slice(0, 4)}****${adminPhone.slice(-2)}`
+    : adminPhone;
 
   // Countdown timer for OTP
   useEffect(() => {
@@ -57,7 +66,7 @@ export default function AdminLogin() {
     }
   };
 
-  const ADMIN_PHONE = '9515192936';
+  // Removed hardcoded ADMIN_PHONE in favor of database-fetched adminPhone state
 
   const handleSendOtp = async () => {
     setSubmitting(true);
@@ -72,7 +81,7 @@ export default function AdminLogin() {
       const response = await fetch('/api/otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: ADMIN_PHONE, otp: code })
+        body: JSON.stringify({ phone: adminPhone, otp: code })
       });
       
       if (!response.ok) {

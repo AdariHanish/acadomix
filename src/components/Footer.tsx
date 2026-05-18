@@ -7,7 +7,7 @@ const footerLinks = {
   Services: [
     { name: 'Mini Projects', href: '#services' }, { name: 'Major Projects', href: '#services' },
     { name: 'Websites', href: '#services' }, { name: 'Research Papers', href: '#services' },
-    { name: 'Assignments', href: '#services' },
+    { name: 'Assignments', href: '#services' }, { name: 'Plagiarism Removal', href: '#services' },
   ],
   Company: [
     { name: 'How It Works', href: '#how-it-works' }, { name: 'Pricing', href: '#pricing' },
@@ -23,14 +23,36 @@ const footerLinks = {
 
 export default function Footer() {
   const scrollTo = (id: string) => { AdminAuth.logout(); document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }); };
-  const [logoSrc, setLogoSrc] = useState('/images/logo-placeholder.png');
+  
+  const handleFooterLinkClick = (item: any, categoryTitle: string) => {
+    if (categoryTitle === 'Services') {
+      let domain = item.name;
+      if (item.name === 'Mini Projects') domain = 'Mini Project';
+      else if (item.name === 'Major Projects') domain = 'Major Project';
+      else if (item.name === 'Websites') domain = 'Website';
+      else if (item.name === 'Research Papers') domain = 'Research Paper';
+      else if (item.name === 'Assignments') domain = 'Assignment';
+      else if (item.name === 'Plagiarism Removal') domain = 'Plagiarism Removal';
+      
+      window.dispatchEvent(new CustomEvent('select-service', { detail: domain }));
+    } else {
+      scrollTo(item.href.replace('#', ''));
+    }
+  };
+
+  const [logoSrc, setLogoSrc] = useState(() => {
+    return localStorage.getItem('acadomix_cached_logo') || '/images/logo-placeholder.png';
+  });
   const [tagline, setTagline] = useState('Coding Your Ideas');
   const [locationText, setLocationText] = useState('65-5-259, VUDA Colony, Vizag - 530011');
   const [locationLink, setLocationLink] = useState('https://maps.google.com/?q=VUDA+Colony+Visakhapatnam');
 
   useEffect(() => {
     AssetsDB.get('logo').then(logo => {
-      if (logo?.data) setLogoSrc(logo.data);
+      if (logo?.data) {
+        setLogoSrc(logo.data);
+        localStorage.setItem('acadomix_cached_logo', logo.data);
+      }
     }).catch(() => {
       // Silently keep placeholder if API unavailable
     });
@@ -59,7 +81,7 @@ export default function Footer() {
               />
               <div className="flex flex-col items-start">
                 <span className="text-lg sm:text-xl font-black tracking-[0.2em] text-gradient uppercase leading-none">ACADOMIX</span>
-                <span className="text-[7px] sm:text-[9px] font-semibold text-gold/60 tracking-[0.05em] uppercase mt-1.5 leading-none">{tagline}</span>
+                <span className="text-[7px] sm:text-[9px] font-extrabold text-gradient tracking-[0.05em] uppercase mt-1.5 leading-none">{tagline}</span>
               </div>
             </Link>
             <p className="text-[10px] sm:text-sm text-white/25 leading-relaxed max-w-xs mb-4">
@@ -91,7 +113,7 @@ export default function Footer() {
                     ) : item.external ? (
                       <a href={item.href} target="_blank" rel="noopener noreferrer" className="text-[10px] sm:text-sm text-white/25 hover:text-white active:text-gold transition-colors">{item.name}</a>
                     ) : (
-                      <button onClick={() => scrollTo(item.href.replace('#', ''))} className="text-[10px] sm:text-sm text-white/25 hover:text-white active:text-gold transition-colors text-left">{item.name}</button>
+                      <button onClick={() => handleFooterLinkClick(item, title)} className="text-[10px] sm:text-sm text-white/25 hover:text-white active:text-gold transition-colors text-left">{item.name}</button>
                     )}
                   </li>
                 ))}

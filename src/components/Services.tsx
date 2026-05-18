@@ -13,6 +13,20 @@ const services = [
 ];
 
 export default function Services() {
+  const handleServiceClick = (serviceTitle: string) => {
+    let domain = serviceTitle;
+    if (serviceTitle === 'Plagiarism Removal') domain = 'Plagiarism Removal';
+    else if (serviceTitle === 'Custom Projects') domain = 'Custom';
+    else if (serviceTitle === 'IoT Projects') domain = 'IoT Project';
+    else if (serviceTitle === 'Mini Projects') domain = 'Mini Project';
+    else if (serviceTitle === 'Major Projects') domain = 'Major Project';
+    else if (serviceTitle === 'Websites') domain = 'Website';
+    else if (serviceTitle === 'Assignments') domain = 'Assignment';
+    else if (serviceTitle === 'Research Papers') domain = 'Research Paper';
+    
+    window.dispatchEvent(new CustomEvent('select-service', { detail: domain }));
+  };
+
   return (
     <section id="services" className="relative py-20 sm:py-28 lg:py-32 section-glow overflow-hidden">
       <div className="absolute inset-0 bg-dots opacity-20" />
@@ -25,11 +39,12 @@ export default function Services() {
             <br /><span className="text-gradient">All in one place.</span>
           </h2>
         </motion.div>
-
+ 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
           {services.map((s, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.5, delay: i * 0.06 }}
-              className={`glass-card rounded-2xl p-4 sm:p-5 relative overflow-hidden group active:bg-white/5 transition-colors ${
+              onClick={() => handleServiceClick(s.title)}
+              className={`glass-card rounded-2xl p-4 sm:p-5 relative overflow-hidden group active:bg-white/5 cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 ${
                 s.popular ? 'ring-1 ring-gold/40' : ''} ${s.highlight ? 'ring-1 ring-crimson/40' : ''}`}>
               {s.popular && <div className="absolute -top-px -right-px px-2.5 py-0.5 bg-gradient-to-r from-gold-dark to-gold text-black text-[9px] sm:text-[10px] font-bold rounded-bl-xl rounded-tr-2xl uppercase tracking-wider">Popular</div>}
               {s.highlight && <div className="absolute -top-px -right-px px-2.5 py-0.5 bg-gradient-to-r from-crimson to-gold text-white text-[9px] sm:text-[10px] font-bold rounded-bl-xl rounded-tr-2xl uppercase tracking-wider">0% Plag</div>}
@@ -58,6 +73,7 @@ export default function Services() {
 
               <a href={`https://wa.me/918897492936?text=${encodeURIComponent(`Hi! I'm interested in ${s.title} (${s.price}). Can you help?`)}`}
                 target="_blank" rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
                 className={`flex items-center gap-1 text-[10px] sm:text-xs font-semibold transition-colors group/link active:scale-95 ${
                   s.accent === 'gold' ? 'text-gold hover:text-gold-light' : 'text-crimson hover:text-crimson-light'
                 }`}>

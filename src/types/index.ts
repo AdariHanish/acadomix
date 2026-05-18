@@ -78,4 +78,5 @@ export interface SiteSettings {
   company_tagline?: string;
   office_location_text?: string;
   office_location_link?: string;
+  admin_phone?: string;
 }
