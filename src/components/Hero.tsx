@@ -44,9 +44,9 @@ export default function Hero() {
         {/* Headline */}
         <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
           className="text-hero text-white mb-4 sm:mb-6">
-          Your Projects.
+          Your Academic Vision.
           <br />
-          <span className="text-gradient">Our Expertise.</span>
+          <span className="text-gradient">Engineered to Perfection.</span>
         </motion.h1>
 
         {/* Sub */}

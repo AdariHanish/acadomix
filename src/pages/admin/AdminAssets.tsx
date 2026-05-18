@@ -50,7 +50,7 @@ export default function AdminAssets() {
           { type: 'logo' as const, title: 'Company Logo', desc: 'Displayed in navbar & footer', icon: <ImageIcon className="w-5 h-5 text-crimson" />, preview: logo, hint: 'Square PNG with transparent bg, min 200×200px' },
           { type: 'payment_qr' as const, title: 'Payment QR Code', desc: 'Displayed on payment page', icon: <QrCode className="w-5 h-5 text-gold" />, preview: qrCode, hint: 'UPI/GPay/PhonePe QR image' },
         ].map((item) => (
-          <div key={item.type} className="rounded-2xl bg-surface-1 border border-border p-6">
+          <div key={item.type} className="rounded-2xl glass-card p-6">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-9 h-9 rounded-lg bg-white/[0.03] border border-white/[0.06] flex items-center justify-center">{item.icon}</div>
               <div>

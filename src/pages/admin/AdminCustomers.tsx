@@ -190,7 +190,7 @@ export default function AdminCustomers() {
           { label: 'Male Clients', value: stats.male, desc: `${((stats.male / (stats.total || 1)) * 100).toFixed(0)}% Gender Ratio`, color: 'text-gold' },
           { label: 'Total Revenue Generated', value: `₹${stats.revenue.toLocaleString()}`, desc: 'From Verified Transactions', color: 'text-green-400' },
         ].map((item, idx) => (
-          <div key={idx} className="p-4 rounded-2xl bg-surface-1 border border-border relative overflow-hidden">
+          <div key={idx} className="p-4 rounded-2xl glass-card relative overflow-hidden">
             <div className="absolute top-0 right-0 w-24 h-24 bg-white/[0.01] rounded-full blur-2xl" />
             <p className="text-[11px] text-white/20 uppercase font-medium">{item.label}</p>
             <p className={`text-xl sm:text-2xl font-black mt-1 ${item.color}`}>{item.value}</p>
@@ -217,7 +217,7 @@ export default function AdminCustomers() {
         <div className="space-y-3">
           {filteredCustomers.length > 0 ? filteredCustomers.map((c, idx) => (
             <motion.div key={idx} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-              className="rounded-xl bg-surface-1 border border-border p-5 relative overflow-hidden hover:border-gold/30 transition-all group">
+              className="rounded-xl glass-card p-5 relative overflow-hidden hover:border-gold/30 transition-all group">
               
               {/* Gold gradient background layer */}
               <div className="absolute inset-0 bg-gradient-to-r from-crimson/0 to-gold/0 group-hover:from-crimson/[0.02] group-hover:to-gold/[0.02] transition-colors pointer-events-none" />

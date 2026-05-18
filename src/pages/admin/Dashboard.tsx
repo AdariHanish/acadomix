@@ -53,7 +53,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {cards.map((c, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}>
-            <Link to={c.link} className="card-hover block rounded-2xl bg-surface-1 border border-border p-5">
+            <Link to={c.link} className="card-hover block rounded-2xl glass-card p-5">
               <div className={`w-9 h-9 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center ${c.color} mb-3`}>{c.icon}</div>
               <p className="text-[12px] text-white/30">{c.title}</p>
               <p className="text-2xl font-bold text-white mt-0.5">{c.value}</p>
@@ -66,7 +66,7 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Recent Payments */}
-        <div className="rounded-2xl bg-surface-1 border border-border p-5">
+        <div className="rounded-2xl glass-card p-5">
           <div className="flex items-center justify-between mb-4">
             <p className="text-[14px] font-medium text-white">Recent Payments</p>
             <Link to="/admin/payments" className="text-[11px] text-crimson">View All →</Link>
@@ -89,7 +89,7 @@ export default function Dashboard() {
         </div>
 
         {/* Pending Reviews */}
-        <div className="rounded-2xl bg-surface-1 border border-border p-5">
+        <div className="rounded-2xl glass-card p-5">
           <div className="flex items-center justify-between mb-4">
             <p className="text-[14px] font-medium text-white">Pending Reviews</p>
             <Link to="/admin/reviews" className="text-[11px] text-crimson">View All →</Link>

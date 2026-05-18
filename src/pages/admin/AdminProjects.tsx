@@ -128,7 +128,7 @@ export default function AdminProjects() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredProjects.length > 0 ? filteredProjects.map(p => (
           <motion.div key={p.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-            className="rounded-xl bg-surface-1 border border-border p-5">
+            className="rounded-xl glass-card p-5">
             <div className="flex gap-1.5 mb-3">
               <button onClick={async () => { await ProjectsDB.update(p.id, { is_popular: !p.is_popular }); load(); }}
                 className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium transition-all ${p.is_popular ? 'bg-crimson/10 text-crimson' : 'bg-white/[0.03] text-white/20 hover:text-crimson'}`}>
@@ -175,7 +175,7 @@ export default function AdminProjects() {
       {showForm && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" onClick={() => setShowForm(false)}>
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-            className="bg-surface-1 border border-border rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            className="glass-card rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
             onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-5">
               <p className="text-[16px] font-bold text-white">{editing ? 'Edit' : 'Add'} Project</p>

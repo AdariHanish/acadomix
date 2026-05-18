@@ -93,7 +93,7 @@ export default function AdminReviews() {
         <div className="space-y-3">
           {filtered.length > 0 ? filtered.map(r => (
             <motion.div key={r.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-              className="rounded-xl bg-surface-1 border border-border p-5">
+              className="rounded-xl glass-card p-5">
               <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-crimson/80 to-gold/80 flex items-center justify-center text-white text-[11px] font-bold flex-shrink-0">
                   {r.student_name.split(' ').map(n => n[0]).join('').slice(0, 2)}
@@ -127,7 +127,7 @@ export default function AdminReviews() {
       {selectedReview && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" onClick={() => setSelectedReview(null)}>
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-            className="bg-surface-1 border border-border rounded-2xl p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto"
+            className="glass-card rounded-2xl p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto"
             onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-5">
               <p className="text-[16px] font-bold text-white">Review Details</p>

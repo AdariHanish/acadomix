@@ -14,7 +14,7 @@ const tech = [
   { name: 'Node.js', color: '#339933', category: 'Backend', slug: 'nodedotjs' },
   { name: 'Python', color: '#3776AB', category: 'Backend', slug: 'python' },
   { name: 'Django', color: '#092E20', category: 'Backend', slug: 'django' },
-  { name: 'Java', color: '#ED8B00', category: 'Backend', slug: 'oracle' },
+  { name: 'Java', color: '#ED8B00', category: 'Backend', slug: 'java', customUrl: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg' },
   { name: 'Spring Boot', color: '#6DB33F', category: 'Backend', slug: 'springboot' },
   { name: 'FastAPI', color: '#009688', category: 'Backend', slug: 'fastapi' },
   // AI / ML
@@ -81,8 +81,8 @@ export default function TechStack() {
                 className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0"
                 style={{
                   backgroundColor: t.color,
-                  WebkitMaskImage: `url(https://cdn.jsdelivr.net/npm/simple-icons@11.12.0/icons/${t.slug}.svg)`,
-                  maskImage: `url(https://cdn.jsdelivr.net/npm/simple-icons@11.12.0/icons/${t.slug}.svg)`,
+                  WebkitMaskImage: `url(${t.customUrl || `https://cdn.jsdelivr.net/npm/simple-icons@11.12.0/icons/${t.slug}.svg`})`,
+                  maskImage: `url(${t.customUrl || `https://cdn.jsdelivr.net/npm/simple-icons@11.12.0/icons/${t.slug}.svg`})`,
                   WebkitMaskRepeat: 'no-repeat',
                   maskRepeat: 'no-repeat',
                   WebkitMaskPosition: 'center',
@@ -211,8 +211,8 @@ export default function TechStack() {
                           className="w-6 h-6 flex-shrink-0 transition-transform group-hover:rotate-[5deg]"
                           style={{
                             backgroundColor: t.color,
-                            WebkitMaskImage: `url(https://cdn.jsdelivr.net/npm/simple-icons@11.12.0/icons/${t.slug}.svg)`,
-                            maskImage: `url(https://cdn.jsdelivr.net/npm/simple-icons@11.12.0/icons/${t.slug}.svg)`,
+                            WebkitMaskImage: `url(${t.customUrl || `https://cdn.jsdelivr.net/npm/simple-icons@11.12.0/icons/${t.slug}.svg`})`,
+                            maskImage: `url(${t.customUrl || `https://cdn.jsdelivr.net/npm/simple-icons@11.12.0/icons/${t.slug}.svg`})`,
                             WebkitMaskRepeat: 'no-repeat',
                             maskRepeat: 'no-repeat',
                             WebkitMaskPosition: 'center',

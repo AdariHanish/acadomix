@@ -63,7 +63,7 @@ export default function AdminPayments() {
             const b = badge(p.status);
             return (
               <motion.div key={p.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                className="rounded-xl bg-surface-1 border border-border p-5">
+                className="rounded-xl glass-card p-5">
               <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                 <div className="w-16 h-16 rounded-lg overflow-hidden bg-white/[0.03] flex-shrink-0">
                   <ClickableImage src={p.screenshot_data} alt="Payment screenshot" className="w-full h-full object-cover" />
@@ -103,7 +103,7 @@ export default function AdminPayments() {
       {selected && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" onClick={() => setSelected(null)}>
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-            className="bg-surface-1 border border-border rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            className="glass-card rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
             onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-5">
               <p className="text-[16px] font-bold text-white">Payment Details</p>

@@ -41,7 +41,7 @@ export default function AdminLeads() {
       <div className="space-y-3">
         {filtered.length > 0 ? filtered.map(l => (
           <motion.div key={l.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-            className="rounded-xl bg-surface-1 border border-border p-5">
+            className="rounded-xl glass-card p-5">
             <div className="flex flex-col lg:flex-row lg:items-center gap-4">
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2 mb-1.5">
