@@ -111,10 +111,9 @@ export default function PaymentPage() {
             <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Home</span>
           </Link>
           <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-            <LazyImage
+            <img
               src={logoSrc}
               alt="Acadomix Logo"
-              spinnerSize="sm"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
