@@ -67,6 +67,26 @@ export default function Navbar() {
     if (!isHome) setActiveSection('');
   }, [isHome]);
 
+  // Center active navigation button horizontally in its container
+  useEffect(() => {
+    if (activeSection) {
+      const activeEl = document.getElementById(`nav-btn-${activeSection}`);
+      if (activeEl) {
+        activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    }
+  }, [activeSection]);
+
+  useEffect(() => {
+    if (!isHome) {
+      const pageName = location.pathname.replace('/', '').toLowerCase();
+      const activeEl = document.getElementById(`nav-btn-${pageName}`);
+      if (activeEl) {
+        activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    }
+  }, [location.pathname, isHome]);
+
   const scrollTo = (id: string) => {
     AdminAuth.logout();
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
@@ -97,10 +117,9 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Logo */}
           <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-            <LazyImage
+            <img
               src={logoSrc}
               alt="Acadomix Logo"
-              spinnerSize="sm"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -128,6 +147,7 @@ export default function Navbar() {
               {sectionLinks.map((link) => (
                 <button
                   key={link.name}
+                  id={`nav-btn-${link.id}`}
                   onClick={() => scrollTo(link.id)}
                   className={navItemClass(activeSection === link.id)}
                 >
@@ -138,6 +158,7 @@ export default function Navbar() {
               {routeLinks.map((link) => (
                 <Link
                   key={link.name}
+                  id={`nav-btn-${link.name.toLowerCase()}`}
                   to={link.href}
                   onClick={() => AdminAuth.logout()}
                   className={navItemClass(location.pathname === link.href)}
