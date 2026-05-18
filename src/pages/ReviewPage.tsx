@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Star, Send, ArrowLeft, CheckCircle, Calendar, GraduationCap, Briefcase, Quote, Shield } from 'lucide-react';
-import { ReviewsDB, AssetsDB } from '../utils/storage';
+import { ReviewsDB, AssetsDB, SettingsDB } from '../utils/storage';
 import { Review } from '../types';
 import LazyImage from '../components/LazyImage';
 import AppleLoader from '../components/AppleLoader';
@@ -39,6 +39,7 @@ export default function ReviewPage() {
   const [submitted, setSubmitted] = useState(false);
   const [rating, setRating] = useState(5);
   const [hoverRating, setHoverRating] = useState(0);
+  const [tagline, setTagline] = useState('Coding Your Ideas');
   
   const [reviewType, setReviewType] = useState<'individual' | 'team'>('individual');
   const [memberCount, setMemberCount] = useState(2);
@@ -65,6 +66,11 @@ export default function ReviewPage() {
         } catch (e) {
           console.warn('Failed to cache logo:', e);
         }
+      }
+    });
+    SettingsDB.get().then(settings => {
+      if (settings && settings.company_tagline) {
+        setTagline(settings.company_tagline);
       }
     });
   }, []);
@@ -113,13 +119,33 @@ export default function ReviewPage() {
       {/* Header */}
       <div className="sticky top-0 z-50 glass-nav">
         <div className="container-responsive flex items-center justify-between h-14 sm:h-16">
-          <Link to="/" className="flex items-center gap-2 text-white/50 hover:text-white text-sm transition-colors">
+          <Link to="/" className="flex items-center gap-2 text-white/50 hover:text-white text-sm transition-colors flex-shrink-0">
             <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Home</span>
           </Link>
-          <Link to="/" className="flex items-center gap-2">
-            <LazyImage src={logoSrc} alt="Acadomix" spinnerSize="sm" className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg" />
-            <span className="text-sm sm:text-base font-bold text-white/80">Acado<span className="text-gradient">mix</span></span>
-          </Link>
+          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+            <LazyImage
+              src={logoSrc}
+              alt="Acadomix Logo"
+              spinnerSize="sm"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                window.dispatchEvent(new CustomEvent('open-lightbox', { detail: { src: logoSrc, alt: 'Acadomix Logo' } }));
+              }}
+              className="h-11 w-11 sm:h-13 sm:w-13 rounded-2xl object-contain cursor-pointer active:scale-95 transition-transform shadow-lg shadow-crimson/20 border border-gold/30 hover:border-gold transition-colors"
+            />
+            <Link
+              to="/"
+              className="flex flex-col items-start active:scale-95 transition-transform"
+            >
+              <span className="text-xs sm:text-lg md:text-2xl font-black tracking-[0.1em] sm:tracking-[0.15em] text-gradient uppercase leading-none">
+                ACADOMIX
+              </span>
+              <span className="text-[6px] sm:text-[9px] md:text-[10px] font-extrabold text-gradient tracking-[0.02em] sm:tracking-[0.05em] uppercase leading-none mt-0.5 sm:mt-1">
+                {tagline}
+              </span>
+            </Link>
+          </div>
           <div className="flex items-center gap-2">
             <Link to="/admin" className="p-2 text-white/30 hover:text-crimson transition-colors">
               <Shield className="w-4 h-4" />
