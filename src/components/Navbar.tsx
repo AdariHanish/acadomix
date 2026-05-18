@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Shield } from 'lucide-react';
 import { AssetsDB, AdminAuth, SettingsDB } from '../utils/storage';
+import LazyImage from './LazyImage';
 
 const sectionLinks = [
   { name: 'Services', id: 'services' },
@@ -96,9 +97,10 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Logo */}
           <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-            <img
+            <LazyImage
               src={logoSrc}
               alt="Acadomix Logo"
+              spinnerSize="sm"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -109,12 +111,12 @@ export default function Navbar() {
             <Link
               to="/"
               onClick={() => { AdminAuth.logout(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-              className="hidden min-[400px]:flex flex-col items-start active:scale-95 transition-transform"
+              className="flex flex-col items-start active:scale-95 transition-transform"
             >
-              <span className="text-lg sm:text-xl md:text-2xl font-black tracking-[0.15em] text-gradient uppercase leading-none">
+              <span className="text-xs sm:text-lg md:text-2xl font-black tracking-[0.1em] sm:tracking-[0.15em] text-gradient uppercase leading-none">
                 ACADOMIX
               </span>
-              <span className="text-[7px] sm:text-[9px] md:text-[10px] font-extrabold text-gradient tracking-[0.05em] uppercase leading-none mt-1">
+              <span className="text-[6px] sm:text-[9px] md:text-[10px] font-extrabold text-gradient tracking-[0.02em] sm:tracking-[0.05em] uppercase leading-none mt-0.5 sm:mt-1">
                 {tagline}
               </span>
             </Link>
@@ -122,7 +124,7 @@ export default function Navbar() {
 
           {/* Nav Links - Unified Glass Pill */}
           <div className="flex-1 max-w-[50%] sm:max-w-xl mx-2 sm:mx-4 overflow-hidden flex justify-center">
-            <nav className="flex items-center gap-1 sm:gap-2 px-3 py-1 sm:py-1.5 rounded-full glass-card border border-gold/10 overflow-x-auto hide-scrollbar whitespace-nowrap max-w-full">
+            <nav className="flex items-center gap-1 sm:gap-2 px-3 py-1 sm:py-1.5 rounded-full glass-card border border-gold/10 overflow-x-auto small-header-scrollbar whitespace-nowrap max-w-full">
               {sectionLinks.map((link) => (
                 <button
                   key={link.name}

@@ -300,4 +300,42 @@ footer {
     inset 0 1px 0 rgba(212, 168, 83, 0.15) !important;
 }
 
+/* Custom extremely thin and beautiful scrollbar for header menu */
+.small-header-scrollbar::-webkit-scrollbar {
+  height: 3px !important;
+}
+.small-header-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2) !important;
+  border-radius: 9999px !important;
+}
+.small-header-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #dc143c, #d4a853) !important;
+  border-radius: 9999px !important;
+}
+.small-header-scrollbar {
+  scrollbar-width: thin !important;
+  scrollbar-color: #d4a853 rgba(0,0,0,0.2) !important;
+}
+
+/* Touch screen glow activation for glass-cards */
+.glass-card-active {
+  background: linear-gradient(135deg, rgba(220, 20, 60, 0.15) 0%, rgba(150, 10, 30, 0.25) 40%, rgba(180, 140, 50, 0.25) 60%, rgba(212, 168, 83, 0.15) 100%) !important;
+  border-color: rgba(220, 20, 60, 0.45) !important;
+  box-shadow: 0 16px 48px rgba(220, 20, 60, 0.2), 0 8px 24px rgba(0,0,0,0.4), 0 0 50px rgba(220, 20, 60, 0.12), inset 0 1px 0 rgba(212, 168, 83, 0.25) !important;
+  transform: scale(1.02) !important;
+}
+
+/* Premium Crimson and Gold Spinner */
+.premium-spinner {
+  border: 3px solid rgba(212, 168, 83, 0.15) !important;
+  border-top-color: #dc143c !important; /* crimson */
+  border-right-color: #d4a853 !important; /* gold */
+  border-radius: 50% !important;
+  animation: premium-spin 0.8s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite !important;
+}
+
+@keyframes premium-spin {
+  to { transform: rotate(360deg); }
+}
+
 

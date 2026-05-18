@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUp, Heart, Phone, Mail, MapPin, Shield } from 'lucide-react';
 import { AdminAuth, AssetsDB, SettingsDB } from '../utils/storage';
+import LazyImage from './LazyImage';
 
 const footerLinks = {
   Services: [
@@ -74,9 +75,10 @@ export default function Footer() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-2 lg:col-span-2">
             <Link to="/" onClick={() => { AdminAuth.logout(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="inline-flex items-start gap-2.5 mb-3 sm:mb-5 group">
-              <img 
+              <LazyImage 
                 src={logoSrc} 
                 alt="Acadomix" 
+                spinnerSize="sm"
                 className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl object-contain border border-gold/20 group-active:scale-90 transition-transform shadow-lg shadow-crimson/10 mt-1"
               />
               <div className="flex flex-col items-start">

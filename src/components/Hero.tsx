@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Zap, Users, Award, Clock, Sparkles } from 'lucide-react';
 import { ReviewsDB } from '../utils/storage';
+import LazyImage from './LazyImage';
 
 export default function Hero() {
   const [totalStudents, setTotalStudents] = useState(300);
@@ -17,9 +18,10 @@ export default function Hero() {
   return (
     <section id="home" className="relative min-h-[100svh] flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0">
-        <img 
+        <LazyImage 
           src="/api/assets?asset_name=hero_bg" 
           alt="" 
+          spinnerSize="lg"
           className="w-full h-full object-cover opacity-30" 
           onError={(e) => (e.currentTarget.src = '/images/hero-bg.jpg')}
         />

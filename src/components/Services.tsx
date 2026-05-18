@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Code2, Globe, FileCode, Database, Cpu, FileText, CheckCircle, BookOpen, ArrowRight } from 'lucide-react';
 
@@ -13,6 +14,8 @@ const services = [
 ];
 
 export default function Services() {
+  const [activeTouchIndex, setActiveTouchIndex] = useState<number | null>(null);
+
   const handleServiceClick = (serviceTitle: string) => {
     let domain = serviceTitle;
     if (serviceTitle === 'Plagiarism Removal') domain = 'Plagiarism Removal';
@@ -25,6 +28,20 @@ export default function Services() {
     else if (serviceTitle === 'Research Papers') domain = 'Research Paper';
     
     window.dispatchEvent(new CustomEvent('select-service', { detail: domain }));
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    const target = document.elementFromPoint(touch.clientX, touch.clientY);
+    if (target) {
+      const cardEl = target.closest('[data-index]');
+      if (cardEl) {
+        const index = parseInt(cardEl.getAttribute('data-index') || '', 10);
+        if (!isNaN(index) && index !== activeTouchIndex) {
+          setActiveTouchIndex(index);
+        }
+      }
+    }
   };
 
   return (
@@ -40,12 +57,18 @@ export default function Services() {
           </h2>
         </motion.div>
  
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
+        <div 
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5"
+          onTouchMove={handleTouchMove}
+        >
           {services.map((s, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.5, delay: i * 0.06 }}
               onClick={() => handleServiceClick(s.title)}
+              onTouchStart={() => setActiveTouchIndex(i)}
+              data-index={i}
               className={`glass-card rounded-2xl p-4 sm:p-5 relative overflow-hidden group active:bg-white/5 cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 ${
-                s.popular ? 'ring-1 ring-gold/40' : ''} ${s.highlight ? 'ring-1 ring-crimson/40' : ''}`}>
+                activeTouchIndex === i ? 'glass-card-active' : ''
+              } ${s.popular ? 'ring-1 ring-gold/40' : ''} ${s.highlight ? 'ring-1 ring-crimson/40' : ''}`}>
               {s.popular && <div className="absolute -top-px -right-px px-2.5 py-0.5 bg-gradient-to-r from-gold-dark to-gold text-black text-[9px] sm:text-[10px] font-bold rounded-bl-xl rounded-tr-2xl uppercase tracking-wider">Popular</div>}
               {s.highlight && <div className="absolute -top-px -right-px px-2.5 py-0.5 bg-gradient-to-r from-crimson to-gold text-white text-[9px] sm:text-[10px] font-bold rounded-bl-xl rounded-tr-2xl uppercase tracking-wider">0% Plag</div>}
 
