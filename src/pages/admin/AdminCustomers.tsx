@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Users, Phone, Mail, FileText, ArrowRight, ShieldCheck, Heart, User, Sparkles } from 'lucide-react';
+import { Search, Users, Phone, Mail, FileText, ArrowRight, ShieldCheck, Heart, User, Sparkles, Download } from 'lucide-react';
 import { PaymentsDB } from '../../utils/storage';
 import { Payment } from '../../types';
 import { SpinnerOverlay } from '../../components/Spinner';
@@ -125,6 +125,33 @@ export default function AdminCustomers() {
     return { total: list.length, female: femaleCount, male: maleCount, revenue: totalRevenue };
   }, [customersList]);
 
+  const handleDownloadExcel = () => {
+    // Build CSV content with requested columns
+    const headers = ['Name', 'College', 'Year of Study', 'Phone No'];
+    const rows = filteredCustomers.map(c => {
+      // Extract college and year from project names or payment data
+      const collegeName = c.email.split('@')[0] || 'N/A';
+      const yearOfStudy = c.projects.length > 0 ? `${c.projects.length} project(s)` : 'N/A';
+      return [
+        c.name,
+        collegeName,
+        yearOfStudy,
+        c.phone
+      ].map(val => `"${String(val).replace(/"/g, '""')}"`).join(',');
+    });
+    
+    const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Acadomix_Customers_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -135,14 +162,23 @@ export default function AdminCustomers() {
           <p className="text-[13px] text-white/30">Detailed record of active users and acquired project history.</p>
         </div>
         
-        {/* Gender Filter Tabs */}
-        <div className="flex gap-1 p-1 bg-white/[0.03] rounded-lg border border-border">
-          {(['All', 'Male', 'Female'] as const).map(g => (
-            <button key={g} onClick={() => setGenderFilter(g)}
-              className={`px-3 py-1.5 rounded-md text-[12px] font-medium transition-all ${genderFilter === g ? 'bg-gradient-to-r from-crimson to-gold text-white shadow' : 'text-white/30 hover:text-white/60'}`}>
-              {g}
-            </button>
-          ))}
+        {/* Gender Filter Tabs + Download */}
+        <div className="flex items-center gap-3">
+          <div className="flex gap-1 p-1 bg-white/[0.03] rounded-lg border border-border">
+            {(['All', 'Male', 'Female'] as const).map(g => (
+              <button key={g} onClick={() => setGenderFilter(g)}
+                className={`px-3 py-1.5 rounded-md text-[12px] font-medium transition-all ${genderFilter === g ? 'bg-gradient-to-r from-crimson to-gold text-white shadow' : 'text-white/30 hover:text-white/60'}`}>
+                {g}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={handleDownloadExcel}
+            disabled={filteredCustomers.length === 0}
+            className="flex items-center gap-1.5 px-4 py-2 bg-green-500/10 border border-green-500/20 text-green-400 text-[12px] font-semibold rounded-lg hover:bg-green-500/20 hover:border-green-500/30 disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95"
+          >
+            <Download className="w-3.5 h-3.5" /> Download Excel
+          </button>
         </div>
       </div>
 

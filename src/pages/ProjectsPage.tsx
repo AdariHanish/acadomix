@@ -192,7 +192,7 @@ export default function ProjectsPage() {
                         </div>
                         
                         <a
-                          href={`https://wa.me/919515192936?text=${encodeURIComponent(`Hi! Acadomix, I’m interested in discussing the project: "${project.title}" (₹${project.our_price}).`)}`}
+                          href={`https://wa.me/918897492936?text=${encodeURIComponent(`Hi! Acadomix, I’m interested in discussing the project: "${project.title}" (₹${project.our_price}).`)}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="w-full py-3.5 bg-gradient-to-r from-gold-dark to-gold text-black text-sm font-bold rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform"

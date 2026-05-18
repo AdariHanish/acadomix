@@ -158,11 +158,11 @@ export const LeadsDB = {
 
 // App Assets
 export const AssetsDB = {
-  get: async (assetName: 'logo' | 'payment_qr'): Promise<AppAsset | undefined> => {
+  get: async (assetName: string): Promise<AppAsset | undefined> => {
     const assets = await fetchAPI(`/assets?asset_name=${assetName}`);
     return assets.length > 0 ? assets[0] : undefined;
   },
-  set: async (assetName: 'logo' | 'payment_qr', data: string, mimeType: string): Promise<AppAsset> => {
+  set: async (assetName: string, data: string, mimeType: string): Promise<AppAsset> => {
     await fetchAPI('/assets', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },

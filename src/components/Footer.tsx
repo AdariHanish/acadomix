@@ -1,6 +1,7 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUp, Heart, Phone, Mail, MapPin, Shield } from 'lucide-react';
-import { AdminAuth } from '../utils/storage';
+import { AdminAuth, AssetsDB } from '../utils/storage';
 
 const footerLinks = {
   Services: [
@@ -15,31 +16,46 @@ const footerLinks = {
   ],
   Support: [
     { name: 'Contact Us', href: '#contact' },
-    { name: 'WhatsApp', href: 'https://wa.me/919515192936', external: true },
+    { name: 'WhatsApp', href: `https://wa.me/918897492936?text=${encodeURIComponent('Hi! Acadomix, I’m interested in discussing a project collaboration with you.')}`, external: true },
     { name: 'Privacy Policy', href: '#' }, { name: 'Terms', href: '#' },
   ],
 };
 
 export default function Footer() {
   const scrollTo = (id: string) => { AdminAuth.logout(); document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }); };
+  const [logoSrc, setLogoSrc] = useState('/images/logo-placeholder.png');
+
+  useEffect(() => {
+    AssetsDB.get('logo').then(logo => {
+      if (logo?.data) setLogoSrc(logo.data);
+    }).catch(() => {
+      // Silently keep placeholder if API unavailable
+    });
+  }, []);
 
   return (
-    <footer className="relative bg-surface pt-12 sm:pt-16 lg:pt-20 pb-6 sm:pb-8">
+    <footer className="relative pt-12 sm:pt-16 lg:pt-20 pb-6 sm:pb-8">
       <div className="gold-divider mb-10 sm:mb-14" />
       <div className="container-responsive">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 sm:gap-8 mb-10 sm:mb-14">
           {/* Brand */}
           <div className="col-span-2 md:col-span-2 lg:col-span-2">
-            <Link to="/" onClick={() => { AdminAuth.logout(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="inline-flex items-center gap-2 mb-3 sm:mb-5 group">
-              <img src="/images/logo-placeholder.png" alt="Acadomix" className="h-7 w-7 sm:h-9 sm:w-9 rounded-xl object-contain group-active:scale-90 transition-transform" />
-              <span className="text-base sm:text-lg font-bold text-white/80">Acado<span className="text-gradient">mix</span></span>
+            <Link to="/" onClick={() => { AdminAuth.logout(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="inline-flex items-center gap-2.5 mb-3 sm:mb-5 group">
+              <img 
+                src={logoSrc} 
+                alt="Acadomix" 
+                className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl object-contain border border-gold/20 group-active:scale-90 transition-transform shadow-lg shadow-crimson/10"
+                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden'); }}
+              />
+              <span className="hidden w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-crimson to-gold flex items-center justify-center text-white font-black text-lg flex-shrink-0">A</span>
+              <span className="text-lg sm:text-xl font-black tracking-[0.2em] text-gradient uppercase">ACADOMIX</span>
             </Link>
             <p className="text-[10px] sm:text-sm text-white/25 leading-relaxed max-w-xs mb-4">
               Your trusted partner for academic projects. Student-friendly prices, expert delivery.
             </p>
             <div className="space-y-1.5 text-[10px] sm:text-sm">
-              <a href="tel:+919515192936" className="flex items-center gap-2 text-white/25 hover:text-gold active:text-crimson transition-colors">
-                <Phone className="w-3 h-3 flex-shrink-0" /> +91 95151 92936
+              <a href="tel:+918897492936" className="flex items-center gap-2 text-white/25 hover:text-gold active:text-crimson transition-colors">
+                <Phone className="w-3 h-3 flex-shrink-0" /> +91 88974 92936
               </a>
               <a href="mailto:acadomix@gmail.com" className="flex items-center gap-2 text-white/25 hover:text-gold active:text-crimson transition-colors">
                 <Mail className="w-3 h-3 flex-shrink-0" /> acadomix@gmail.com
@@ -78,7 +94,7 @@ export default function Footer() {
             © {new Date().getFullYear()} Acadomix. Made with <Heart className="w-2.5 h-2.5 text-crimson fill-crimson" /> for students.
           </p>
           <div className="flex items-center gap-2">
-            <a href="https://wa.me/919515192936?text=hi!%20iam%20intrested%20to%20do%20a%20work%20with%20you" target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full glass flex items-center justify-center text-white/25 hover:text-green-400 active:bg-green-500/10 transition-all text-xs">💬</a>
+            <a href={`https://wa.me/918897492936?text=${encodeURIComponent('Hi! Acadomix, I’m interested in discussing a project collaboration with you.')}`} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full glass flex items-center justify-center text-white/25 hover:text-green-400 active:bg-green-500/10 transition-all text-xs">💬</a>
             <a href="mailto:acadomix@gmail.com" className="w-8 h-8 rounded-full glass flex items-center justify-center text-white/25 hover:text-gold active:bg-gold/10 transition-all"><Mail className="w-3.5 h-3.5" /></a>
             <Link to="/admin" onClick={() => AdminAuth.logout()} className="w-8 h-8 rounded-full glass flex items-center justify-center text-white/25 hover:text-crimson active:bg-crimson/10 transition-all"><Shield className="w-3.5 h-3.5" /></Link>
           </div>

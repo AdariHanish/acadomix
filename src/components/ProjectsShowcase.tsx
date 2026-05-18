@@ -237,7 +237,7 @@ export default function ProjectsShowcase() {
 
                     {/* CTA */}
                     <a
-                      href={`https://wa.me/919515192936?text=${encodeURIComponent(`Hi! Acadomix, I’m interested in discussing the project: "${project.title}" (₹${project.our_price}).`)}`}
+                      href={`https://wa.me/918897492936?text=${encodeURIComponent(`Hi! Acadomix, I’m interested in discussing the project: "${project.title}" (₹${project.our_price}).`)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="mt-4 w-full py-3 bg-gradient-to-r from-crimson to-crimson-dark text-white text-xs sm:text-sm font-semibold rounded-xl flex items-center justify-center gap-2 btn-glow shine active:scale-[0.98] transition-transform"

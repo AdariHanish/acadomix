@@ -93,7 +93,12 @@ export default function AdminLogin() {
       }
     } catch (err: any) {
       console.error(err);
-      setError(`Network error: ${err.message || 'Please check your internet connection.'}`);
+      // Distinguish between network errors and API errors
+      if (err.message?.includes('Failed to fetch') || err.message?.includes('NetworkError')) {
+        setError('Network error: Unable to reach the server. Please check your internet connection and try again.');
+      } else {
+        setError(`Error: ${err.message || 'Failed to send OTP. Please try again.'}`);
+      }
     } finally {
       setSubmitting(false);
     }

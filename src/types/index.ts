@@ -60,7 +60,7 @@ export interface Review {
 
 export interface AppAsset {
   id: number;
-  asset_name: 'logo' | 'payment_qr';
+  asset_name: string;
   mime_type: string;
   data: string; // Base64
   updated_at: string;

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Upload, Send, GraduationCap } from 'lucide-react';
 import { compressImage } from '../utils/image';
+import { AssetsDB } from '../utils/storage';
 
 interface Props {
   isOpen: boolean;
@@ -16,7 +17,7 @@ export default function StudentDiscountModal({ isOpen, onClose }: Props) {
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const compressed = await compressImage(file, 1);
+    const compressed = await compressImage(file, 0.45); // Compress to ~400KB max for faster database save
     setIdCard(compressed);
     setIdCardName(file.name);
   };
@@ -28,25 +29,38 @@ export default function StudentDiscountModal({ isOpen, onClose }: Props) {
     }
     setSending(true);
 
-    // WhatsApp deep link — message then they upload manually
-    const msg = encodeURIComponent(
-      `Hi Acadomix! 🎓 I want to claim the 10% Student Discount.\n\n` +
-      `I am sending my college ID card for verification below.\n\n` +
-      `Please apply the discount on my next project! 🙏`
-    );
-    const waUrl = `https://wa.me/919515192936?text=${msg}`;
-    
-    // Open WhatsApp first
-    window.open(waUrl, '_blank');
+    try {
+      // 1. Generate a unique asset name for this student's ID card
+      const uniqueAssetName = `studentid_${Date.now()}`;
+      
+      // 2. Parse the MIME type
+      const mimeMatch = idCard.match(/^data:(image\/[a-zA-Z+.-]+);base64,/);
+      const mimeType = mimeMatch ? mimeMatch[1] : 'image/png';
+      
+      // 3. Upload the asset to database (no local download)
+      await AssetsDB.set(uniqueAssetName, idCard, mimeType);
+      
+      // 4. Generate the direct hosted link for the admin to view
+      const publicUrl = `${window.location.origin}/api/assets?asset_name=${uniqueAssetName}&raw=true`;
 
-    // Also trigger a download of their ID card so they can share in WA
-    const link = document.createElement('a');
-    link.href = idCard;
-    link.download = 'my-college-id.jpg';
-    link.click();
-
-    setSending(false);
-    onClose();
+      // 5. Build WhatsApp message with EXACT user-requested text
+      const msg = encodeURIComponent(
+        `Hi Acadomix! I want to claim the 10% Student Discount. I am sending my college ID card for verification below. Please apply the discount on my next project!\n\n` +
+        `📎 College ID Card: ${publicUrl}`
+      );
+      
+      const waUrl = `https://wa.me/918897492936?text=${msg}`;
+      
+      // Open WhatsApp — no file downloads, just the hosted link
+      window.open(waUrl, '_blank');
+      
+      setSending(false);
+      onClose();
+    } catch (err: any) {
+      console.error('Failed to upload/link discount ID:', err);
+      alert('Failed to connect to gateway. Please check your network and try again.');
+      setSending(false);
+    }
   };
 
   return (
@@ -112,8 +126,8 @@ export default function StudentDiscountModal({ isOpen, onClose }: Props) {
               </label>
 
               <div className="p-3 rounded-xl bg-gold/5 border border-gold/10 text-xs text-gold/60 flex gap-2">
-                <span>💡</span>
-                <span>After clicking "Claim Discount", WhatsApp will open with a pre-filled message. Your ID card image will also be downloaded — simply attach it in WhatsApp to complete verification.</span>
+                <span>🎓</span>
+                <span>Clicking "Claim Discount" uploads your ID card securely and opens WhatsApp with a pre-filled hosted verification link. No downloads required!</span>
               </div>
 
               <button

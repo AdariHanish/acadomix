@@ -64,7 +64,7 @@ export default function Hero() {
             className="w-full sm:w-auto px-8 py-3.5 sm:py-4 bg-gradient-to-r from-crimson via-crimson-dark to-gold-dark text-white text-sm sm:text-lg font-semibold rounded-full btn-glow shine flex items-center justify-center gap-2 active:scale-[0.97] transition-transform">
             <Zap className="w-4 h-4 sm:w-5 sm:h-5" /> Start Your Project <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
-          <a href="https://wa.me/919515192936?text=hi!%20iam%20intrested%20to%20do%20a%20work%20with%20you" target="_blank" rel="noopener noreferrer"
+          <a href={`https://wa.me/918897492936?text=${encodeURIComponent('Hi! Acadomix, I’m interested in discussing a project collaboration with you.')}`} target="_blank" rel="noopener noreferrer"
             className="w-full sm:w-auto px-8 py-3.5 sm:py-4 glass text-white/80 hover:text-white text-sm sm:text-lg font-semibold rounded-full transition-all duration-300 hover:bg-white/10 active:scale-[0.97] flex items-center justify-center gap-2">
             💬 WhatsApp Us
           </a>

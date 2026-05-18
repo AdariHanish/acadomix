@@ -89,7 +89,7 @@ export default function Contact() {
               <h3 className="text-xs sm:text-base font-bold text-white mb-3 sm:mb-4">📍 Contact Information</h3>
               <div className="space-y-3">
                 {[
-                  { icon: <Phone className="w-4 h-4" />, label: 'Call / WhatsApp', value: '+91 95151 92936', href: 'tel:+919515192936', color: 'group-hover:text-gold' },
+                  { icon: <Phone className="w-4 h-4" />, label: 'Call / WhatsApp', value: '+91 88974 92936', href: 'tel:+918897492936', color: 'group-hover:text-gold' },
                   { icon: <Mail className="w-4 h-4" />, label: 'Email', value: 'acadomix@gmail.com', href: 'mailto:acadomix@gmail.com', color: 'group-hover:text-crimson' },
                   { icon: <MapPin className="w-4 h-4" />, label: 'Office', value: '65-5-259, VUDA Colony, Vizag - 530011', href: 'https://maps.google.com/?q=VUDA+Colony+Visakhapatnam', color: 'group-hover:text-gold' },
                   { icon: <Clock className="w-4 h-4" />, label: 'Hours', value: 'Mon - Sat: 9 AM - 9 PM', href: '#', color: 'group-hover:text-crimson' },
@@ -105,7 +105,7 @@ export default function Contact() {
               </div>
             </div>
 
-            <a href="https://wa.me/919515192936?text=hi!%20iam%20intrested%20to%20do%20a%20work%20with%20you" target="_blank" rel="noopener noreferrer"
+            <a href={`https://wa.me/918897492936?text=${encodeURIComponent('Hi! Acadomix, I’m interested in discussing a project collaboration with you.')}`} target="_blank" rel="noopener noreferrer"
               className="glass-card rounded-2xl p-4 sm:p-5 text-center block group hover:ring-1 hover:ring-green-500/30 active:bg-white/5 transition-all">
               <MessageCircle className="w-7 h-7 sm:w-9 sm:h-9 text-green-400 mx-auto mb-1.5 group-hover:scale-110 transition-transform" />
               <p className="text-green-400 text-xs sm:text-sm font-semibold">WhatsApp Us Now</p>

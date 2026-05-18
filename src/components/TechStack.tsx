@@ -32,7 +32,7 @@ const tech = [
   { name: 'Redis', color: '#DC382D', category: 'Database', slug: 'redis' },
   { name: 'SQLite', color: '#003B57', category: 'Database', slug: 'sqlite' },
   // Cloud / DevOps
-  { name: 'AWS', color: '#FF9900', category: 'Cloud / DevOps', slug: 'amazonwebservices' },
+  { name: 'AWS', color: '#FF9900', category: 'Cloud / DevOps', slug: 'amazonaws' },
   { name: 'Docker', color: '#2496ED', category: 'Cloud / DevOps', slug: 'docker' },
   { name: 'GitHub Actions', color: '#2088FF', category: 'Cloud / DevOps', slug: 'githubactions' },
   { name: 'Vercel', color: '#FFFFFF', category: 'Cloud / DevOps', slug: 'vercel' },
@@ -174,7 +174,7 @@ export default function TechStack() {
               </div>
 
               {/* Tech Grid with Real Brand Logos */}
-              <div className="flex-1 overflow-y-auto p-6 sm:p-8 relative z-10">
+              <div className="flex-1 overflow-y-auto p-6 sm:p-8 relative z-10" style={{ scrollBehavior: 'smooth', WebkitOverflowScrolling: 'touch' }}>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
                   {filtered.map((t, i) => (
                     <motion.div

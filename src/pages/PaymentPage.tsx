@@ -200,7 +200,7 @@ export default function PaymentPage() {
               </form>
 
               <div className="mt-5 pt-5 border-t border-white/5 text-center">
-                <p className="text-xs sm:text-sm text-white/20">Need help? <a href="https://wa.me/919515192936" target="_blank" rel="noopener noreferrer" className="text-green-400 hover:underline">WhatsApp us</a></p>
+                <p className="text-xs sm:text-sm text-white/20">Need help? <a href={`https://wa.me/918897492936?text=${encodeURIComponent("Hi! Acadomix, I'm interested in discussing a project collaboration with you.")}`} target="_blank" rel="noopener noreferrer" className="text-green-400 hover:underline">WhatsApp us</a></p>
               </div>
             </div>
           </motion.div>
