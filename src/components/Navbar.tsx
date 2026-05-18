@@ -69,9 +69,18 @@ export default function Navbar() {
   };
 
   const navItemClass = (isActive: boolean) =>
-    `relative flex-shrink-0 px-4 py-1.5 sm:px-5 sm:py-2 mx-1 text-[11px] sm:text-[13px] font-medium whitespace-nowrap transition-all duration-300 active:scale-95 group rounded-full glass-card flex items-center justify-center ${
-      isActive ? 'border-gold text-white shadow-[0_0_15px_rgba(255,215,0,0.2)]' : 'border-white/10 text-white/70 hover:text-white hover:border-gold/50'
+    `relative flex-shrink-0 px-3 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-[13px] font-medium whitespace-nowrap transition-colors duration-250 active:scale-95 group flex items-center justify-center ${
+      isActive ? 'text-gold' : 'text-white/60 hover:text-white'
     }`;
+
+  // Gold animated underline
+  const Underline = ({ active }: { active: boolean }) => (
+    <span className={`absolute bottom-1 left-1/2 h-[1.5px] rounded-full transition-all duration-300 ease-out ${
+      active
+        ? 'w-1/2 -translate-x-1/2 bg-gradient-to-r from-crimson via-gold to-crimson'
+        : 'w-0 -translate-x-1/2 bg-gradient-to-r from-gold to-crimson group-hover:w-1/2'
+    }`} />
+  );
 
   return (
     <motion.header
@@ -103,28 +112,32 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Nav Links */}
-          <nav className="flex items-center overflow-x-auto hide-scrollbar mx-1 sm:mx-3 flex-1 justify-start sm:justify-center px-2 py-2">
-            {sectionLinks.map((link) => (
-              <button
-                key={link.name}
-                onClick={() => scrollTo(link.id)}
-                className={navItemClass(activeSection === link.id)}
-              >
-                {link.name}
-              </button>
-            ))}
-            {routeLinks.map((link) => (
-              <Link
-                key={link.name}
-                to={link.href}
-                onClick={() => AdminAuth.logout()}
-                className={navItemClass(location.pathname === link.href)}
-              >
-                {link.name}
-              </Link>
-            ))}
-          </nav>
+          {/* Nav Links - Unified Glass Pill */}
+          <div className="flex-1 max-w-[50%] sm:max-w-xl mx-2 sm:mx-4 overflow-hidden flex justify-center">
+            <nav className="flex items-center gap-1 sm:gap-2 px-3 py-1 sm:py-1.5 rounded-full glass-card border border-gold/10 overflow-x-auto hide-scrollbar whitespace-nowrap max-w-full">
+              {sectionLinks.map((link) => (
+                <button
+                  key={link.name}
+                  onClick={() => scrollTo(link.id)}
+                  className={navItemClass(activeSection === link.id)}
+                >
+                  {link.name}
+                  <Underline active={activeSection === link.id} />
+                </button>
+              ))}
+              {routeLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  to={link.href}
+                  onClick={() => AdminAuth.logout()}
+                  className={navItemClass(location.pathname === link.href)}
+                >
+                  {link.name}
+                  <Underline active={location.pathname === link.href} />
+                </Link>
+              ))}
+            </nav>
+          </div>
 
           {/* Admin + CTA */}
           <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
