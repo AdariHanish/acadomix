@@ -3,7 +3,6 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Shield } from 'lucide-react';
 import { AssetsDB, AdminAuth, SettingsDB } from '../utils/storage';
-import LazyImage from './LazyImage';
 
 const sectionLinks = [
   { name: 'Services', id: 'services' },
