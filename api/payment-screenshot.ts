@@ -18,12 +18,12 @@ export default async function handler(req: any, res: any) {
     }
 
     const payment = rows[0];
-    if (!payment.screenshot_data) {
+    if (!payment || !payment.screenshot_data) {
       return res.status(404).json({ error: 'Screenshot not found' });
     }
 
     // Parse base64 data url if present
-    const base64Data = payment.screenshot_data.includes('base64,') 
+    const base64Data = (typeof payment.screenshot_data === 'string' && payment.screenshot_data.includes('base64,')) 
       ? payment.screenshot_data.split('base64,')[1] 
       : payment.screenshot_data;
     const imgBuffer = Buffer.from(base64Data, 'base64');

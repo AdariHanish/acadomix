@@ -1,9 +1,5 @@
 import { Lead, Project, Payment, Review, AppAsset, SiteSettings } from '../types';
 
-export function initializeStorage() {
-  // Deprecated, no-op since data comes from API now
-}
-
 // In-memory cache to make transactions fraction-of-a-second fast
 const cache: Record<string, { data: any, timestamp: number }> = {};
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes

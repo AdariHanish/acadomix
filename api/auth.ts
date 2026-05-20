@@ -4,6 +4,9 @@ export default async function handler(req: any, res: any) {
   if (req.method === 'POST') {
     try {
       const { password } = req.body;
+      if (!password) {
+        return res.status(400).json({ error: 'Password is required' });
+      }
       const [rows]: any = await pool.query('SELECT admin_password FROM site_settings LIMIT 1');
       if (rows.length > 0 && rows[0].admin_password === password) {
         res.status(200).json({ success: true });

@@ -14,6 +14,9 @@ export default async function handler(req: any, res: any) {
       
       if (asset_name && rows.length > 0 && raw === 'true') {
         const asset = rows[0];
+        if (!asset || !asset.data) {
+          return res.status(404).json({ error: 'Asset data not found' });
+        }
         // Parse base64 data url if present
         const base64Data = asset.data.includes('base64,') 
           ? asset.data.split('base64,')[1] 

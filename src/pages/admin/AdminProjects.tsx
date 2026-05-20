@@ -83,6 +83,7 @@ export default function AdminProjects() {
       
       // For simplicity, we open the first one and alert the user
       customers.forEach((c, index) => {
+        if (!c || !c.phone) return; // Skip if customer or phone is missing
         setTimeout(() => {
           const url = `https://wa.me/91${c.phone.replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`;
           window.open(url, '_blank');
