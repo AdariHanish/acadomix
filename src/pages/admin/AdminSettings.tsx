@@ -259,9 +259,13 @@ export default function AdminSettings() {
                             const compressedData = canvas.toDataURL('image/webp', 0.8);
                             
                             // Upload to server
+                            const token = localStorage.getItem('acadomix_admin_auth');
                             fetch('/api/assets', {
                               method: 'PUT',
-                              headers: { 'Content-Type': 'application/json' },
+                              headers: {
+                                'Content-Type': 'application/json',
+                                ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                              },
                               body: JSON.stringify({
                                 asset_name: asset.key,
                                 data: compressedData,
