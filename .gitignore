@@ -1,6 +1,7 @@
 # Dependencies
 node_modules/
-
+setup_db.py
+update_reviews.py
 # Build output
 dist/
 build/
