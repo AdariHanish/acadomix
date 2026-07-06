@@ -116,7 +116,7 @@ export default function ProjectsPage() {
           </div>
 
           {loading ? (
-            <div className="py-20"><AppleLoader /></div>
+            <label className="block relative"><AppleLoader /></label>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               <AnimatePresence mode="popLayout">
@@ -163,11 +163,11 @@ export default function ProjectsPage() {
                         <div className="space-y-1.5">
                           <div className="flex justify-between text-[11px] text-white/50 uppercase tracking-widest">
                             <span>Project Value</span>
-                            <span className="line-through">₹{project.original_price.toLocaleString()}</span>
+                            <span className="text-red-500 line-through">₹{project.original_price.toLocaleString()}</span>
                           </div>
                           <div className="flex justify-between text-[11px] text-white/60 font-bold uppercase tracking-widest">
                             <span>Market Price</span>
-                            <span className="line-through decoration-gold/60">₹{project.market_price.toLocaleString()}</span>
+                            <span className="text-yellow-400 line-through decoration-gold/60">₹{project.market_price.toLocaleString()}</span>
                           </div>
                         </div>
 
