@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Send, ArrowLeft, CheckCircle, Calendar, GraduationCap, Briefcase, Quote, Shield, X, Users } from 'lucide-react';
 import { ReviewsDB, AssetsDB, SettingsDB } from '../utils/storage';
 import { Review } from '../types';
-import LazyImage from '../components/LazyImage';
+
 import AppleLoader from '../components/AppleLoader';
 import WhatsAppButton from '../components/WhatsAppButton';
 

@@ -9,8 +9,6 @@ import WhatsAppButton from '../components/WhatsAppButton';
 
 import { ClickableImage } from '../components/ImageLightbox';
 import { Spinner } from '../components/Spinner';
-import LazyImage from '../components/LazyImage';
-
 export default function PaymentPage() {
 
   const [qrCode, setQrCode] = useState<string | null>(null);
