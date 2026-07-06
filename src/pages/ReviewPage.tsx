@@ -7,7 +7,7 @@ import { Review } from '../types';
 import LazyImage from '../components/LazyImage';
 import AppleLoader from '../components/AppleLoader';
 import WhatsAppButton from '../components/WhatsAppButton';
-import { useScrollHoverFix } from '../hooks/useScrollHoverFix';
+
 import DateInput from '../components/DateInput';
 
 // Fractional star rating (Amazon/Flipkart style)
@@ -49,7 +49,7 @@ const projectTypes = [
 ];
 
 export default function ReviewPage() {
-  useScrollHoverFix();
+
   const [reviews, setReviews] = useState<Review[]>([]);
   const [totalStudents, setTotalStudents] = useState(300);
   const [loading, setLoading] = useState(true);

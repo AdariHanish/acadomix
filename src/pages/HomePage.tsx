@@ -11,10 +11,10 @@ import CTA from '../components/CTA';
 import Contact from '../components/Contact';
 import Footer from '../components/Footer';
 import WhatsAppButton from '../components/WhatsAppButton';
-import { useScrollHoverFix } from '../hooks/useScrollHoverFix';
+
 
 export default function HomePage() {
-  useScrollHoverFix();
+
 
   return (
     <div className="bg-black min-h-screen text-white">

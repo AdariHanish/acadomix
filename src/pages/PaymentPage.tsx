@@ -6,13 +6,13 @@ import { PaymentsDB, AssetsDB, SettingsDB } from '../utils/storage';
 import { compressImage } from '../utils/image';
 import AppleLoader from '../components/AppleLoader';
 import WhatsAppButton from '../components/WhatsAppButton';
-import { useScrollHoverFix } from '../hooks/useScrollHoverFix';
+
 import { ClickableImage } from '../components/ImageLightbox';
 import { Spinner } from '../components/Spinner';
 import LazyImage from '../components/LazyImage';
 
 export default function PaymentPage() {
-  useScrollHoverFix();
+
   const [qrCode, setQrCode] = useState<string | null>(null);
   const [logoSrc, setLogoSrc] = useState('/images/logo-placeholder.png');
   const [submitted, setSubmitted] = useState(false);
