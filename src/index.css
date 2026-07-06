@@ -335,3 +335,7 @@ footer {
 }
 
 
+
+/* Optimization Classes */
+.content-visibility-auto { content-visibility: auto; contain-intrinsic-size: 1000px; }
+

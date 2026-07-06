@@ -13,7 +13,42 @@ import reviewsHandler from '../../api/reviews';
 import settingsHandler from '../../api/settings';
 import setupHandler from '../../api/setup';
 
+import crypto from 'crypto';
+
 const app = express();
+
+const SECRET = process.env.VITE_JWT_SECRET || 'acadomix_fallback_secure_key_2026_xYz';
+
+function verifyToken(token: string) {
+  try {
+    const [payload, signature] = token.split('.');
+    if (!payload || !signature) return false;
+    const expectedSignature = crypto.createHmac('sha256', SECRET).update(payload).digest('base64');
+    return signature === expectedSignature;
+  } catch {
+    return false;
+  }
+}
+
+// Global Security Middleware
+app.use((req, res, next) => {
+  // Allow all GETs, and POSTs to public auth/leads endpoints
+  if (req.method === 'GET' || req.path.includes('/auth') || req.path.includes('/leads') || req.method === 'OPTIONS') {
+    return next();
+  }
+  
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Unauthorized: Missing or invalid token format' });
+  }
+  
+  const token = authHeader.split(' ')[1];
+  if (!verifyToken(token)) {
+    return res.status(403).json({ error: 'Forbidden: Invalid token signature' });
+  }
+  
+  next();
+});
 
 // Increase JSON payload limit for base64 images
 app.use(express.json({ limit: '20mb' }));

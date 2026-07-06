@@ -66,7 +66,7 @@ export default function ProjectsShowcase() {
   const scrollToContact = () => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
 
   return (
-    <section id="projects" className="relative py-20 sm:py-28 lg:py-32 bg-surface-1 section-glow overflow-hidden">
+    <section id="projects" className="relative py-20 sm:py-28 lg:py-32 bg-surface-1 section-glow overflow-hidden content-visibility-auto">
       <div className="absolute inset-0 bg-grid opacity-20" />
 
       <div className="container-responsive relative z-10">

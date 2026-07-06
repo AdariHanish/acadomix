@@ -31,6 +31,8 @@ export default function LazyImage({ src, alt, className = '', spinnerSize = 'md'
       <img
         src={src}
         alt={alt}
+        loading="lazy"
+        decoding="async"
         className={`${className} transition-all duration-300 ${loaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
         onLoad={(e) => {
           setLoaded(true);

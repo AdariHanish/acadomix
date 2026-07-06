@@ -12,7 +12,19 @@ async function fetchAPI(endpoint: string, options?: RequestInit) {
     return cache[endpoint].data;
   }
 
-  const response = await fetch(`/api${endpoint}`, options);
+  // Inject Authorization header for mutations
+  const finalOptions = { ...options };
+  if (!isGet) {
+    const token = localStorage.getItem('acadomix_admin_auth');
+    if (token) {
+      finalOptions.headers = {
+        ...finalOptions.headers,
+        'Authorization': `Bearer ${token}`
+      };
+    }
+  }
+
+  const response = await fetch(`/api${endpoint}`, finalOptions);
   if (!response.ok) {
     throw new Error(`API error: ${response.statusText}`);
   }
@@ -197,8 +209,8 @@ export const AdminAuth = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password })
       });
-      if (result.success) {
-        localStorage.setItem('acadomix_admin_auth', 'true');
+      if (result.success && result.token) {
+        localStorage.setItem('acadomix_admin_auth', result.token);
         return true;
       }
     } catch {
@@ -210,6 +222,6 @@ export const AdminAuth = {
     localStorage.removeItem('acadomix_admin_auth');
   },
   isLoggedIn: (): boolean => {
-    return localStorage.getItem('acadomix_admin_auth') === 'true';
+    return !!localStorage.getItem('acadomix_admin_auth');
   },
 };
