@@ -22,7 +22,7 @@ export default function Testimonials() {
   const marqueeReviews = [...reviews, ...reviews, ...reviews, ...reviews].slice(0, 20);
 
   return (
-    <section id="testimonials" className="py-20 sm:py-32 bg-black relative overflow-hidden content-visibility-auto">
+    <section id="testimonials" className="py-20 sm:py-32 bg-black relative overflow-hidden">
       {/* Background Glows */}
       <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[500px] h-[500px] bg-crimson/10 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-gold/5 blur-[100px] rounded-full pointer-events-none" />

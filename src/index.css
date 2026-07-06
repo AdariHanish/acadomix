@@ -261,11 +261,10 @@ html {
 }
 
 /* ===== PREMIUM ULTRA-SMOOTH SCROLLS IN MODALS/POPUPS ===== */
-.modal-content, [class*="modal"], [class*="popup"], .overflow-y-auto, .overflow-x-auto, [style*="overflow"] {
+.modal-content, [class*="modal"], [class*="popup"] {
   scroll-behavior: smooth !important;
   -webkit-overflow-scrolling: touch !important;
   overscroll-behavior: contain;
-  will-change: scroll-position;
 }
 
 /* Hardware-accelerated scroll containers */
@@ -335,7 +334,4 @@ footer {
 }
 
 
-
-/* Optimization Classes */
-.content-visibility-auto { content-visibility: auto; contain-intrinsic-size: 1000px; }
 
