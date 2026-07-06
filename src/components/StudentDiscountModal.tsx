@@ -135,8 +135,8 @@ export default function StudentDiscountModal({ isOpen, onClose }: Props) {
                     >✕</button>
                   </div>
                 ) : (
-                  <div className="border-2 border-dashed border-white/10 hover:border-gold/40 rounded-2xl p-6 text-center transition-colors cursor-pointer group">
-                    <input type="file" accept="image/*" onChange={handleFile} className="w-full h-full opacity-0 cursor-pointer" />
+                  <div className="relative border-2 border-dashed border-white/10 hover:border-gold/40 rounded-2xl p-6 text-center transition-colors cursor-pointer group">
+                    <input type="file" accept="image/*" onChange={handleFile} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
                     <Upload className="w-8 h-8 text-white/20 group-hover:text-gold/50 mx-auto mb-2 transition-colors" />
                     <p className="text-sm text-white/30 group-hover:text-white/50 transition-colors">Click to upload or drag & drop</p>
                     <p className="text-xs text-white/15 mt-1">JPG, PNG, WEBP supported</p>
