@@ -51,7 +51,7 @@ export default function ProjectsShowcase() {
     const normal = projects.filter(p => !p.is_popular && !p.is_trending);
 
     const allSorted = [...trendingAndPopular, ...onlyPopular, ...normal];
-    const displayed = allSorted.slice(0, 2);
+    const displayed = allSorted.slice(0, 5);
     const remainingCount = totalCount - displayed.length;
 
     return { displayed, remainingCount };

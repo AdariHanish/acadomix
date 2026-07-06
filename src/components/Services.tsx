@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Code2, Globe, FileCode, Database, Cpu, FileText, CheckCircle, BookOpen, ArrowRight } from 'lucide-react';
+import { Code2, Globe, FileCode, Database, Cpu, FileText, CheckCircle, BookOpen, ArrowRight, Tag } from 'lucide-react';
+import { SettingsDB } from '../utils/storage';
+import { SiteSettings } from '../types';
 
-const services = [
+const defaultServices = [
   { icon: <FileCode className="w-6 h-6" />, title: 'Mini Projects', price: '₹1,500', tag: 'onwards', desc: 'Complete mini projects with source code, documentation & presentation.', features: ['Full Source Code', 'Documentation & PPT', '5-7 Day Delivery'], accent: 'crimson' },
   { icon: <Cpu className="w-6 h-6" />, title: 'Major Projects', price: '₹4,500', tag: 'onwards', desc: 'Full-scale final year projects with research papers & demo videos.', features: ['Complete Documentation', 'Video Demo', '14-21 Days'], popular: true, accent: 'gold' },
   { icon: <Globe className="w-6 h-6" />, title: 'Websites', price: '₹2,000', tag: 'onwards', desc: 'Modern, responsive websites for portfolios, startups & businesses.', features: ['Responsive Design', 'SEO Ready', 'Hosting Help'], accent: 'crimson' },
@@ -15,6 +17,11 @@ const services = [
 
 export default function Services() {
   const [activeTouchIndex, setActiveTouchIndex] = useState<number | null>(null);
+  const [settings, setSettings] = useState<SiteSettings | null>(null);
+
+  useEffect(() => {
+    SettingsDB.get().then(setSettings);
+  }, []);
 
   const handleServiceClick = (serviceTitle: string) => {
     let domain = serviceTitle;
@@ -44,13 +51,46 @@ export default function Services() {
     }
   };
 
+  const services = defaultServices.map(s => {
+    let currentPrice = s.price;
+    let originalPrice = '';
+    
+    if (settings) {
+      if (s.title === 'Mini Projects') currentPrice = `₹${settings.mini_project_price}`;
+      else if (s.title === 'Major Projects') currentPrice = `₹${settings.major_project_price}`;
+      else if (s.title === 'Research Papers') currentPrice = `₹${settings.research_paper_price}`;
+      else if (s.title === 'Plagiarism Removal') currentPrice = `₹${settings.plagiarism_removal_price}`;
+      else if (s.title === 'Custom Projects') currentPrice = `₹${settings.custom_project_price}`;
+
+      if (settings.offer_active) {
+        if (s.title === 'Mini Projects' && settings.original_mini_price) originalPrice = `₹${settings.original_mini_price}`;
+        else if (s.title === 'Major Projects' && settings.original_major_price) originalPrice = `₹${settings.original_major_price}`;
+        else if (s.title === 'Custom Projects' && settings.original_custom_price) originalPrice = `₹${settings.original_custom_price}`;
+      }
+    }
+    
+    return { ...s, currentPrice, originalPrice };
+  });
+
+  const offerActive = settings?.offer_active && settings?.offer_end_time && new Date(settings.offer_end_time).getTime() > Date.now();
+
   return (
     <section id="services" className="relative py-20 sm:py-28 lg:py-32 section-glow overflow-hidden">
       <div className="absolute inset-0 bg-dots opacity-20" />
       <div className="container-responsive relative z-10">
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.15 }} transition={{ duration: 0.7 }}
           className="text-center mb-12 sm:mb-16 lg:mb-20">
-          <span className="inline-block px-4 py-1.5 rounded-full glass text-xs sm:text-sm text-gold font-semibold mb-4 uppercase tracking-wider">Our Services</span>
+          {offerActive ? (
+            <motion.span 
+              animate={{ scale: [1, 1.05, 1], boxShadow: ["0 0 10px rgba(220,20,60,0.2)", "0 0 20px rgba(220,20,60,0.6)", "0 0 10px rgba(220,20,60,0.2)"] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-crimson/20 border border-crimson/40 text-xs sm:text-sm text-white font-bold mb-4 uppercase tracking-widest shadow-lg shadow-crimson/20"
+            >
+              <Tag className="w-4 h-4 text-gold" /> {settings.offer_reason} - Limited Time
+            </motion.span>
+          ) : (
+            <span className="inline-block px-4 py-1.5 rounded-full glass text-xs sm:text-sm text-gold font-semibold mb-4 uppercase tracking-wider">Our Services</span>
+          )}
           <h2 className="text-section text-white mb-4">
             Everything you need.
             <br /><span className="text-gradient">All in one place.</span>
@@ -68,24 +108,37 @@ export default function Services() {
               data-index={i}
               className={`glass-card rounded-2xl p-4 sm:p-5 relative overflow-hidden group active:bg-white/5 cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 ${
                 activeTouchIndex === i ? 'glass-card-active' : ''
-              } ${s.popular ? 'ring-1 ring-gold/40' : ''} ${s.highlight ? 'ring-1 ring-crimson/40' : ''}`}>
-              {s.popular && <div className="absolute -top-px -right-px px-2.5 py-0.5 bg-gradient-to-r from-gold-dark to-gold text-black text-[9px] sm:text-[10px] font-bold rounded-bl-xl rounded-tr-2xl uppercase tracking-wider">Popular</div>}
-              {s.highlight && <div className="absolute -top-px -right-px px-2.5 py-0.5 bg-gradient-to-r from-crimson to-gold text-white text-[9px] sm:text-[10px] font-bold rounded-bl-xl rounded-tr-2xl uppercase tracking-wider">0% Plag</div>}
+              } ${s.popular ? 'ring-1 ring-gold/40' : ''} ${s.highlight ? 'ring-1 ring-crimson/40' : ''} ${offerActive && s.originalPrice ? 'border-crimson/30 shadow-[0_0_30px_rgba(220,20,60,0.1)]' : ''}`}>
+              
+              {offerActive && s.originalPrice && (
+                <div className="absolute inset-0 bg-gradient-to-br from-crimson/5 to-transparent pointer-events-none" />
+              )}
 
-              <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-xl glass flex items-center justify-center mb-3 sm:mb-4 ${
+              {s.popular && !offerActive && <div className="absolute -top-px -right-px px-2.5 py-0.5 bg-gradient-to-r from-gold-dark to-gold text-black text-[9px] sm:text-[10px] font-bold rounded-bl-xl rounded-tr-2xl uppercase tracking-wider">Popular</div>}
+              {s.highlight && !offerActive && <div className="absolute -top-px -right-px px-2.5 py-0.5 bg-gradient-to-r from-crimson to-gold text-white text-[9px] sm:text-[10px] font-bold rounded-bl-xl rounded-tr-2xl uppercase tracking-wider">0% Plag</div>}
+              {offerActive && s.originalPrice && (
+                <div className="absolute -top-px -right-px px-3 py-1 bg-gradient-to-r from-crimson to-crimson-dark text-white text-[10px] font-black rounded-bl-2xl rounded-tr-2xl uppercase tracking-widest shadow-lg shadow-crimson/50 animate-pulse">
+                  Offer Active
+                </div>
+              )}
+
+              <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-xl glass flex items-center justify-center mb-3 sm:mb-4 relative z-10 ${
                 s.accent === 'gold' ? 'text-gold/60 group-hover:text-gold' : 'text-crimson/60 group-hover:text-crimson'
               } transition-colors`}>
                 {s.icon}
               </div>
 
-              <h3 className="text-card-title text-white mb-0.5">{s.title}</h3>
-              <div className="flex items-baseline gap-1.5 mb-2 sm:mb-3">
-                <span className="text-lg sm:text-xl font-bold text-gradient">{s.price}</span>
+              <h3 className="text-card-title text-white mb-0.5 relative z-10">{s.title}</h3>
+              <div className="flex items-baseline gap-1.5 mb-2 sm:mb-3 relative z-10 flex-wrap">
+                <span className="text-lg sm:text-xl font-bold text-gradient">{s.currentPrice}</span>
+                {s.originalPrice && (
+                  <span className="text-xs sm:text-sm text-red-500/60 line-through decoration-red-500/60 font-semibold">{s.originalPrice}</span>
+                )}
                 <span className="text-[10px] sm:text-xs text-white/25">{s.tag}</span>
               </div>
-              <p className="text-[11px] sm:text-xs text-white/35 leading-relaxed mb-3 sm:mb-4">{s.desc}</p>
+              <p className="text-[11px] sm:text-xs text-white/35 leading-relaxed mb-3 sm:mb-4 relative z-10">{s.desc}</p>
 
-              <ul className="space-y-1.5 mb-4">
+              <ul className="space-y-1.5 mb-4 relative z-10">
                 {s.features.map((f, j) => (
                   <li key={j} className="flex items-center gap-2 text-[10px] sm:text-xs text-white/40">
                     <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${s.accent === 'gold' ? 'bg-gold/60' : 'bg-crimson/60'}`} />
@@ -94,10 +147,10 @@ export default function Services() {
                 ))}
               </ul>
 
-              <a href={`https://wa.me/918897492936?text=${encodeURIComponent(`Hi! I'm interested in ${s.title} (${s.price}). Can you help?`)}`}
+              <a href={`https://wa.me/918897492936?text=${encodeURIComponent(`Hi! I'm interested in ${s.title} (${s.currentPrice}). Can you help?`)}`}
                 target="_blank" rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className={`flex items-center gap-1 text-[10px] sm:text-xs font-semibold transition-colors group/link active:scale-95 ${
+                className={`flex items-center gap-1 text-[10px] sm:text-xs font-semibold transition-colors group/link active:scale-95 relative z-10 ${
                   s.accent === 'gold' ? 'text-gold hover:text-gold-light' : 'text-crimson hover:text-crimson-light'
                 }`}>
                 Enquire Now <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 group-hover/link:translate-x-0.5 transition-transform" />

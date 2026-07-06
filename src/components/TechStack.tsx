@@ -162,7 +162,7 @@ export default function TechStack() {
                   <button
                     key={cat}
                     onClick={() => setActiveCategory(cat)}
-                    className={`flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+                    className={`flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap ${
                       activeCategory === cat
                         ? 'bg-gradient-to-r from-crimson to-gold text-white shadow-lg shadow-crimson/20'
                         : 'bg-white/5 text-white/30 hover:text-white/60 hover:bg-white/10'
