@@ -54,12 +54,13 @@ export default function AdminLayout() {
         // User switched tabs or minimized — logout for security
         AdminAuth.logout();
         navigate('/admin', { replace: true });
-        window.location.reload(); // Hard reload to clear any visual state immediately
+        // Removed window.location.reload() because hard-reloading a sleeping background tab 
+        // causes modern browsers (Chrome/Edge) to kill the request, resulting in ERR_CONNECTION_TIMED_OUT.
       }
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, []);
+  }, [navigate]);
 
   const handleLogout = () => {
     AdminAuth.logout();
