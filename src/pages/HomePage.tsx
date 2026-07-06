@@ -17,26 +17,18 @@ export default function HomePage() {
   useScrollHoverFix();
 
   return (
-    <div className="bg-black min-h-screen text-white gold-line-wrapper gold-accent-right">
+    <div className="bg-black min-h-screen text-white">
       <Navbar />
       <Hero />
-      <div className="gold-divider" />
       <Services />
-      <div className="gold-divider" />
       <ProjectsShowcase />
-      <div className="gold-divider" />
       <WhyUs />
       <TechStack />
-      <div className="gold-divider" />
       <Pricing />
-      <div className="gold-divider" />
       <HowItWorks />
-      <div className="gold-divider" />
       <Testimonials />
       <CTA />
-      <div className="gold-divider" />
       <Contact />
-      <div className="gold-divider" />
       <Footer />
       <WhatsAppButton />
     </div>

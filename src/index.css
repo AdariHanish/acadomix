@@ -44,26 +44,9 @@ body {
 ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, rgba(220,20,60,0.4), rgba(212,168,83,0.4)); border-radius: 100px; }
 ::selection { background: rgba(220,20,60,0.35); color: #fff; }
 
-/* ===== GOLD LINE — decorative vertical line through website ===== */
+/* ===== GOLD LINE — removed, was causing visible vertical lines ===== */
 .gold-line-wrapper { position: relative; }
-.gold-line-wrapper::before {
-  content: '';
-  position: fixed; top: 0; bottom: 0; left: 50%; width: 1px;
-  background: linear-gradient(180deg, transparent 0%, rgba(212,168,83,0.08) 15%, rgba(212,168,83,0.18) 40%, rgba(220,20,60,0.12) 50%, rgba(212,168,83,0.18) 60%, rgba(212,168,83,0.08) 85%, transparent 100%);
-  pointer-events: none; z-index: 1;
-}
-.gold-line-wrapper::after {
-  content: '';
-  position: fixed; top: 0; bottom: 0; left: calc(50% - 220px); width: 1px;
-  background: linear-gradient(180deg, transparent, rgba(212,168,83,0.04) 30%, rgba(212,168,83,0.04) 70%, transparent);
-  pointer-events: none; z-index: 1;
-}
-.gold-accent-right::before {
-  content: '';
-  position: fixed; top: 0; bottom: 0; right: calc(50% - 220px); width: 1px;
-  background: linear-gradient(180deg, transparent, rgba(212,168,83,0.04) 30%, rgba(212,168,83,0.04) 70%, transparent);
-  pointer-events: none; z-index: 1;
-}
+.gold-accent-right {}
 
 /* ===== GLASS EFFECTS ===== */
 .glass {
@@ -214,8 +197,8 @@ body {
 
 /* ===== BACKGROUNDS ===== */
 .bg-grid {
-  background-image: linear-gradient(rgba(220,20,60,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(220,20,60,0.03) 1px, transparent 1px);
-  background-size: 50px 50px;
+  /* grid lines removed — was causing visible horizontal/vertical lines */
+  display: none;
 }
 .bg-dots {
   background-image: radial-gradient(rgba(220,20,60,0.12) 1px, transparent 1px);
@@ -229,10 +212,8 @@ body {
   pointer-events: none; z-index: 0;
 }
 
-.gold-divider {
-  height: 1px;
-  background: linear-gradient(90deg, transparent 10%, rgba(212,168,83,0.25) 35%, rgba(220,20,60,0.2) 50%, rgba(212,168,83,0.25) 65%, transparent 90%);
-}
+/* gold-divider removed — was causing visible horizontal lines */
+.gold-divider { display: none; }
 
 /* ===== CONTAINER ===== */
 .container-responsive {
@@ -246,9 +227,21 @@ body {
 
 *:focus-visible { outline: 2px solid rgba(220,20,60,0.5); outline-offset: 2px; }
 
-/* ===== PREMIUM DYNAMIC SMOOTH OVERRIDES (Apple & Glassy feel) ===== */
+/* ===== PREMIUM DYNAMIC SMOOTH OVERRIDES ===== */
+/* GPU-accelerate all interactive elements for 60fps smoothness */
 .glass-card, .card-hover, button, a, img, input, select, textarea, .modal-content {
-  transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: auto;
+}
+/* Smooth scroll — native 120Hz support */
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: none;
 }
 
 /* ===== CUSTOM SMOOTH CRIMSON/GOLD SCROLLBARS ===== */
