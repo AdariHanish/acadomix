@@ -7,7 +7,15 @@ interface Props {
   onClose: () => void;
 }
 
+import { useEffect } from 'react';
+
 export default function ImageLightbox({ src, alt = 'Image', onClose }: Props) {
+  useEffect(() => {
+    if (src) document.body.style.overflow = 'hidden';
+    else document.body.style.overflow = '';
+    return () => { document.body.style.overflow = ''; };
+  }, [src]);
+
   return (
     <AnimatePresence>
       {src && (

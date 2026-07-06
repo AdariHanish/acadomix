@@ -30,13 +30,29 @@ function verifyToken(token: string) {
   }
 }
 
+// Parse bodies first so middleware can read req.body
+app.use(express.json({ limit: '20mb' }));
+app.use(express.urlencoded({ extended: true, limit: '20mb' }));
+
 // Global Security Middleware
 app.use((req, res, next) => {
-  // Allow all GETs, and POSTs to public auth/leads endpoints
-  if (req.method === 'GET' || req.path.includes('/auth') || req.path.includes('/leads') || req.method === 'OPTIONS') {
-    return next();
-  }
+  // 1. Allow all GETs and OPTIONS
+  if (req.method === 'GET' || req.method === 'OPTIONS') return next();
   
+  // 2. Allow public auth/leads/payments/reviews POST endpoints
+  const isPublicPost = req.method === 'POST' && (
+    req.path.includes('/auth') || 
+    req.path.includes('/leads') || 
+    req.path.includes('/payments') || 
+    req.path.includes('/reviews')
+  );
+  if (isPublicPost) return next();
+
+  // 3. Allow public student ID asset uploads (must start with studentid_)
+  const isStudentIdUpload = req.method === 'PUT' && req.path.includes('/assets') && req.body?.asset_name?.startsWith('studentid_');
+  if (isStudentIdUpload) return next();
+  
+  // 4. Everything else requires a valid Admin JWT
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'Unauthorized: Missing or invalid token format' });
@@ -49,10 +65,6 @@ app.use((req, res, next) => {
   
   next();
 });
-
-// Increase JSON payload limit for base64 images
-app.use(express.json({ limit: '20mb' }));
-app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 
 // Helper to adapt Express req/res to Vercel-like handler
 const adaptHandler = (handler: any) => {

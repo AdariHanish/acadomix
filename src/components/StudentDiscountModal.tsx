@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Upload, Send, GraduationCap } from 'lucide-react';
 import { compressImage } from '../utils/image';
@@ -14,6 +14,11 @@ export default function StudentDiscountModal({ isOpen, onClose }: Props) {
   const [idCardName, setIdCardName] = useState('');
   const [studentName, setStudentName] = useState('');
   const [sending, setSending] = useState(false);
+  useEffect(() => {
+    if (isOpen) document.body.style.overflow = 'hidden';
+    else document.body.style.overflow = '';
+    return () => { document.body.style.overflow = ''; };
+  }, [isOpen]);
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
