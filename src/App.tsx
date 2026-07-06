@@ -22,7 +22,7 @@ const AdminAssets = React.lazy(() => import('./pages/admin/AdminAssets'));
 const AdminSettings = React.lazy(() => import('./pages/admin/AdminSettings'));
 const AdminIDCards = React.lazy(() => import('./pages/admin/AdminIDCards'));
 
-import { Analytics } from '@vercel/analytics/react';
+
 
 export default function App() {
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
@@ -95,8 +95,7 @@ export default function App() {
       {/* Global Image Lightbox */}
       <ImageLightbox src={lightboxSrc} alt={lightboxAlt} onClose={() => setLightboxSrc(null)} />
       
-      {/* Vercel Web Analytics */}
-      <Analytics />
+
     </HashRouter>
   );
 }
