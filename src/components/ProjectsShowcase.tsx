@@ -219,13 +219,13 @@ export default function ProjectsShowcase() {
 
                     {/* Pricing */}
                     <div className="border-t border-white/5 pt-4 space-y-1.5">
-                      <div className="flex justify-between text-[10px] sm:text-xs text-white/10">
+                      <div className="flex justify-between text-[10px] sm:text-xs text-red-500">
                         <span>Project Value:</span>
-                        <span className="line-through decoration-white/20">₹{project.original_price.toLocaleString()}</span>
+                        <span className="line-through decoration-red-500">₹{project.original_price.toLocaleString()}</span>
                       </div>
-                      <div className="flex justify-between text-[11px] sm:text-xs text-white/30">
+                      <div className="flex justify-between text-[11px] sm:text-xs text-yellow-500">
                         <span>Market Price:</span>
-                        <span className="line-through decoration-crimson/30 text-white/40">₹{project.market_price.toLocaleString()}</span>
+                        <span className="line-through decoration-yellow-500">₹{project.market_price.toLocaleString()}</span>
                       </div>
                       <div className="flex justify-between items-center pt-1">
                         <div className="flex flex-col">
