@@ -74,7 +74,7 @@ export default function ProjectsPage() {
           </div>
 
           {/* Category Filters */}
-          <div className="flex flex-wrap gap-2 mb-4 p-2 glass rounded-2xl sm:rounded-full overflow-x-auto no-scrollbar">
+          <div className="flex flex-wrap gap-2 mb-4 p-2 glass rounded-2xl sm:rounded-full">
             {categories.map((cat) => {
               const count = cat.id === 'all' ? allProjects.length : allProjects.filter(p => p.category === cat.id).length;
               return (

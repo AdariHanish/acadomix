@@ -53,6 +53,8 @@ export default function AdminLayout() {
       if (document.hidden) {
         // User switched tabs or minimized — logout for security
         AdminAuth.logout();
+        navigate('/admin', { replace: true });
+        window.location.reload(); // Hard reload to clear any visual state immediately
       }
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);

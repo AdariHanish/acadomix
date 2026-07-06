@@ -53,6 +53,21 @@ export default function AdminReviews() {
         </div>
       </div>
 
+      {/* Futuristic Stats Row */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-2 mt-4">
+        {[
+          { label: 'Total Reviews', value: reviews.length, color: 'text-white' },
+          { label: 'Pending', value: reviews.filter(r => !r.is_approved).length, color: 'text-gold' },
+          { label: 'Approved', value: reviews.filter(r => r.is_approved).length, color: 'text-green-400' },
+          { label: 'Deleted/Rejected', value: 'N/A', color: 'text-red-400' },
+        ].map(stat => (
+          <div key={stat.label} className="glass-card p-4 rounded-xl border border-white/5 bg-white/[0.02] flex flex-col justify-center shadow-lg shadow-black/20">
+            <p className="text-[10px] text-white/30 uppercase font-bold tracking-widest mb-1">{stat.label}</p>
+            <p className={`text-2xl font-black ${stat.color} tracking-tight`}>{stat.value}</p>
+          </div>
+        ))}
+      </div>
+
       {/* Search */}
       <div className="relative">
         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />

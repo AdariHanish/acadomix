@@ -22,8 +22,14 @@ export default function AdminSettings() {
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState<string | null>(null);
   const [assetTimestamps, setAssetTimestamps] = useState<Record<string, number>>({});
+  const [assetData, setAssetData] = useState<Record<string, string>>({});
 
-  useEffect(() => { SettingsDB.get().then(setSettings); }, []);
+  useEffect(() => { 
+    SettingsDB.get().then(setSettings); 
+    ['logo', 'hero_bg', 'payment_qr'].forEach(key => {
+      AssetsDB.get(key).then(a => { if (a) setAssetData(prev => ({...prev, [key]: a.data})) });
+    });
+  }, []);
 
   const savePricing = async () => {
     await SettingsDB.update({
@@ -203,7 +209,7 @@ export default function AdminSettings() {
                       <div className="w-5 h-5 border-2 border-crimson border-t-transparent rounded-full animate-spin" />
                     ) : (
                       <img 
-                        src={`/api/assets?asset_name=${asset.key}&raw=true&t=${assetTimestamps[asset.key] || Date.now()}`} 
+                        src={assetData[asset.key] || 'https://via.placeholder.com/150?text=No+Asset'} 
                         alt="Preview" 
                         className="max-w-full max-h-full object-contain"
                         onError={(e) => (e.currentTarget.src = 'https://via.placeholder.com/150?text=No+Asset')}
@@ -267,6 +273,7 @@ export default function AdminSettings() {
                             .then((data) => {
                               if (data.success) {
                                 setAssetTimestamps(prev => ({ ...prev, [asset.key]: Date.now() }));
+                                setAssetData(prev => ({ ...prev, [asset.key]: compressedData }));
                                 setSuccess(`${asset.label} uploaded!`);
                               } else {
                                 setError('Upload failed. Try a smaller image.');

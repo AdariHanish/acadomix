@@ -88,7 +88,14 @@ export default function Navbar() {
 
   const scrollTo = (id: string) => {
     AdminAuth.logout();
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    if (isHome) {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      window.location.href = '/#/';
+      setTimeout(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
   };
 
   const navItemClass = (isActive: boolean) =>
