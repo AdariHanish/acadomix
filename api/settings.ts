@@ -10,7 +10,7 @@ export default async function handler(req: any, res: any) {
     }
   } else if (req.method === 'PUT') {
     try {
-      const allowedFields = ['mini_project_price', 'major_project_price', 'custom_project_price', 'research_paper_price', 'plagiarism_removal_price', 'admin_password', 'security_question', 'security_answer', 'company_tagline', 'office_location_text', 'office_location_link', 'admin_phone'];
+      const allowedFields = ['mini_project_price', 'major_project_price', 'custom_project_price', 'research_paper_price', 'plagiarism_removal_price', 'admin_password', 'security_question', 'security_answer', 'company_tagline', 'office_location_text', 'office_location_link', 'admin_phone', 'offer_active', 'offer_reason', 'offer_end_time', 'original_mini_price', 'original_major_price', 'original_custom_price'];
       
       const [existing]: any = await pool.query('SELECT * FROM site_settings LIMIT 1');
       if (existing.length > 0) {

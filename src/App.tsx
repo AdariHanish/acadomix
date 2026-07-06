@@ -21,6 +21,7 @@ const AdminCustomers = React.lazy(() => import('./pages/admin/AdminCustomers'));
 const AdminAssets = React.lazy(() => import('./pages/admin/AdminAssets'));
 const AdminSettings = React.lazy(() => import('./pages/admin/AdminSettings'));
 const AdminIDCards = React.lazy(() => import('./pages/admin/AdminIDCards'));
+const AdminOffers = React.lazy(() => import('./pages/admin/AdminOffers'));
 
 
 
@@ -84,6 +85,7 @@ export default function App() {
             <Route path="customers" element={<AdminCustomers />} />
             <Route path="assets" element={<AdminAssets />} />
             <Route path="id-cards" element={<AdminIDCards />} />
+            <Route path="offers" element={<AdminOffers />} />
             <Route path="settings" element={<AdminSettings />} />
           </Route>
 

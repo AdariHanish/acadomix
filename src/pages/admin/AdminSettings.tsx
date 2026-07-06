@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Save, Lock, Check, Eye, EyeOff, AlertTriangle } from 'lucide-react';
-import { SettingsDB } from '../../utils/storage';
+import { SettingsDB, AssetsDB } from '../../utils/storage';
 import { SiteSettings } from '../../types';
 
 export default function AdminSettings() {
@@ -21,7 +21,6 @@ export default function AdminSettings() {
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState<string | null>(null);
-  const [assetTimestamps, setAssetTimestamps] = useState<Record<string, number>>({});
   const [assetData, setAssetData] = useState<Record<string, string>>({});
 
   useEffect(() => { 
@@ -158,9 +157,9 @@ export default function AdminSettings() {
             <div className="p-4 rounded-xl glass text-center">
               <p className="text-xs text-white/30 uppercase tracking-wider mb-1">Registered Mobile</p>
               <p className="text-lg font-bold text-white/80 tracking-wider">
-                {settings.admin_phone && settings.admin_phone.length >= 10
+                {settings?.admin_phone && settings.admin_phone.length >= 10
                   ? `${settings.admin_phone.slice(0, 4)}****${settings.admin_phone.slice(-2)}`
-                  : settings.admin_phone || '9515****36'}
+                  : settings?.admin_phone || '9515****36'}
               </p>
               <p className="text-xs text-white/20 mt-2">OTP will be sent to this number for password reset</p>
             </div>
@@ -272,7 +271,6 @@ export default function AdminSettings() {
                             .then(res => res.json())
                             .then((data) => {
                               if (data.success) {
-                                setAssetTimestamps(prev => ({ ...prev, [asset.key]: Date.now() }));
                                 setAssetData(prev => ({ ...prev, [asset.key]: compressedData }));
                                 setSuccess(`${asset.label} uploaded!`);
                               } else {

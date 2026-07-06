@@ -1,6 +1,6 @@
 import pool from './db.js';
 
-export default async function handler(req: any, res: any) {
+export default async function handler(_req: any, res: any) {
   try {
     console.log("Starting database setup...");
 
@@ -89,7 +89,13 @@ export default async function handler(req: any, res: any) {
       { name: 'company_tagline', type: "VARCHAR(255) DEFAULT 'Coding Your Ideas'" },
       { name: 'office_location_text', type: "VARCHAR(255) DEFAULT '65-5-259, VUDA Colony, Vizag - 530011'" },
       { name: 'office_location_link', type: "TEXT" },
-      { name: 'admin_phone', type: "VARCHAR(20) DEFAULT '9515192936'" }
+      { name: 'admin_phone', type: "VARCHAR(20) DEFAULT '9515192936'" },
+      { name: 'offer_active', type: "BOOLEAN DEFAULT FALSE" },
+      { name: 'offer_reason', type: "VARCHAR(255)" },
+      { name: 'offer_end_time', type: "VARCHAR(255)" },
+      { name: 'original_mini_price', type: "VARCHAR(100)" },
+      { name: 'original_major_price', type: "VARCHAR(100)" },
+      { name: 'original_custom_price', type: "VARCHAR(100)" }
     ];
 
     for (const col of columns) {
