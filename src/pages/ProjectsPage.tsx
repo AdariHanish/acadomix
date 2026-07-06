@@ -149,25 +149,25 @@ export default function ProjectsPage() {
                     </div>
 
                     <div className="p-6 flex flex-col flex-1">
-                      <p className="text-[10px] text-white/20 uppercase tracking-widest mb-1">{project.category} · {project.year_type}</p>
+                      <p className="text-[10px] text-white/50 uppercase tracking-widest mb-1">{project.category} · {project.year_type}</p>
                       <h3 className="text-xl font-bold text-white mb-3 group-hover:text-gold transition-colors">{project.title}</h3>
-                      <p className="text-sm text-white/40 leading-relaxed mb-6 flex-1 line-clamp-3">{project.description}</p>
+                      <p className="text-sm text-white/65 leading-relaxed mb-6 flex-1 line-clamp-3">{project.description}</p>
                       
                       <div className="flex flex-wrap gap-2 mb-6">
                         {project.features.split(',').slice(0, 3).map((f, j) => (
-                          <span key={j} className="text-[10px] px-2.5 py-1 rounded-lg bg-white/5 text-white/30 border border-white/5">{f.trim()}</span>
+                          <span key={j} className="text-[10px] px-2.5 py-1 rounded-lg bg-white/10 text-white/60 border border-white/10">{f.trim()}</span>
                         ))}
                       </div>
 
-                      <div className="mt-auto pt-6 border-t border-white/5 space-y-3">
-                        <div className="space-y-1">
-                          <div className="flex justify-between text-[10px] text-white/10 uppercase tracking-widest">
+                      <div className="mt-auto pt-6 border-t border-white/15 space-y-3">
+                        <div className="space-y-1.5">
+                          <div className="flex justify-between text-[11px] text-white/50 uppercase tracking-widest">
                             <span>Project Value</span>
                             <span className="line-through">₹{project.original_price.toLocaleString()}</span>
                           </div>
-                          <div className="flex justify-between text-[11px] text-white/30 font-bold uppercase tracking-widest">
+                          <div className="flex justify-between text-[11px] text-white/60 font-bold uppercase tracking-widest">
                             <span>Market Price</span>
-                            <span className="line-through decoration-gold/50">₹{project.market_price.toLocaleString()}</span>
+                            <span className="line-through decoration-gold/60">₹{project.market_price.toLocaleString()}</span>
                           </div>
                         </div>
 

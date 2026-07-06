@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Star, Send, ArrowLeft, CheckCircle, Calendar, GraduationCap, Briefcase, Quote, Shield } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Star, Send, ArrowLeft, CheckCircle, Calendar, GraduationCap, Briefcase, Quote, Shield, X, Users } from 'lucide-react';
 import { ReviewsDB, AssetsDB, SettingsDB } from '../utils/storage';
 import { Review } from '../types';
 import LazyImage from '../components/LazyImage';
@@ -9,6 +9,31 @@ import AppleLoader from '../components/AppleLoader';
 import WhatsAppButton from '../components/WhatsAppButton';
 import { useScrollHoverFix } from '../hooks/useScrollHoverFix';
 import DateInput from '../components/DateInput';
+
+// Fractional star rating (Amazon/Flipkart style)
+function FractionalStars({ rating, size = 'md' }: { rating: number; size?: 'sm' | 'md' | 'lg' }) {
+  const sizeClass = size === 'sm' ? 'w-3 h-3' : size === 'lg' ? 'w-6 h-6' : 'w-4 h-4';
+  return (
+    <div className="flex gap-0.5">
+      {[1, 2, 3, 4, 5].map(s => {
+        const fill = Math.min(1, Math.max(0, rating - (s - 1)));
+        return (
+          <span key={s} className="relative inline-block">
+            {/* Background (empty) star */}
+            <Star className={`${sizeClass} text-white/15`} />
+            {/* Foreground (filled) star clipped to fill% */}
+            <span
+              className="absolute inset-0 overflow-hidden"
+              style={{ width: `${fill * 100}%` }}
+            >
+              <Star className={`${sizeClass} fill-gold text-gold`} />
+            </span>
+          </span>
+        );
+      })}
+    </div>
+  );
+}
 
 const getTodayFormatted = () => {
   const now = new Date();
@@ -26,9 +51,10 @@ const projectTypes = [
 export default function ReviewPage() {
   useScrollHoverFix();
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [totalStudents, setTotalStudents] = useState(300); // Base count + dynamic
+  const [totalStudents, setTotalStudents] = useState(300);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [selectedReview, setSelectedReview] = useState<Review | null>(null);
   const [logoSrc, setLogoSrc] = useState(() => {
     try {
       return localStorage.getItem('acadomix_cached_logo') || '/images/logo-placeholder.png';
@@ -54,8 +80,14 @@ export default function ReviewPage() {
   useEffect(() => { 
     ReviewsDB.getApproved().then(data => {
       setReviews(data);
-      // Sync logic: Base 300 + actual approved reviews
-      setTotalStudents(300 + data.length);
+      // Count team members individually — 1 lead + N team members per team review
+      const count = data.reduce((total, r) => {
+        const teamCount = r.team_members
+          ? r.team_members.split(',').filter((m: string) => m.trim()).length
+          : 0;
+        return total + 1 + teamCount;
+      }, 0);
+      setTotalStudents(300 + count);
       setLoading(false);
     }); 
     AssetsDB.get('logo').then(logo => {
@@ -167,9 +199,9 @@ export default function ReviewPage() {
             <div className="text-center">
               <p className="text-2xl sm:text-3xl font-bold text-gradient">{avg}</p>
               <div className="flex gap-0.5 justify-center mt-1">
-                {[1,2,3,4,5].map(s => <Star key={s} className="w-3 h-3 sm:w-4 sm:h-4 text-gold fill-gold" />)}
+                <FractionalStars rating={parseFloat(avg)} size="md" />
               </div>
-              <p className="text-[10px] sm:text-xs text-white/25 mt-1">Average</p>
+              <p className="text-[10px] sm:text-xs text-white/35 mt-1">Average Rating</p>
             </div>
             <div className="w-px h-10 bg-white/10" />
             <div className="text-center">
@@ -293,10 +325,11 @@ export default function ReviewPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
                 {reviews.map((r, i) => (
                   <motion.div key={r.id} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
-                    className="glass-card rounded-2xl sm:rounded-3xl p-5 sm:p-6 flex flex-col group">
-                    <Quote className="w-8 h-8 text-crimson/20 mb-3 group-hover:text-crimson/40 transition-colors" />
-                    <p className="text-sm sm:text-base text-white/50 leading-relaxed mb-4 flex-1 italic line-clamp-4">"{r.experience}"</p>
-                    {r.pricing_review && <p className="text-xs text-gold/50 mb-3">💰 {r.pricing_review}</p>}
+                    onClick={() => setSelectedReview(r)}
+                    className="glass-card rounded-2xl sm:rounded-3xl p-5 sm:p-6 flex flex-col group cursor-pointer hover:border-crimson/30 active:scale-[0.98] transition-all">
+                    <Quote className="w-8 h-8 text-crimson/30 mb-3 group-hover:text-crimson/60 transition-colors" />
+                    <p className="text-sm sm:text-base text-white/65 leading-relaxed mb-4 flex-1 italic line-clamp-4">"{r.experience}"</p>
+                    {r.pricing_review && <p className="text-xs text-gold/60 mb-3">💰 {r.pricing_review}</p>}
                   
                     <div className="flex gap-0.5 mb-3">
                       {[1,2,3,4,5].map(s => <Star key={s} className={`w-4 h-4 ${s <= r.rating ? 'text-gold fill-gold' : 'text-white/10'}`} />)}
@@ -306,24 +339,29 @@ export default function ReviewPage() {
                       <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg glass text-crimson/70 text-[10px] sm:text-xs font-medium">
                         <Briefcase className="w-3 h-3" /> {r.project_type}
                       </span>
-                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg glass text-white/25 text-[10px] sm:text-xs">
+                      {r.team_members && (
+                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg glass text-gold/70 text-[10px] font-bold uppercase tracking-wider">
+                          <Users className="w-3 h-3" /> Team
+                        </span>
+                      )}
+                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg glass text-white/35 text-[10px] sm:text-xs">
                         <Calendar className="w-3 h-3" /> {new Date(r.date).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}
                       </span>
                     </div>
                   
-                    <div className="flex items-center gap-3 pt-4 border-t border-white/5">
-                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-crimson to-gold flex items-center justify-center text-white text-[10px] sm:text-xs font-bold">
+                    <div className="flex items-center gap-3 pt-4 border-t border-white/10">
+                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-crimson to-gold flex items-center justify-center text-white text-[10px] sm:text-xs font-bold flex-shrink-0">
                         {r.student_name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                       </div>
-                      <div>
-                        <p className="text-sm font-semibold text-white/70">{r.student_name}</p>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-white/80 truncate">{r.student_name}</p>
                         {r.team_members && (
-                          <p className="text-[10px] text-crimson/50 font-bold uppercase tracking-wider">Team: {r.team_members}</p>
+                          <p className="text-[10px] text-crimson/60 font-bold uppercase tracking-wider truncate">+ {r.team_members.split(',').length} more members</p>
                         )}
-                        <p className="text-[10px] sm:text-xs text-white/25 flex items-center gap-1"><GraduationCap className="w-3 h-3" /> {r.year_of_study} · {r.college_name}</p>
+                        <p className="text-[10px] sm:text-xs text-white/35 flex items-center gap-1"><GraduationCap className="w-3 h-3" /> {r.year_of_study} · {r.college_name}</p>
                       </div>
                     </div>
-                    <p className="mt-2 text-[10px] text-white/15">Project: {r.project_name}</p>
+                    <p className="mt-2 text-[10px] text-white/30">Project: {r.project_name}</p>
                   </motion.div>
                 ))}
               </div>
@@ -339,6 +377,104 @@ export default function ReviewPage() {
         )}
       </div>
       <WhatsAppButton />
+
+      {/* Review Detail Popup */}
+      <AnimatePresence>
+        {selectedReview && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 sm:p-8"
+            onClick={() => setSelectedReview(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.92, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.92, opacity: 0 }}
+              className="w-full max-w-lg bg-surface-1 border border-white/10 rounded-[30px] overflow-hidden shadow-2xl"
+              onClick={e => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="p-6 border-b border-white/5 bg-black/40 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-crimson to-gold flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+                    {selectedReview.student_name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-white">{selectedReview.student_name}</p>
+                    <p className="text-xs text-white/40">{selectedReview.year_of_study} · {selectedReview.college_name}</p>
+                  </div>
+                </div>
+                <button onClick={() => setSelectedReview(null)} className="p-2 bg-white/5 hover:bg-white/10 rounded-xl text-white/50 hover:text-white transition-colors">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Body */}
+              <div className="p-6 space-y-5 max-h-[60vh] overflow-y-auto">
+                {/* Team Members */}
+                {selectedReview.team_members && (
+                  <div className="p-4 rounded-2xl bg-crimson/5 border border-crimson/15">
+                    <p className="text-[10px] text-crimson/60 uppercase font-bold tracking-widest mb-3 flex items-center gap-1.5">
+                      <Users className="w-3.5 h-3.5" /> Team Members
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      <span className="flex items-center gap-1.5 px-3 py-1.5 bg-crimson/10 border border-crimson/25 rounded-full text-xs text-white font-semibold">
+                        <span className="w-2 h-2 rounded-full bg-crimson inline-block" />
+                        {selectedReview.student_name} <span className="text-crimson/60">(Lead)</span>
+                      </span>
+                      {selectedReview.team_members.split(',').filter(m => m.trim()).map((m, i) => (
+                        <span key={i} className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 border border-white/10 rounded-full text-xs text-white/70">
+                          <span className="w-2 h-2 rounded-full bg-gold/60 inline-block" />
+                          {m.trim()}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Project */}
+                <div>
+                  <p className="text-[10px] text-white/25 uppercase font-bold tracking-widest mb-1">Project</p>
+                  <p className="text-base font-bold text-gold">{selectedReview.project_name}</p>
+                  <p className="text-sm text-white/40">{selectedReview.project_type} · {new Date(selectedReview.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                </div>
+
+                {/* Rating */}
+                <div>
+                  <p className="text-[10px] text-white/25 uppercase font-bold tracking-widest mb-2">Rating</p>
+                  <div className="flex gap-1">{[...Array(5)].map((_, j) => <Star key={j} className={`w-6 h-6 ${j < selectedReview.rating ? 'fill-gold text-gold' : 'text-white/10'}`} />)}</div>
+                </div>
+
+                {/* Experience */}
+                <div>
+                  <p className="text-[10px] text-white/25 uppercase font-bold tracking-widest mb-2">Experience</p>
+                  <p className="text-sm text-white/75 leading-relaxed italic border-l-2 border-gold/30 pl-4">"{selectedReview.experience}"</p>
+                </div>
+
+                {/* Pricing */}
+                {selectedReview.pricing_review && (
+                  <div>
+                    <p className="text-[10px] text-white/25 uppercase font-bold tracking-widest mb-1">On Pricing</p>
+                    <p className="text-sm text-green-400/80 italic">"{selectedReview.pricing_review}"</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className="p-5 border-t border-white/5 bg-white/[0.02]">
+                <button
+                  onClick={() => setSelectedReview(null)}
+                  className="w-full py-3 glass rounded-xl text-white/60 hover:text-white text-sm font-medium transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -33,7 +33,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif;
   background: #000;
   min-height: 100vh;
-  color: #f5f5f7;
+  color: #ffffff;
   overflow-x: hidden;
   line-height: 1.6;
 }
@@ -76,17 +76,17 @@ body {
 
 /* IMPORTANT: No transform on hover — prevents scroll-hover desyncing */
 .glass-card {
-  background: linear-gradient(135deg, rgba(220, 20, 60, 0.08) 0%, rgba(150, 10, 30, 0.12) 40%, rgba(180, 140, 50, 0.12) 60%, rgba(212, 168, 83, 0.08) 100%);
-  backdrop-filter: blur(40px) saturate(200%) brightness(0.95);
-  -webkit-backdrop-filter: blur(40px) saturate(200%) brightness(0.95);
-  border: 1px solid rgba(212, 168, 83, 0.15);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(212, 168, 83, 0.1);
+  background: linear-gradient(135deg, rgba(220, 20, 60, 0.10) 0%, rgba(150, 10, 30, 0.16) 40%, rgba(180, 140, 50, 0.16) 60%, rgba(212, 168, 83, 0.10) 100%);
+  backdrop-filter: blur(40px) saturate(200%) brightness(1.05);
+  -webkit-backdrop-filter: blur(40px) saturate(200%) brightness(1.05);
+  border: 1px solid rgba(212, 168, 83, 0.22);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(212, 168, 83, 0.15);
   transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 .glass-card:hover {
-  background: linear-gradient(135deg, rgba(220, 20, 60, 0.15) 0%, rgba(150, 10, 30, 0.2) 40%, rgba(180, 140, 50, 0.2) 60%, rgba(212, 168, 83, 0.15) 100%);
-  border-color: rgba(220,20,60,0.35);
-  box-shadow: 0 16px 48px rgba(220,20,60,0.15), 0 8px 24px rgba(0,0,0,0.4), 0 0 50px rgba(220,20,60,0.08), inset 0 1px 0 rgba(212, 168, 83, 0.2);
+  background: linear-gradient(135deg, rgba(220, 20, 60, 0.18) 0%, rgba(150, 10, 30, 0.26) 40%, rgba(180, 140, 50, 0.26) 60%, rgba(212, 168, 83, 0.18) 100%);
+  border-color: rgba(220,20,60,0.45);
+  box-shadow: 0 16px 48px rgba(220,20,60,0.18), 0 8px 24px rgba(0,0,0,0.4), 0 0 50px rgba(220,20,60,0.10), inset 0 1px 0 rgba(212, 168, 83, 0.25);
 }
 
 .glass-nav {

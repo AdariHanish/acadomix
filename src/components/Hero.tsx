@@ -6,10 +6,20 @@ import LazyImage from './LazyImage';
 
 export default function Hero() {
   const [totalStudents, setTotalStudents] = useState(300);
+  const [totalProjects, setTotalProjects] = useState(0);
   
   useEffect(() => {
     ReviewsDB.getApproved().then(data => {
-      setTotalStudents(300 + data.length);
+      // Projects: each review = 1 project (team project still counts as 1)
+      setTotalProjects(data.length);
+      // Students: 1 (lead/solo) + count of team members per review
+      const count = data.reduce((total, r) => {
+        const teamCount = r.team_members
+          ? r.team_members.split(',').filter((m: string) => m.trim()).length
+          : 0;
+        return total + 1 + teamCount;
+      }, 0);
+      setTotalStudents(300 + count);
     });
   }, []);
 
@@ -77,7 +87,7 @@ export default function Hero() {
           className="mt-14 sm:mt-20 lg:mt-24">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto px-4">
             {[
-              { icon: <Award className="w-5 h-5 sm:w-6 sm:h-6" />, value: '100+', label: 'Projects Delivered', color: 'text-crimson' },
+              { icon: <Award className="w-5 h-5 sm:w-6 sm:h-6" />, value: `${totalProjects || 100}+`, label: 'Projects Delivered', color: 'text-crimson' },
               { icon: <Users className="w-5 h-5 sm:w-6 sm:h-6" />, value: `${totalStudents}+`, label: 'Happy Students', color: 'text-gold' },
               { icon: <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />, value: '98%', label: 'Success Rate', color: 'text-crimson' },
               { icon: <Clock className="w-5 h-5 sm:w-6 sm:h-6" />, value: '24/7', label: 'Support', color: 'text-gold' },
