@@ -66,6 +66,7 @@ export default function ReviewPage() {
   const [rating, setRating] = useState(5);
   const [hoverRating, setHoverRating] = useState(0);
   const [tagline, setTagline] = useState('Coding Your Ideas');
+  const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
   
   const [reviewType, setReviewType] = useState<'individual' | 'team'>('individual');
   const [memberCount, setMemberCount] = useState(2);
@@ -145,6 +146,12 @@ export default function ReviewPage() {
   const avg = reviews.length > 0 ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1) : '5.0';
   const inputCls = "w-full px-4 py-3 sm:py-3.5 glass-input rounded-xl text-white text-sm sm:text-base placeholder-white/25 focus:outline-none focus:border-crimson/30 transition-all";
   const labelCls = "block text-[10px] sm:text-xs text-white/30 mb-1.5 uppercase tracking-wider font-medium";
+
+  const sortedReviews = [...reviews].sort((a, b) => {
+    const dateA = new Date(a.date).getTime();
+    const dateB = new Date(b.date).getTime();
+    return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
+  });
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -322,8 +329,23 @@ export default function ReviewPage() {
             {loading ? (
               <AppleLoader />
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
-                {reviews.map((r, i) => (
+              <div className="space-y-6">
+                <div className="flex justify-end items-center px-2">
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="text-white/40 font-medium">Sort by:</span>
+                    <select 
+                      value={sortOrder} 
+                      onChange={(e) => setSortOrder(e.target.value as 'newest' | 'oldest')}
+                      className="bg-black border border-white/10 rounded-lg px-3 py-1.5 text-white/80 focus:outline-none focus:border-crimson/40 transition-colors cursor-pointer"
+                    >
+                      <option value="newest">Newest First</option>
+                      <option value="oldest">Oldest First</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
+                  {sortedReviews.map((r, i) => (
                   <motion.div key={r.id} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
                     onClick={() => setSelectedReview(r)}
                     className="glass-card rounded-2xl sm:rounded-3xl p-5 sm:p-6 flex flex-col group cursor-pointer hover:border-crimson/30 active:scale-[0.98] transition-all">
@@ -365,6 +387,7 @@ export default function ReviewPage() {
                   </motion.div>
                 ))}
               </div>
+            </div>
             )}
 
             {/* CTA */}

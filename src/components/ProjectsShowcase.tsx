@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { TrendingUp, Star, ArrowRight, Sparkles } from 'lucide-react';
@@ -21,6 +21,9 @@ export default function ProjectsShowcase() {
   const [error, setError] = useState<string | null>(null);
   const [activeDomain, setActiveDomain] = useState('all');
   const [activeType, setActiveType] = useState<'mini' | 'major'>('major');
+  const [hasScrolled, setHasScrolled] = useState(false);
+
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     ProjectsDB.getAll().then(data => {
@@ -31,6 +34,21 @@ export default function ProjectsShowcase() {
       setLoading(false);
     });
   }, []);
+
+  useEffect(() => {
+    // Subtle nudge animation on mount for mobile
+    const timeout = setTimeout(() => {
+      if (scrollRef.current && window.innerWidth < 640 && !hasScrolled) {
+        scrollRef.current.scrollTo({ left: 45, behavior: 'smooth' });
+        setTimeout(() => {
+          if (scrollRef.current) {
+            scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+          }
+        }, 500);
+      }
+    }, 1500);
+    return () => clearTimeout(timeout);
+  }, [hasScrolled]);
 
   const getShowcaseData = () => {
     let projects = allProjects;
@@ -89,8 +107,18 @@ export default function ProjectsShowcase() {
         </motion.div>
 
         {/* Filter Pills — scrollable on mobile */}
-        <div className="mb-4 sm:mb-6 -mx-2 px-2 overflow-x-auto no-scrollbar">
-          <div className="flex gap-1.5 sm:gap-2 justify-center min-w-max mx-auto p-1.5 glass rounded-full">
+        <div className="relative mb-4 sm:mb-6">
+          {!hasScrolled && (
+            <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-surface-1 via-surface-1/80 to-transparent pointer-events-none z-10 sm:hidden flex justify-end items-center pr-3">
+              <ArrowRight className="w-5 h-5 text-white/50 animate-pulse drop-shadow-md" />
+            </div>
+          )}
+          <div 
+            ref={scrollRef}
+            className="-mx-2 px-2 overflow-x-auto no-scrollbar relative"
+            onScroll={() => { if (!hasScrolled) setHasScrolled(true); }}
+          >
+            <div className="flex gap-1.5 sm:gap-2 justify-start sm:justify-center w-max mx-auto p-1.5 glass rounded-full">
             {categories.map((cat) => {
               const count = cat.id === 'all' ? allProjects.length : allProjects.filter(p => p.category === cat.id).length;
               return (
@@ -112,6 +140,7 @@ export default function ProjectsShowcase() {
                 </button>
               );
             })}
+            </div>
           </div>
         </div>
 
