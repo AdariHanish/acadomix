@@ -184,6 +184,16 @@ body {
   0% { transform: translateX(0%); }
   100% { transform: translateX(-50%); }
 }
+@keyframes orbFloat1 {
+  0%, 100% { transform: translate(0, 0); }
+  33% { transform: translate(20px, -30px); }
+  66% { transform: translate(-10px, -15px); }
+}
+@keyframes orbFloat2 {
+  0%, 100% { transform: translate(0, 0); }
+  33% { transform: translate(-30px, 20px); }
+  66% { transform: translate(15px, 10px); }
+}
 .animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
 .animate-border-glow { animation: border-glow 3s ease infinite; }
 .animate-marquee { animation: marquee 30s linear infinite; }
@@ -227,14 +237,10 @@ body {
 *:focus-visible { outline: 2px solid rgba(220,20,60,0.5); outline-offset: 2px; }
 
 /* ===== PREMIUM DYNAMIC SMOOTH OVERRIDES ===== */
-/* GPU-accelerate all interactive elements for 60fps smoothness */
-.glass-card, .card-hover, button, a, img, input, select, textarea, .modal-content {
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+/* GPU-accelerate only cards and interactive elements — NOT all elements */
+.glass-card {
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-  will-change: auto;
 }
 /* Smooth scroll — native 120Hz support */
 html {

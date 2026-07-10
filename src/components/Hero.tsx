@@ -5,7 +5,7 @@ import { ReviewsDB } from '../utils/storage';
 import LazyImage from './LazyImage';
 
 export default function Hero() {
-  const [totalStudents, setTotalStudents] = useState(300);
+  const [totalStudents, setTotalStudents] = useState(0);
   const [totalProjects, setTotalProjects] = useState(0);
   
   useEffect(() => {
@@ -19,7 +19,7 @@ export default function Hero() {
           : 0;
         return total + 1 + teamCount;
       }, 0);
-      setTotalStudents(300 + count);
+      setTotalStudents(count);
     });
   }, []);
 
@@ -32,6 +32,8 @@ export default function Hero() {
           src="/api/assets?asset_name=hero_bg" 
           alt="" 
           spinnerSize="lg"
+          fetchPriority="high"
+          loading="eager"
           className="w-full h-full object-cover opacity-30" 
           onError={(e) => (e.currentTarget.src = '/images/hero-bg.jpg')}
         />
@@ -39,11 +41,11 @@ export default function Hero() {
         <div className="absolute inset-0 bg-grid opacity-30" />
       </div>
 
-      {/* Orbs — crimson + gold */}
-      <motion.div animate={{ y: [0, -30, 0], x: [0, 20, 0] }} transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute top-1/4 left-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-crimson/10 rounded-full blur-[100px] pointer-events-none" />
-      <motion.div animate={{ y: [0, 20, 0], x: [0, -30, 0] }} transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-        className="absolute bottom-1/4 right-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-gold/10 rounded-full blur-[100px] pointer-events-none" />
+      {/* Orbs — CSS animated for GPU performance */}
+      <div className="absolute top-1/4 left-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-crimson/10 rounded-full blur-[100px] pointer-events-none"
+        style={{ animation: 'orbFloat1 10s ease-in-out infinite', willChange: 'transform' }} />
+      <div className="absolute bottom-1/4 right-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-gold/10 rounded-full blur-[100px] pointer-events-none"
+        style={{ animation: 'orbFloat2 12s ease-in-out infinite 1s', willChange: 'transform' }} />
 
       <div className="relative z-10 container-responsive text-center pt-20 sm:pt-24">
         {/* Badge */}
@@ -87,7 +89,7 @@ export default function Hero() {
           className="mt-14 sm:mt-20 lg:mt-24">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto px-4">
             {[
-              { icon: <Award className="w-5 h-5 sm:w-6 sm:h-6" />, value: `${totalProjects || 100}+`, label: 'Projects Delivered', color: 'text-crimson' },
+              { icon: <Award className="w-5 h-5 sm:w-6 sm:h-6" />, value: `${totalProjects}+`, label: 'Projects Delivered', color: 'text-crimson' },
               { icon: <Users className="w-5 h-5 sm:w-6 sm:h-6" />, value: `${totalStudents}+`, label: 'Happy Students', color: 'text-gold' },
               { icon: <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />, value: '98%', label: 'Success Rate', color: 'text-crimson' },
               { icon: <Clock className="w-5 h-5 sm:w-6 sm:h-6" />, value: '24/7', label: 'Support', color: 'text-gold' },

@@ -51,7 +51,7 @@ const projectTypes = [
 export default function ReviewPage() {
 
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [totalStudents, setTotalStudents] = useState(300);
+  const [totalStudents, setTotalStudents] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
@@ -78,33 +78,28 @@ export default function ReviewPage() {
     project_type: '', experience: '', pricing_review: '', date: getTodayFormatted(),
   });
 
-  useEffect(() => { 
-    ReviewsDB.getApproved().then(data => {
+  useEffect(() => {
+    // Fire all DB calls in parallel for fast load
+    Promise.all([
+      ReviewsDB.getApproved(),
+      AssetsDB.get('logo'),
+      SettingsDB.get(),
+    ]).then(([data, logo, settings]) => {
       setReviews(data);
-      // Count team members individually — 1 lead + N team members per team review
       const count = data.reduce((total, r) => {
         const teamCount = r.team_members
           ? r.team_members.split(',').filter((m: string) => m.trim()).length
           : 0;
         return total + 1 + teamCount;
       }, 0);
-      setTotalStudents(300 + count);
-      setLoading(false);
-    }); 
-    AssetsDB.get('logo').then(logo => {
+      setTotalStudents(count);
+
       if (logo) {
         setLogoSrc(logo.data);
-        try {
-          localStorage.setItem('acadomix_cached_logo', logo.data);
-        } catch (e) {
-          console.warn('Failed to cache logo:', e);
-        }
+        try { localStorage.setItem('acadomix_cached_logo', logo.data); } catch {}
       }
-    });
-    SettingsDB.get().then(settings => {
-      if (settings && settings.company_tagline) {
-        setTagline(settings.company_tagline);
-      }
+      if (settings?.company_tagline) setTagline(settings.company_tagline);
+      setLoading(false);
     });
   }, []);
 
@@ -147,10 +142,21 @@ export default function ReviewPage() {
   const inputCls = "w-full px-4 py-3 sm:py-3.5 glass-input rounded-xl text-white text-sm sm:text-base placeholder-white/25 focus:outline-none focus:border-crimson/30 transition-all";
   const labelCls = "block text-[10px] sm:text-xs text-white/30 mb-1.5 uppercase tracking-wider font-medium";
 
+  // Robust date parser — handles YYYY-MM-DD, DD/MM/YYYY, and fallbacks
+  const parseDate = (dateStr: string) => {
+    if (!dateStr) return 0;
+    // YYYY-MM-DD
+    if (/^\d{4}-\d{2}-\d{2}/.test(dateStr)) return new Date(dateStr).getTime();
+    // DD/MM/YYYY
+    const parts = dateStr.split('/');
+    if (parts.length === 3) return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`).getTime();
+    return new Date(dateStr).getTime();
+  };
+
   const sortedReviews = [...reviews].sort((a, b) => {
-    const dateA = new Date(a.date).getTime();
-    const dateB = new Date(b.date).getTime();
-    return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
+    return sortOrder === 'newest'
+      ? parseDate(b.date) - parseDate(a.date)
+      : parseDate(a.date) - parseDate(b.date);
   });
 
   return (

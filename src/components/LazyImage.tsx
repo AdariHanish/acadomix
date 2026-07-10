@@ -4,7 +4,7 @@ interface LazyImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   spinnerSize?: 'sm' | 'md' | 'lg';
 }
 
-export default function LazyImage({ src, alt, className = '', spinnerSize = 'md', onLoad, ...props }: LazyImageProps) {
+export default function LazyImage({ src, alt, className = '', spinnerSize = 'md', loading = 'lazy', onLoad, ...props }: LazyImageProps & { loading?: 'lazy' | 'eager' }) {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -31,7 +31,7 @@ export default function LazyImage({ src, alt, className = '', spinnerSize = 'md'
       <img
         src={src}
         alt={alt}
-        loading="lazy"
+        loading={loading}
         decoding="async"
         className={`${className} transition-all duration-300 ${loaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
         onLoad={(e) => {

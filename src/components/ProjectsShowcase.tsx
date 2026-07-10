@@ -22,8 +22,10 @@ export default function ProjectsShowcase() {
   const [activeDomain, setActiveDomain] = useState('all');
   const [activeType, setActiveType] = useState<'mini' | 'major'>('major');
   const [hasScrolled, setHasScrolled] = useState(false);
+  const nudgeFired = useRef(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     ProjectsDB.getAll().then(data => {
@@ -35,19 +37,27 @@ export default function ProjectsShowcase() {
     });
   }, []);
 
+  // Nudge fires 1.5s after the section scrolls INTO VIEW on mobile
   useEffect(() => {
-    // Subtle nudge animation on mount for mobile
-    const timeout = setTimeout(() => {
-      if (scrollRef.current && window.innerWidth < 640 && !hasScrolled) {
-        scrollRef.current.scrollTo({ left: 45, behavior: 'smooth' });
-        setTimeout(() => {
-          if (scrollRef.current) {
-            scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-          }
-        }, 500);
-      }
-    }, 1500);
-    return () => clearTimeout(timeout);
+    if (typeof window === 'undefined' || window.innerWidth >= 640) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !nudgeFired.current && !hasScrolled) {
+          nudgeFired.current = true;
+          setTimeout(() => {
+            if (scrollRef.current) {
+              scrollRef.current.scrollTo({ left: 60, behavior: 'smooth' });
+              setTimeout(() => {
+                scrollRef.current?.scrollTo({ left: 0, behavior: 'smooth' });
+              }, 600);
+            }
+          }, 1500);
+        }
+      },
+      { threshold: 0.4 }
+    );
+    if (sectionRef.current) observer.observe(sectionRef.current);
+    return () => observer.disconnect();
   }, [hasScrolled]);
 
   const getShowcaseData = () => {
@@ -84,7 +94,7 @@ export default function ProjectsShowcase() {
   const scrollToContact = () => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
 
   return (
-    <section id="projects" className="relative py-20 sm:py-28 lg:py-32 bg-surface-1 section-glow overflow-hidden">
+    <section ref={sectionRef} id="projects" className="relative py-20 sm:py-28 lg:py-32 bg-surface-1 section-glow overflow-hidden">
       <div className="absolute inset-0 bg-grid opacity-20" />
 
       <div className="container-responsive relative z-10">
@@ -109,8 +119,14 @@ export default function ProjectsShowcase() {
         {/* Filter Pills — scrollable on mobile */}
         <div className="relative mb-4 sm:mb-6">
           {!hasScrolled && (
-            <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-surface-1 via-surface-1/80 to-transparent pointer-events-none z-10 sm:hidden flex justify-end items-center pr-3">
-              <ArrowRight className="w-5 h-5 text-white/50 animate-pulse drop-shadow-md" />
+            <div
+              className="absolute right-0 top-0 bottom-0 w-28 pointer-events-none z-10 sm:hidden flex justify-end items-center pr-2"
+              style={{ background: 'linear-gradient(to left, #0a0a0a 35%, rgba(10,10,10,0.7) 70%, transparent)' }}
+            >
+              <div className="flex items-center gap-0.5 animate-pulse">
+                <ArrowRight className="w-4 h-4 text-gold drop-shadow-[0_0_6px_rgba(212,168,83,0.8)]" />
+                <ArrowRight className="w-3 h-3 text-gold/50" />
+              </div>
             </div>
           )}
           <div 
@@ -140,6 +156,12 @@ export default function ProjectsShowcase() {
                 </button>
               );
             })}
+            {/* Mobile-only swipe hint arrow pill */}
+            {!hasScrolled && (
+              <span className="sm:hidden inline-flex items-center px-2 py-1.5 rounded-full bg-crimson/20 border border-crimson/40 animate-pulse ml-1 flex-shrink-0">
+                <ArrowRight className="w-3.5 h-3.5 text-crimson" />
+              </span>
+            )}
             </div>
           </div>
         </div>
