@@ -7,8 +7,8 @@ import { Review } from '../types';
 
 import AppleLoader from '../components/AppleLoader';
 import WhatsAppButton from '../components/WhatsAppButton';
-
 import DateInput from '../components/DateInput';
+import useLockBodyScroll from '../hooks/useLockBodyScroll';
 
 // Fractional star rating (Amazon/Flipkart style)
 function FractionalStars({ rating, size = 'md' }: { rating: number; size?: 'sm' | 'md' | 'lg' }) {
@@ -77,6 +77,8 @@ export default function ReviewPage() {
     student_name: '', phone: '', college_name: '', year_of_study: '', project_name: '',
     project_type: '', experience: '', pricing_review: '', date: getTodayFormatted(),
   });
+
+  useLockBodyScroll(selectedReview !== null);
 
   useEffect(() => {
     // Fire all DB calls in parallel for fast load
@@ -159,14 +161,27 @@ export default function ReviewPage() {
       : parseDate(a.date) - parseDate(b.date);
   });
 
+  const noOfProjects = reviews.length;
+  let totalTeams = 0;
+  let teamMembersCount = 0;
+  let individualMembersCount = 0;
+
+  reviews.forEach(r => {
+    if (r.team_members) {
+      totalTeams++;
+      const count = r.team_members.split(',').filter((m: string) => m.trim()).length;
+      teamMembersCount += (count + 1); // +1 for the lead
+    } else {
+      individualMembersCount++;
+    }
+  });
+
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
       <div className="sticky top-0 z-50 glass-nav">
         <div className="container-responsive flex items-center justify-between h-14 sm:h-16">
-          <Link to="/" className="flex items-center gap-2 text-white/50 hover:text-white text-sm transition-colors flex-shrink-0">
-            <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Home</span>
-          </Link>
+          <div className="w-8" /> {/* Spacer to keep logo centered if needed */}
           <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
             <img
               src={logoSrc}
@@ -194,9 +209,6 @@ export default function ReviewPage() {
             <Link to="/admin" className="p-2 text-white/30 hover:text-crimson transition-colors">
               <Shield className="w-4 h-4" />
             </Link>
-            <button onClick={() => setShowForm(!showForm)} className="text-xs sm:text-sm font-semibold text-crimson hover:text-crimson-light transition-colors">
-              {showForm ? 'View All' : 'Write Review'}
-            </button>
           </div>
         </div>
       </div>
@@ -208,7 +220,7 @@ export default function ReviewPage() {
           <p className="text-sm sm:text-base text-white/35 mb-8">Real feedback from real students.</p>
           
           {/* Stats */}
-          <div className="inline-flex items-center gap-4 sm:gap-8 px-6 py-4 glass-card rounded-2xl">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 px-6 py-4 glass-card rounded-2xl max-w-4xl mx-auto">
             <div className="text-center">
               <p className="text-2xl sm:text-3xl font-bold text-gradient">{avg}</p>
               <div className="flex gap-0.5 justify-center mt-1">
@@ -216,10 +228,47 @@ export default function ReviewPage() {
               </div>
               <p className="text-[10px] sm:text-xs text-white/35 mt-1">Average Rating</p>
             </div>
-            <div className="w-px h-10 bg-white/10" />
+            
+            <div className="hidden sm:block w-px h-10 bg-white/10" />
+            
             <div className="text-center">
-              <p className="text-2xl sm:text-3xl font-bold text-gradient">{totalStudents}+</p>
+              <p className="text-2xl sm:text-3xl font-bold text-gradient">{totalStudents}</p>
               <p className="text-[10px] sm:text-xs text-white/25 mt-1">Happy Students</p>
+            </div>
+
+            <div className="hidden sm:block w-px h-10 bg-white/10" />
+            
+            <div className="text-center">
+              <p className="text-2xl sm:text-3xl font-bold text-gradient">{noOfProjects}</p>
+              <p className="text-[10px] sm:text-xs text-white/25 mt-1">Projects Delivered</p>
+            </div>
+
+            <div className="hidden sm:block w-px h-10 bg-white/10" />
+            
+            <div className="text-center">
+              <p className="text-2xl sm:text-3xl font-bold text-gradient">{totalTeams} Team{totalTeams === 1 ? '' : 's'}</p>
+              <p className="text-[10px] sm:text-xs text-white/25 mt-1">{teamMembersCount} total members from {totalTeams} team{totalTeams === 1 ? '' : 's'}</p>
+            </div>
+
+            <div className="hidden sm:block w-px h-10 bg-white/10" />
+            
+            <div className="text-center">
+              <p className="text-2xl sm:text-3xl font-bold text-gradient">{individualMembersCount}</p>
+              <p className="text-[10px] sm:text-xs text-white/25 mt-1">Individuals</p>
+            </div>
+          </div>
+
+          <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row items-stretch justify-center gap-4 max-w-4xl mx-auto px-6">
+            <Link to="/" className="flex-1 glass-card rounded-2xl p-4 sm:p-5 text-center hover:scale-[1.02] transition-transform cursor-pointer flex flex-col items-center justify-center gap-2">
+              <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 text-white/50 mb-1" />
+              <span className="text-xs sm:text-sm font-bold text-white/80 uppercase tracking-wider">Back to Home</span>
+            </Link>
+            <div 
+              onClick={() => setShowForm(!showForm)} 
+              className="flex-1 glass-card rounded-2xl p-4 sm:p-5 text-center hover:scale-[1.02] transition-transform cursor-pointer flex flex-col items-center justify-center gap-2 border border-crimson/20 hover:border-crimson/40"
+            >
+              <Send className="w-5 h-5 sm:w-6 sm:h-6 text-crimson mb-1" />
+              <span className="text-xs sm:text-sm font-bold text-gradient uppercase tracking-wider">{showForm ? 'View All Reviews' : 'Write a Review ✍️'}</span>
             </div>
           </div>
         </motion.div>
@@ -352,7 +401,7 @@ export default function ReviewPage() {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
                   {sortedReviews.map((r, i) => (
-                  <motion.div key={r.id} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
+                  <motion.div key={r.id} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i * 0.03, 0.3), duration: 0.2 }}
                     onClick={() => setSelectedReview(r)}
                     className="glass-card rounded-2xl sm:rounded-3xl p-5 sm:p-6 flex flex-col group cursor-pointer hover:border-crimson/30 active:scale-[0.98] transition-all">
                     <Quote className="w-8 h-8 text-crimson/30 mb-3 group-hover:text-crimson/60 transition-colors" />
@@ -396,12 +445,8 @@ export default function ReviewPage() {
             </div>
             )}
 
-            {/* CTA */}
-            <div className="text-center mt-10 sm:mt-12">
-              <button onClick={() => setShowForm(true)} className="px-8 py-4 bg-gradient-to-r from-crimson to-crimson-dark text-white text-sm sm:text-base font-semibold rounded-full btn-glow shine">
-                Write Your Review ✍️
-              </button>
-            </div>
+
+
           </>
         )}
       </div>
@@ -414,7 +459,7 @@ export default function ReviewPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 sm:p-8"
+            className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-8"
             onClick={() => setSelectedReview(null)}
           >
             <motion.div

@@ -57,12 +57,12 @@ export default function TechStack() {
   const filtered = activeCategory === 'All' ? tech : tech.filter(t => t.category === activeCategory);
 
   return (
-    <section className="relative py-12 sm:py-16 overflow-hidden">
+    <section className="relative overflow-hidden">
       <div className="gold-divider mb-10" />
       
       {/* Title Centered at Top */}
-      <div className="container-responsive mb-10 text-center">
-        <p className="text-[10px] sm:text-xs text-gold/40 uppercase tracking-[0.25em] font-black">Technologies We Master</p>
+      <div className="container-responsive mb-8 text-center">
+        <span className="section-badge glass text-gold/70">Technologies We Master</span>
       </div>
 
       {/* Scrolling Marquee Animation */}

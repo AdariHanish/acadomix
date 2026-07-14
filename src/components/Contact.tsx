@@ -58,14 +58,14 @@ export default function Contact() {
   const labelCls = "block text-[9px] sm:text-[11px] text-gold/40 mb-1 sm:mb-1.5 uppercase tracking-wider font-medium";
 
   return (
-    <section id="contact" className="relative py-20 sm:py-28 lg:py-32 bg-surface-1 section-glow overflow-hidden">
+    <section id="contact" className="relative bg-surface-1 section-glow overflow-hidden">
       <div className="absolute inset-0 bg-grid opacity-20" />
       <div className="container-responsive relative z-10">
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.15 }} transition={{ duration: 0.7 }}
-          className="text-center mb-10 sm:mb-14">
-          <span className="inline-block px-4 py-1.5 rounded-full glass text-xs sm:text-sm text-gold font-semibold mb-4 uppercase tracking-wider">Get In Touch</span>
-          <h2 className="text-section text-white mb-4">Let's <span className="text-gradient">build together.</span></h2>
-          <p className="text-xs sm:text-sm text-white/30 max-w-lg mx-auto">Reach out online or visit us offline — we're always ready to help.</p>
+          className="section-header">
+          <span className="section-badge glass text-gold">Get In Touch</span>
+          <h2 className="text-section text-white">Let's <span className="text-gradient">build together.</span></h2>
+          <p className="section-sub">Reach out online or visit us offline — we're always ready to help.</p>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 sm:gap-6 lg:gap-8">

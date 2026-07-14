@@ -145,7 +145,7 @@ export default function AdminSettings() {
               </button>
             </div>
             <div className="mt-3 p-3 rounded-lg glass">
-              <p className="text-xs text-white/25">Current: <code className="text-crimson/70">{settings.admin_password}</code></p>
+              <p className="text-xs text-white/25">Current: <code className="text-crimson/70">Hidden for security</code></p>
             </div>
           </div>
 

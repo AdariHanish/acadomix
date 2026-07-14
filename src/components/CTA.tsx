@@ -3,7 +3,7 @@ import { ArrowRight, Sparkles } from 'lucide-react';
 
 export default function CTA() {
   return (
-    <section className="relative py-20 sm:py-28 lg:py-32 overflow-hidden">
+    <section className="relative overflow-hidden">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] bg-crimson/8 rounded-full blur-[100px] sm:blur-[150px] pointer-events-none" />
       <div className="absolute top-1/3 right-1/4 w-[200px] h-[200px] bg-gold/8 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute inset-0 bg-grid opacity-20" />
@@ -13,7 +13,7 @@ export default function CTA() {
           className="glass-card rounded-2xl sm:rounded-3xl p-6 sm:p-10 lg:p-14 text-center max-w-4xl mx-auto border-gold/10">
           <motion.div animate={{ y: [0, -15, 0], rotate: [0, 5, -5, 0] }} transition={{ duration: 5, repeat: Infinity }}
             className="text-3xl sm:text-4xl mb-4 sm:mb-6">🚀</motion.div>
-          <h2 className="text-section text-white mb-4">
+          <h2 className="text-section text-white">
             Ready to ace
             <br /><span className="text-gradient">your project?</span>
           </h2>

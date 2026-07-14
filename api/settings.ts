@@ -4,7 +4,15 @@ export default async function handler(req: any, res: any) {
   if (req.method === 'GET') {
     try {
       const [rows]: any = await pool.query('SELECT * FROM site_settings LIMIT 1');
-      res.status(200).json(rows[0] || {});
+      const settings = rows[0] || {};
+      
+      // CRITICAL SECURITY FIX: Omit sensitive fields from public GET request
+      delete settings.admin_password;
+      delete settings.security_question;
+      delete settings.security_answer;
+
+      res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=300, stale-while-revalidate=86400');
+      res.status(200).json(settings);
     } catch (error) {
       res.status(500).json({ error: 'Database query failed' });
     }

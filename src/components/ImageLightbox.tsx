@@ -7,14 +7,10 @@ interface Props {
   onClose: () => void;
 }
 
-import { useEffect } from 'react';
+import useLockBodyScroll from '../hooks/useLockBodyScroll';
 
 export default function ImageLightbox({ src, alt = 'Image', onClose }: Props) {
-  useEffect(() => {
-    if (src) document.body.style.overflow = 'hidden';
-    else document.body.style.overflow = '';
-    return () => { document.body.style.overflow = ''; };
-  }, [src]);
+  useLockBodyScroll(src !== null);
 
   return (
     <AnimatePresence>
@@ -23,7 +19,7 @@ export default function ImageLightbox({ src, alt = 'Image', onClose }: Props) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[300] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4"
+          className="fixed inset-0 z-[300] bg-black/95 backdrop-blur-md flex items-center justify-center p-4"
           onClick={e => { if (e.target === e.currentTarget) onClose(); }}
         >
           <button

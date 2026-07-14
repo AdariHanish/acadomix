@@ -75,26 +75,27 @@ export default function Services() {
   const offerActive = settings?.offer_active && settings?.offer_end_time && new Date(settings.offer_end_time).getTime() > Date.now();
 
   return (
-    <section id="services" className="relative py-20 sm:py-28 lg:py-32 section-glow overflow-hidden">
+    <section id="services" className="relative section-glow overflow-hidden">
       <div className="absolute inset-0 bg-dots opacity-20" />
       <div className="container-responsive relative z-10">
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.15 }} transition={{ duration: 0.7 }}
-          className="text-center mb-12 sm:mb-16 lg:mb-20">
+          className="section-header">
           {offerActive ? (
             <motion.span 
               animate={{ scale: [1, 1.05, 1], boxShadow: ["0 0 10px rgba(220,20,60,0.2)", "0 0 20px rgba(220,20,60,0.6)", "0 0 10px rgba(220,20,60,0.2)"] }}
               transition={{ duration: 2, repeat: Infinity }}
-              className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-crimson/20 border border-crimson/40 text-xs sm:text-sm text-white font-bold mb-4 uppercase tracking-widest shadow-lg shadow-crimson/20"
+              className="section-badge glass bg-crimson/20 border border-crimson/40 text-white shadow-lg shadow-crimson/20"
             >
-              <Tag className="w-4 h-4 text-gold" /> {settings.offer_reason} - Limited Time
+              <Tag className="w-4 h-4 text-gold" /> {settings.offer_reason} — Limited Time
             </motion.span>
           ) : (
-            <span className="inline-block px-4 py-1.5 rounded-full glass text-xs sm:text-sm text-gold font-semibold mb-4 uppercase tracking-wider">Our Services</span>
+            <span className="section-badge glass text-gold">Our Services</span>
           )}
-          <h2 className="text-section text-white mb-4">
+          <h2 className="text-section text-white">
             Everything you need.
             <br /><span className="text-gradient">All in one place.</span>
           </h2>
+          <p className="section-sub">Mini to major — every academic need covered with quality and care.</p>
         </motion.div>
  
         <div 

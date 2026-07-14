@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { ArrowRight, Zap, Users, Award, Clock, Sparkles } from 'lucide-react';
 import { ReviewsDB } from '../utils/storage';
 import LazyImage from './LazyImage';
@@ -7,20 +8,32 @@ import LazyImage from './LazyImage';
 export default function Hero() {
   const [totalStudents, setTotalStudents] = useState(0);
   const [totalProjects, setTotalProjects] = useState(0);
+  const [teamStats, setTeamStats] = useState({ teams: 0, members: 0, individuals: 0 });
   
   useEffect(() => {
-    ReviewsDB.getApproved().then(data => {
-      // Projects: each review = 1 project (team project still counts as 1)
-      setTotalProjects(data.length);
-      // Students: 1 (lead/solo) + count of team members per review
-      const count = data.reduce((total, r) => {
-        const teamCount = r.team_members
-          ? r.team_members.split(',').filter((m: string) => m.trim()).length
-          : 0;
-        return total + 1 + teamCount;
-      }, 0);
-      setTotalStudents(count);
-    });
+    ReviewsDB.getApproved()
+      .then(data => {
+        if (!Array.isArray(data)) return;
+        
+        // Projects: each review = 1 project (team project still counts as 1)
+        setTotalProjects(data.length);
+        let tTeams = 0, tMembers = 0, tIndiv = 0;
+        // Students: 1 (lead/solo) + count of team members per review
+        const count = data.reduce((total, r) => {
+          if (r.team_members) {
+            tTeams++;
+            const mCount = r.team_members.split(',').filter((m: string) => m.trim()).length;
+            tMembers += (mCount + 1);
+            return total + 1 + mCount;
+          } else {
+            tIndiv++;
+            return total + 1;
+          }
+        }, 0);
+        setTotalStudents(count);
+        setTeamStats({ teams: tTeams, members: tMembers, individuals: tIndiv });
+      })
+      .catch(err => console.error("Failed to load hero stats:", err));
   }, []);
 
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
@@ -42,21 +55,21 @@ export default function Hero() {
       </div>
 
       {/* Orbs — CSS animated for GPU performance */}
-      <div className="absolute top-1/4 left-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-crimson/10 rounded-full blur-[100px] pointer-events-none"
+      <div className="absolute top-1/4 left-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-crimson/10 rounded-full blur-[60px] pointer-events-none"
         style={{ animation: 'orbFloat1 10s ease-in-out infinite', willChange: 'transform' }} />
-      <div className="absolute bottom-1/4 right-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-gold/10 rounded-full blur-[100px] pointer-events-none"
+      <div className="absolute bottom-1/4 right-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-gold/10 rounded-full blur-[60px] pointer-events-none"
         style={{ animation: 'orbFloat2 12s ease-in-out infinite 1s', willChange: 'transform' }} />
 
       <div className="relative z-10 container-responsive text-center pt-20 sm:pt-24">
         {/* Badge */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}
           className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-6 sm:mb-8">
           <Sparkles className="w-4 h-4 text-gold" />
           <span className="text-[10px] sm:text-sm text-gold/80 font-medium">#1 Project Partner for Students</span>
         </motion.div>
 
         {/* Headline */}
-        <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
+        <motion.h1 initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.05 }}
           className="text-hero text-white mb-4 sm:mb-6">
           Your Academic Vision.
           <br />
@@ -64,7 +77,7 @@ export default function Hero() {
         </motion.h1>
 
         {/* Sub */}
-        <motion.p initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
+        <motion.p initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.1 }}
           className="text-body text-white/40 max-w-2xl mx-auto mb-8 sm:mb-10 px-4">
           Mini projects, major projects, research papers, websites — delivered
           with <span className="text-crimson font-semibold">zero plagiarism</span> at
@@ -72,7 +85,7 @@ export default function Hero() {
         </motion.p>
 
         {/* CTAs */}
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.15 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 px-4">
           <button onClick={() => scrollTo('contact')}
             className="w-full sm:w-auto px-8 py-3.5 sm:py-4 bg-gradient-to-r from-crimson via-crimson-dark to-gold-dark text-white text-sm sm:text-lg font-semibold rounded-full btn-glow shine flex items-center justify-center gap-2 active:scale-[0.97] transition-transform">
@@ -85,21 +98,61 @@ export default function Hero() {
         </motion.div>
 
         {/* Stats */}
-        <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.4 }}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.2 }}
           className="mt-14 sm:mt-20 lg:mt-24">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto px-4">
             {[
-              { icon: <Award className="w-5 h-5 sm:w-6 sm:h-6" />, value: `${totalProjects}+`, label: 'Projects Delivered', color: 'text-crimson' },
-              { icon: <Users className="w-5 h-5 sm:w-6 sm:h-6" />, value: `${totalStudents}+`, label: 'Happy Students', color: 'text-gold' },
+              { icon: <Award className="w-5 h-5 sm:w-6 sm:h-6" />, value: `${totalProjects}`, label: 'Projects Delivered', color: 'text-crimson', link: '/reviews' },
+              { icon: <Users className="w-5 h-5 sm:w-6 sm:h-6" />, value: `${totalStudents}`, label: 'Happy Students', color: 'text-gold', link: '/reviews' },
               { icon: <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />, value: '98%', label: 'Success Rate', color: 'text-crimson' },
               { icon: <Clock className="w-5 h-5 sm:w-6 sm:h-6" />, value: '24/7', label: 'Support', color: 'text-gold' },
-            ].map((stat, i) => (
-              <div key={i} className="glass-card rounded-2xl p-3 sm:p-5 text-center active:bg-white/5 transition-colors">
-                <div className={`${stat.color} mb-2 flex justify-center`}>{stat.icon}</div>
-                <div className="text-lg sm:text-2xl lg:text-3xl font-bold text-gradient mb-1">{stat.value}</div>
-                <div className="text-[9px] sm:text-xs text-white/30 uppercase tracking-wider">{stat.label}</div>
-              </div>
-            ))}
+            ].map((stat, i) => {
+              const CardContent = (
+                <>
+                  <div className={`${stat.color} mb-2 flex justify-center`}>{stat.icon}</div>
+                  <div className="text-lg sm:text-2xl lg:text-3xl font-bold text-gradient mb-1">{stat.value}</div>
+                  <div className="text-[9px] sm:text-xs text-white/30 uppercase tracking-wider">{stat.label}</div>
+                </>
+              );
+              
+              if (stat.link) {
+                return (
+                  <Link key={i} to={stat.link} className="glass-card rounded-2xl p-3 sm:p-5 text-center active:bg-white/5 transition-colors hover:scale-105 cursor-pointer block">
+                    {CardContent}
+                  </Link>
+                );
+              }
+              
+              return (
+                <div key={i} className="glass-card rounded-2xl p-3 sm:p-5 text-center active:bg-white/5 transition-colors">
+                  {CardContent}
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="mt-4 sm:mt-6 max-w-4xl mx-auto px-4">
+            <Link to="/reviews" className="glass-card rounded-2xl p-4 sm:p-5 text-center hover:scale-[1.02] transition-transform cursor-pointer block">
+               <p className="text-[10px] sm:text-xs text-gold/80 font-bold uppercase tracking-[0.15em] mb-4 flex items-center justify-center gap-2">
+                 <Users className="w-3 h-3 sm:w-4 sm:h-4" /> Acadomix Customers
+               </p>
+               <div className="flex flex-wrap justify-around items-center gap-4">
+                 <div className="flex-1 min-w-[100px]">
+                    <p className="text-xl sm:text-2xl font-bold text-gradient">{teamStats.teams}</p>
+                    <p className="text-[10px] sm:text-xs text-white/30 uppercase tracking-wider mt-1">Teams</p>
+                 </div>
+                 <div className="w-px h-8 bg-white/10 hidden sm:block" />
+                 <div className="flex-1 min-w-[100px]">
+                    <p className="text-xl sm:text-2xl font-bold text-gradient">{teamStats.members}</p>
+                    <p className="text-[10px] sm:text-xs text-white/30 uppercase tracking-wider mt-1">Team Members</p>
+                 </div>
+                 <div className="w-px h-8 bg-white/10 hidden sm:block" />
+                 <div className="flex-1 min-w-[100px]">
+                    <p className="text-xl sm:text-2xl font-bold text-gradient">{teamStats.individuals}</p>
+                    <p className="text-[10px] sm:text-xs text-white/30 uppercase tracking-wider mt-1">Individuals</p>
+                 </div>
+               </div>
+            </Link>
           </div>
         </motion.div>
       </div>

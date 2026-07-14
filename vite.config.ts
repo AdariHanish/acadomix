@@ -11,6 +11,16 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     host: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true
+      },
+      '/.netlify/functions/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true
+      }
+    }
   },
   resolve: {
     alias: {

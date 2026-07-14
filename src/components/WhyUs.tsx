@@ -12,16 +12,17 @@ const reasons = [
 
 export default function WhyUs() {
   return (
-    <section className="relative py-20 sm:py-28 lg:py-32 bg-surface-1 section-glow overflow-hidden">
+    <section className="relative bg-surface-1 section-glow overflow-hidden">
       <div className="absolute inset-0 bg-grid opacity-20" />
       <div className="container-responsive relative z-10">
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.15 }} transition={{ duration: 0.7 }}
-          className="text-center mb-12 sm:mb-16 lg:mb-20">
-          <span className="inline-block px-4 py-1.5 rounded-full glass text-xs sm:text-sm text-crimson font-semibold mb-4 uppercase tracking-wider">Why Choose Us</span>
-          <h2 className="text-section text-white mb-4">
+          className="section-header">
+          <span className="section-badge glass text-crimson">Why Choose Us</span>
+          <h2 className="text-section text-white">
             Built different.
             <br /><span className="text-gradient">Built for you.</span>
           </h2>
+          <p className="section-sub">Six reasons why 500+ students trust Acadomix for their academic projects.</p>
         </motion.div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-5">
           {reasons.map((item, i) => (

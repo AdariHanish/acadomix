@@ -4,6 +4,7 @@ export default async function handler(req: any, res: any) {
   if (req.method === 'GET') {
     try {
       const [rows] = await pool.query('SELECT * FROM projects ORDER BY created_at DESC');
+      res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=300, stale-while-revalidate=86400');
       res.status(200).json(rows);
     } catch (error: any) {
       console.error('Projects fetch error:', error);

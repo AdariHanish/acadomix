@@ -10,16 +10,17 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section id="how-it-works" className="relative py-20 sm:py-28 lg:py-32 section-glow overflow-hidden">
+    <section id="how-it-works" className="relative section-glow overflow-hidden">
       <div className="absolute inset-0 bg-dots opacity-20" />
       <div className="container-responsive relative z-10">
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.15 }} transition={{ duration: 0.7 }}
-          className="text-center mb-12 sm:mb-16 lg:mb-20">
-          <span className="inline-block px-4 py-1.5 rounded-full glass text-xs sm:text-sm text-gold font-semibold mb-4 uppercase tracking-wider">How It Works</span>
-          <h2 className="text-section text-white mb-4">
+          className="section-header">
+          <span className="section-badge glass text-gold">How It Works</span>
+          <h2 className="text-section text-white">
             Four simple steps.
             <br /><span className="text-gradient">That's all it takes.</span>
           </h2>
+          <p className="section-sub">From sharing your requirements to receiving the final project — we keep it simple.</p>
         </motion.div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
           {steps.map((item, i) => (

@@ -94,7 +94,7 @@ export default function ProjectsShowcase() {
   const scrollToContact = () => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
 
   return (
-    <section ref={sectionRef} id="projects" className="relative py-20 sm:py-28 lg:py-32 bg-surface-1 section-glow overflow-hidden">
+    <section ref={sectionRef} id="projects" className="relative bg-surface-1 section-glow overflow-hidden">
       <div className="absolute inset-0 bg-grid opacity-20" />
 
       <div className="container-responsive relative z-10">
@@ -104,16 +104,19 @@ export default function ProjectsShowcase() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, amount: 0.15 }}
           transition={{ duration: 0.7 }}
-          className="text-center mb-10 sm:mb-14"
+          className="section-header"
         >
-          <span className="inline-block px-4 py-1.5 rounded-full glass text-xs sm:text-sm text-gold font-semibold mb-4 uppercase tracking-wider">
+          <span className="section-badge glass text-gold">
             Our Projects
           </span>
-          <h2 className="text-section text-white mb-4">
+          <h2 className="text-section text-white">
             Ready-made. Custom-built.
             <br />
             <span className="text-white/30">Choose what fits.</span>
           </h2>
+          <p className="section-sub">
+            Explore our vast library of ready-to-deploy projects across domains, or request a custom build.
+          </p>
         </motion.div>
 
         {/* Filter Pills — scrollable on mobile */}

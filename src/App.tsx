@@ -2,6 +2,7 @@ import React, { Suspense, useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AppleLoader from './components/AppleLoader';
 import ImageLightbox from './components/ImageLightbox';
+import useIdleRefresh from './hooks/useIdleRefresh';
 
 // Lazy loaded Pages
 const HomePage = React.lazy(() => import('./pages/HomePage'));
@@ -28,6 +29,9 @@ const AdminOffers = React.lazy(() => import('./pages/admin/AdminOffers'));
 export default function App() {
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
   const [lightboxAlt, setLightboxAlt] = useState('');
+  
+  // Refresh site if user is inactive for 15 minutes
+  useIdleRefresh(15);
 
   useEffect(() => {
     const handler = (e: Event) => {
