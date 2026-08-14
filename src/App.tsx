@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { HashRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import AppleLoader from './components/AppleLoader';
 import ImageLightbox from './components/ImageLightbox';
 import SwipeIndicator from './components/SwipeIndicator';
@@ -54,7 +54,7 @@ export default function App() {
   }, []);
 
   return (
-    <HashRouter>
+    <BrowserRouter>
       <NavigationHistoryProvider>
         <SwipeNavigator />
         <SwipeIndicator />
@@ -65,6 +65,6 @@ export default function App() {
         {/* Global Image Lightbox */}
         <ImageLightbox src={lightboxSrc} alt={lightboxAlt} onClose={() => setLightboxSrc(null)} />
       </NavigationHistoryProvider>
-    </HashRouter>
+    </BrowserRouter>
   );
 }
