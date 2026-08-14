@@ -11,12 +11,13 @@ const pool = createPool({
   password: process.env.TIDB_PASSWORD,
   database: process.env.TIDB_DATABASE || 'test',
   ssl: {
-    rejectUnauthorized: false 
+    rejectUnauthorized: true  // TiDB Cloud requires SSL verification
   },
   waitForConnections: true,
-  connectionLimit: 20, 
-  queueLimit: 0,
-  enableKeepAlive: true
+  connectionLimit: 5,         // Lower limit for Netlify serverless (max ~10 concurrent)
+  queueLimit: 50,
+  enableKeepAlive: false,     // Disable keepAlive in serverless (connections don't persist)
+  connectTimeout: 10000,      // 10s timeout for cold starts on Netlify
 });
 
 export default pool;
