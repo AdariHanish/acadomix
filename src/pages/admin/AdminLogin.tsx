@@ -24,7 +24,7 @@ export default function AdminLogin() {
   // OTP flow
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState('');
-  const [generatedOtp, setGeneratedOtp] = useState('');
+  const [otpVerified, setOtpVerified] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
@@ -70,56 +70,57 @@ export default function AdminLogin() {
 
   const handleSendOtp = async () => {
     setSubmitting(true);
-    // Generate 6-digit OTP
-    const code = String(Math.floor(100000 + Math.random() * 900000));
-    setGeneratedOtp(code);
     setError('');
-
     try {
       await new Promise(resolve => setTimeout(resolve, 300));
-      // Call the OTP API to send SMS
       const response = await fetch('/api/otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: adminPhone, otp: code })
+        body: JSON.stringify({ phone: adminPhone })
       });
-      
+
       if (!response.ok) {
         const text = await response.text();
         setError(`Server error (${response.status}): ${text.slice(0, 80) || 'Check API gateway status.'}`);
         return;
       }
 
-      const result = await response.json();
-
-      if (result.success) {
-        setOtpSent(true);
-        setCountdown(60);
-        setMode('otp');
-        console.log(`[Acadomix] OTP logged for fallback: ${code}`);
-      } else {
-        setError(result.error || 'Failed to send OTP. Please try again.');
-      }
+      setOtpSent(true);
+      setCountdown(60);
+      setMode('otp');
     } catch (err: any) {
-      console.error(err);
-      // Distinguish between network errors and API errors
       if (err.message?.includes('Failed to fetch') || err.message?.includes('NetworkError')) {
-        setError('Network error: Unable to reach the server. Please check your internet connection and try again.');
+        setError('Network error: Unable to reach the server. Check your internet connection.');
       } else {
-        setError(`Error: ${err.message || 'Failed to send OTP. Please try again.'}`);
+        setError(`Error: ${err.message || 'Failed to send OTP.'}`);
       }
     } finally {
       setSubmitting(false);
     }
   };
 
-  const handleVerifyOtp = (e: React.FormEvent) => {
+  const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (otp === generatedOtp) {
-      setError('');
-      setMode('reset');
-    } else {
-      setError('Invalid OTP. Please check and try again.');
+    setSubmitting(true);
+    setError('');
+    try {
+      const response = await fetch('/api/otp', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: adminPhone, code: otp })
+      });
+      const result = await response.json();
+      if (result.success) {
+        setOtpVerified(true);
+        setError('');
+        setMode('reset');
+      } else {
+        setError(result.error || 'Invalid OTP. Please try again.');
+      }
+    } catch {
+      setError('Network error. Please try again.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -132,9 +133,14 @@ export default function AdminLogin() {
     setSubmitting(true);
     try {
       await new Promise(resolve => setTimeout(resolve, 300));
-      // Fetch current settings first, then merge in the new password
-      const currentSettings = await SettingsDB.get();
-      await SettingsDB.update({ ...currentSettings, admin_password: newPassword });
+      const response = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'reset', password: newPassword })
+      });
+      
+      if (!response.ok) throw new Error('Reset failed');
+      
       setResetSuccess(true);
       setError('');
       setTimeout(() => {

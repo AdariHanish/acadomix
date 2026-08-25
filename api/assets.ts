@@ -35,13 +35,27 @@ export default async function handler(req: any, res: any) {
   } else if (req.method === 'PUT') {
     try {
       const { asset_name, data, mime_type } = req.body;
-      
-      // Use REPLACE INTO for an atomic, single-query update
+
+      if (!asset_name || typeof asset_name !== 'string') {
+        return res.status(400).json({ error: 'asset_name is required' });
+      }
+
+      // Validate mime type for image assets
+      const allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml', 'application/pdf'];
+      if (mime_type && !allowedMimes.includes(mime_type)) {
+        return res.status(400).json({ error: 'File type not allowed' });
+      }
+
+      // Limit asset_name to safe characters
+      if (!/^[a-zA-Z0-9_\-\.]+$/.test(asset_name)) {
+        return res.status(400).json({ error: 'Invalid asset name' });
+      }
+
       await pool.query(
         'REPLACE INTO app_assets (asset_name, data, mime_type) VALUES (?, ?, ?)',
         [asset_name, data, mime_type]
       );
-      
+
       res.status(200).json({ success: true });
     } catch (error) {
       console.error('Asset upload error:', error);

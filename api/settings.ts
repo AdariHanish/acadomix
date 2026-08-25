@@ -18,17 +18,34 @@ export default async function handler(req: any, res: any) {
     }
   } else if (req.method === 'PUT') {
     try {
-      const allowedFields = ['mini_project_price', 'major_project_price', 'custom_project_price', 'research_paper_price', 'plagiarism_removal_price', 'admin_password', 'security_question', 'security_answer', 'company_tagline', 'office_location_text', 'office_location_link', 'admin_phone', 'offer_active', 'offer_reason', 'offer_end_time', 'original_mini_price', 'original_major_price', 'original_custom_price'];
-      
+      const allowedFields = [
+        'mini_project_price', 'major_project_price', 'custom_project_price',
+        'research_paper_price', 'plagiarism_removal_price',
+        'security_question', 'security_answer',
+        'company_tagline', 'office_location_text', 'office_location_link',
+        'admin_phone', 'offer_active', 'offer_reason', 'offer_end_time',
+        'original_mini_price', 'original_major_price', 'original_custom_price'
+      ];
+      // admin_password is intentionally excluded — use POST /api/auth with action='reset'
+
+      const maxLengths: Record<string, number> = {
+        company_tagline: 200, office_location_text: 300, office_location_link: 500,
+        admin_phone: 20, offer_reason: 200, security_question: 200, security_answer: 200,
+      };
+
       const [existing]: any = await pool.query('SELECT * FROM site_settings LIMIT 1');
       if (existing.length > 0) {
-        // Only update fields that are actually provided in the request body
         const updates: string[] = [];
         const values: any[] = [];
         for (const field of allowedFields) {
           if (req.body[field] !== undefined) {
+            let value = req.body[field];
+            // Apply length limit for string fields
+            if (typeof value === 'string' && maxLengths[field]) {
+              value = value.slice(0, maxLengths[field]);
+            }
             updates.push(`${field}=?`);
-            values.push(req.body[field]);
+            values.push(value);
           }
         }
         if (updates.length > 0) {
