@@ -22,6 +22,7 @@ const AdminAssets    = React.lazy(() => import('../pages/admin/AdminAssets'));
 const AdminSettings  = React.lazy(() => import('../pages/admin/AdminSettings'));
 const AdminIDCards   = React.lazy(() => import('../pages/admin/AdminIDCards'));
 const AdminOffers    = React.lazy(() => import('../pages/admin/AdminOffers'));
+const AdminDatabase  = React.lazy(() => import('../pages/admin/AdminDatabase'));
 
 /** Slide distance (vw) — small value = subtle, fast feel */
 const SLIDE = 22;
@@ -93,6 +94,7 @@ export default function AnimatedRoutes() {
               <Route path="assets"    element={<AdminAssets />} />
               <Route path="id-cards"  element={<AdminIDCards />} />
               <Route path="offers"    element={<AdminOffers />} />
+              <Route path="database"  element={<AdminDatabase />} />
               <Route path="settings"  element={<AdminSettings />} />
             </Route>
 

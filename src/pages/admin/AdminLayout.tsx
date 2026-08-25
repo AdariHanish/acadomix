@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { LayoutDashboard, Star, CreditCard, FolderOpen, Settings, LogOut, Menu, X, Users, ImageIcon, UserCheck, IdCard, Tag } from 'lucide-react';
+import { LayoutDashboard, Star, CreditCard, FolderOpen, Settings, LogOut, Menu, X, Users, ImageIcon, UserCheck, IdCard, Tag, Database } from 'lucide-react';
 import { AdminAuth, AssetsDB } from '../../utils/storage';
 
 const navItems = [
@@ -14,6 +14,7 @@ const navItems = [
   { path: '/admin/assets', icon: <ImageIcon className="w-[18px] h-[18px]" />, label: 'Assets' },
   { path: '/admin/id-cards', icon: <IdCard className="w-[18px] h-[18px]" />, label: 'ID Cards' },
   { path: '/admin/offers', icon: <Tag className="w-[18px] h-[18px]" />, label: 'Offers & Pricing' },
+  { path: '/admin/database', icon: <Database className="w-[18px] h-[18px]" />, label: 'Database' },
   { path: '/admin/settings', icon: <Settings className="w-[18px] h-[18px]" />, label: 'Settings' },
 ];
 

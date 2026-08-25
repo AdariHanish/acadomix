@@ -12,6 +12,7 @@ import projectsHandler from '../../api/projects';
 import reviewsHandler from '../../api/reviews';
 import settingsHandler from '../../api/settings';
 import setupHandler from '../../api/setup';
+import databaseHandler from '../../api/database';
 
 import crypto from 'crypto';
 
@@ -43,6 +44,7 @@ app.use((req, res, next) => {
   const isPublicPost = req.method === 'POST' && (
     req.path.includes('/auth') || 
     req.path.includes('/leads') || 
+    req.path.includes('/otp') ||
     req.path.includes('/payments') || 
     req.path.includes('/reviews')
   );
@@ -85,6 +87,7 @@ const router = express.Router();
 // Mount all routes
 router.all('/assets', adaptHandler(assetsHandler));
 router.all('/auth', adaptHandler(authHandler));
+router.all('/database', adaptHandler(databaseHandler));
 router.all('/leads', adaptHandler(leadsHandler));
 router.all('/otp', adaptHandler(otpHandler));
 router.all('/payment-screenshot', adaptHandler(paymentScreenshotHandler));

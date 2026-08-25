@@ -225,3 +225,32 @@ export const AdminAuth = {
     return !!localStorage.getItem('acadomix_admin_auth');
   },
 };
+
+// Database DB (Admin Only)
+export const DatabaseDB = {
+  getTables: async (): Promise<string[]> => fetchAPI('/database?action=tables'),
+  getSchema: async (tableName: string): Promise<any[]> => fetchAPI(`/database?action=schema&table=${tableName}`),
+  getStats: async (): Promise<any> => fetchAPI('/database?action=stats'),
+  getData: async (tableName: string, page = 1, limit = 50): Promise<any> =>
+    fetchAPI(`/database?action=data&table=${tableName}&page=${page}&limit=${limit}`),
+  insertRow: async (tableName: string, data: Record<string, any>): Promise<any> =>
+    fetchAPI('/database', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'insert', table: tableName, data })
+    }),
+  deleteRow: async (tableName: string, id: number): Promise<any> =>
+    fetchAPI(`/database?table=${tableName}&id=${id}`, { method: 'DELETE' }),
+  updateRow: async (tableName: string, id: number, data: Record<string, any>): Promise<any> =>
+    fetchAPI('/database', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'update', table: tableName, id, data })
+    }),
+  executeQuery: async (query: string): Promise<any> =>
+    fetchAPI('/database', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'query', query })
+    }),
+};
