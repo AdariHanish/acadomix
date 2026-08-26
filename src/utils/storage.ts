@@ -1,49 +1,132 @@
 import { Lead, Project, Payment, Review, AppAsset, SiteSettings } from '../types';
 
-// In-memory cache to make transactions fraction-of-a-second fast
-const cache: Record<string, { data: any, timestamp: number }> = {};
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+// ─── Two-Layer Cache: Memory (instant) + localStorage (survives refresh) ──────
+const CACHE_VERSION = 'v2';
+const LS_PREFIX     = `acadomix_cache_${CACHE_VERSION}_`;
+const MEM_CACHE: Record<string, { data: any; ts: number }> = {};
 
-// Helper to handle API responses with caching for GET requests
-async function fetchAPI(endpoint: string, options?: RequestInit) {
-  const isGet = !options || !options.method || options.method === 'GET';
-  
-  if (isGet && cache[endpoint] && Date.now() - cache[endpoint].timestamp < CACHE_DURATION) {
-    return cache[endpoint].data;
+// How long (ms) cached data is considered FRESH (no network call needed)
+const FRESH_TTL: Record<string, number> = {
+  '/projects':  15 * 60_000, // 15 min — rarely changes
+  '/reviews':    5 * 60_000, // 5 min
+  '/payments':   2 * 60_000, // 2 min
+  '/leads':      2 * 60_000, // 2 min
+  '/settings':  10 * 60_000, // 10 min
+  '/assets':    30 * 60_000, // 30 min
+};
+const DEFAULT_FRESH_TTL = 3 * 60_000; // 3 min fallback
+
+function getTTL(endpoint: string) {
+  const base = endpoint.split('?')[0];
+  return FRESH_TTL[base] ?? DEFAULT_FRESH_TTL;
+}
+
+// ── Read from localStorage ────────────────────────────────────────────────────
+function lsGet(key: string): { data: any; ts: number } | null {
+  try {
+    const raw = localStorage.getItem(LS_PREFIX + key);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch { return null; }
+}
+
+// ── Write to localStorage (fire-and-forget, never blocks render) ──────────────
+function lsSet(key: string, entry: { data: any; ts: number }) {
+  try { localStorage.setItem(LS_PREFIX + key, JSON.stringify(entry)); } catch { /* quota */ }
+}
+
+// ── Invalidate a cache key in both layers ─────────────────────────────────────
+function invalidate(baseEndpoint: string) {
+  Object.keys(MEM_CACHE).forEach(k => { if (k.startsWith(baseEndpoint)) delete MEM_CACHE[k]; });
+  try {
+    const prefix = LS_PREFIX + baseEndpoint;
+    Object.keys(localStorage).forEach(k => { if (k.startsWith(prefix)) localStorage.removeItem(k); });
+  } catch { /* ignore */ }
+}
+
+// ── Core fetch with two-layer SWR ─────────────────────────────────────────────
+async function fetchAPI(endpoint: string, options?: RequestInit): Promise<any> {
+  const isGet = !options?.method || options.method === 'GET';
+
+  const token = localStorage.getItem('acadomix_admin_auth');
+  const finalOptions: RequestInit = { ...options };
+  if (token) {
+    finalOptions.headers = { ...finalOptions.headers, 'Authorization': `Bearer ${token}` };
   }
 
-  // Inject Authorization header for mutations
-  const finalOptions = { ...options };
   if (!isGet) {
-    const token = localStorage.getItem('acadomix_admin_auth');
-    if (token) {
-      finalOptions.headers = {
-        ...finalOptions.headers,
-        'Authorization': `Bearer ${token}`
-      };
-    }
+    const res = await fetch(`/api${endpoint}`, finalOptions);
+    if (!res.ok) throw new Error(`API error: ${res.statusText}`);
+    const data = await res.json();
+    invalidate(endpoint.split('?')[0]);
+    return data;
   }
 
-  const response = await fetch(`/api${endpoint}`, finalOptions);
-  if (!response.ok) {
-    throw new Error(`API error: ${response.statusText}`);
+  // ── GET path: memory → localStorage → network ────────────────────────────
+  const ttl = getTTL(endpoint);
+  const now  = Date.now();
+
+  // 1. Memory cache (fastest — same JS heap)
+  const mem = MEM_CACHE[endpoint];
+  if (mem && now - mem.ts < ttl) return mem.data;
+
+  // 2. localStorage cache — serves instantly even after page refresh
+  const ls = lsGet(endpoint);
+  if (ls) {
+    // Populate memory layer from localStorage
+    MEM_CACHE[endpoint] = ls;
+
+    if (now - ls.ts < ttl) {
+      // FRESH — no network call needed
+      return ls.data;
+    }
+
+    // STALE — return stale data immediately, revalidate in background
+    revalidate(endpoint, finalOptions);
+    return ls.data;
   }
-  
-  const data = await response.json();
-  
-  if (isGet) {
-    cache[endpoint] = { data, timestamp: Date.now() };
-  } else {
-    // Clear cache on mutations to ensure fresh data
-    const baseEndpoint = endpoint.split('?')[0];
-    Object.keys(cache).forEach(key => {
-      if (key.startsWith(baseEndpoint)) {
-        delete cache[key];
-      }
-    });
-  }
-  
+
+  // 3. No cache at all — must wait for network
+  return networkFetch(endpoint, finalOptions);
+}
+
+/** Fire a background refetch and silently update both cache layers */
+function revalidate(endpoint: string, options: RequestInit) {
+  fetch(`/api${endpoint}`, options)
+    .then(r => r.ok ? r.json() : null)
+    .then(data => {
+      if (data == null) return;
+      const entry = { data, ts: Date.now() };
+      MEM_CACHE[endpoint] = entry;
+      lsSet(endpoint, entry);
+    })
+    .catch(() => { /* silent — stale data already in use */ });
+}
+
+/** Blocking network fetch — used only when there is no cached data at all */
+async function networkFetch(endpoint: string, options: RequestInit): Promise<any> {
+  const res = await fetch(`/api${endpoint}`, options);
+  if (!res.ok) throw new Error(`API error: ${res.statusText}`);
+  const data = await res.json();
+  const entry = { data, ts: Date.now() };
+  MEM_CACHE[endpoint] = entry;
+  lsSet(endpoint, entry);
   return data;
+}
+
+/** Prefetch multiple endpoints in parallel (call after login to warm cache) */
+export async function prefetchAdminData() {
+  const token = localStorage.getItem('acadomix_admin_auth');
+  const headers: HeadersInit = token ? { 'Authorization': `Bearer ${token}` } : {};
+  const endpoints = ['/reviews', '/payments', '/projects', '/leads', '/settings'];
+  await Promise.allSettled(endpoints.map(ep => networkFetch(ep, { headers })));
+}
+
+/** Prefetch public data in parallel (call on app load to warm cache for visitors) */
+export async function prefetchPublicData() {
+  // fetchAPI naturally checks cache first and only hits network if needed
+  const endpoints = ['/reviews'];
+  await Promise.allSettled(endpoints.map(ep => fetchAPI(ep)));
 }
 
 // Projects
@@ -110,6 +193,14 @@ export const ReviewsDB = {
   },
   delete: async (id: number): Promise<boolean> => {
     await fetchAPI(`/reviews?id=${id}`, { method: 'DELETE' });
+    return true;
+  },
+  updateVisibility: async (id: number, visibleInHome: boolean): Promise<boolean> => {
+    await fetchAPI('/reviews', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, visible_in_home: visibleInHome })
+    });
     return true;
   },
 };
@@ -220,6 +311,12 @@ export const AdminAuth = {
   },
   logout: (): void => {
     localStorage.removeItem('acadomix_admin_auth');
+    try {
+      Object.keys(localStorage).forEach(k => {
+        if (k.startsWith(LS_PREFIX)) localStorage.removeItem(k);
+      });
+      Object.keys(MEM_CACHE).forEach(k => delete MEM_CACHE[k]);
+    } catch {}
   },
   isLoggedIn: (): boolean => {
     return !!localStorage.getItem('acadomix_admin_auth');

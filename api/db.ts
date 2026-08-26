@@ -16,7 +16,8 @@ const pool = createPool({
   waitForConnections: true,
   connectionLimit: 5,         // Lower limit for Netlify serverless (max ~10 concurrent)
   queueLimit: 50,
-  enableKeepAlive: false,     // Disable keepAlive in serverless (connections don't persist)
+  enableKeepAlive: true,      // Keep database connections alive
+  keepAliveInitialDelay: 10000, // 10s initial delay
   connectTimeout: 10000,      // 10s timeout for cold starts on Netlify
 });
 

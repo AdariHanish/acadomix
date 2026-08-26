@@ -11,24 +11,51 @@ export default function AdminReviews() {
   const [filter, setFilter] = useState<'all' | 'pending' | 'approved'>('all');
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
   const [search, setSearch] = useState('');
+  const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
 
   useEffect(() => { loadReviews(); }, []);
   const loadReviews = () => {
     setLoading(true);
-    ReviewsDB.getAll().then(data => { setReviews(data); setLoading(false); });
+    ReviewsDB.getAll()
+      .then(data => { setReviews(data); setLoading(false); })
+      .catch(() => {
+        // Retry once after 800ms (handles dev server restarts)
+        setTimeout(() => {
+          ReviewsDB.getAll()
+            .then(data => { setReviews(data); setLoading(false); })
+            .catch(() => setLoading(false));
+        }, 800);
+      });
   };
 
   const handleApprove = async (id: number) => { await ReviewsDB.approve(id); loadReviews(); setSelectedReview(null); };
   const handleDelete = async (id: number) => { if (confirm('Delete this review?')) { await ReviewsDB.delete(id); loadReviews(); setSelectedReview(null); } };
+  const handleToggleHome = async (id: number, visible: boolean) => {
+    await ReviewsDB.updateVisibility(id, visible);
+    setReviews(prev => prev.map(r => r.id === id ? { ...r, visible_in_home: visible } : r));
+  };
 
   const filtered = useMemo(() => {
     let r = reviews.filter(r => filter === 'pending' ? !r.is_approved : filter === 'approved' ? r.is_approved : true);
     if (search.trim()) {
       const q = search.toLowerCase();
-      r = r.filter(r => r.student_name.toLowerCase().includes(q) || r.college_name.toLowerCase().includes(q) || r.project_name.toLowerCase().includes(q));
+      r = r.filter(r => 
+        r.student_name.toLowerCase().includes(q) || 
+        r.college_name.toLowerCase().includes(q) || 
+        r.project_name.toLowerCase().includes(q) ||
+        (r.team_members && r.team_members.toLowerCase().includes(q))
+      );
     }
+    
+    // Sort
+    r.sort((a, b) => {
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
+      return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
+    });
+
     return r;
-  }, [reviews, filter, search]);
+  }, [reviews, filter, search, sortOrder]);
 
   // Recently approved (last 5, sorted by date)
   const recentlyApproved = useMemo(() =>
@@ -68,16 +95,29 @@ export default function AdminReviews() {
         ))}
       </div>
 
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
-        <input
-          type="text"
-          placeholder="Search by name, college or project..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          className="w-full pl-10 pr-4 py-2.5 bg-white/[0.03] border border-border rounded-xl text-[13px] text-white placeholder-white/20 focus:outline-none focus:border-crimson/30 transition-colors"
-        />
+      {/* Search & Sort */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
+          <input
+            type="text"
+            placeholder="Search by project or member name..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="w-full pl-10 pr-4 py-2.5 bg-white/[0.03] border border-border rounded-xl text-[13px] text-white placeholder-white/20 focus:outline-none focus:border-crimson/30 transition-colors"
+          />
+        </div>
+        <div className="flex items-center gap-3 justify-between sm:justify-end">
+          <span className="text-xs text-white/40 whitespace-nowrap">{filtered.length} results</span>
+          <select 
+            value={sortOrder} 
+            onChange={(e) => setSortOrder(e.target.value as 'newest' | 'oldest')}
+            className="bg-white/[0.03] border border-border rounded-xl px-3 py-2.5 text-[13px] text-white/80 focus:outline-none focus:border-crimson/30 transition-colors cursor-pointer min-w-[120px]"
+          >
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+          </select>
+        </div>
       </div>
 
       {/* Recently Approved Banner */}
@@ -119,6 +159,18 @@ export default function AdminReviews() {
                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${r.is_approved ? 'bg-green-500/10 text-green-400' : 'bg-gold/10 text-gold'}`}>
                       {r.is_approved ? 'Approved' : 'Pending'}
                     </span>
+                    {r.is_approved && (
+                      <button 
+                        onClick={() => handleToggleHome(r.id, !r.visible_in_home)}
+                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold transition-all border ${
+                          r.visible_in_home 
+                            ? 'bg-crimson/15 text-crimson border-crimson/30 hover:bg-crimson/25' 
+                            : 'bg-white/[0.02] text-white/30 hover:text-white/60 border-white/5'
+                        }`}
+                      >
+                        {r.visible_in_home ? '★ Home Page' : '☆ Pin to Home'}
+                      </button>
+                    )}
                   </div>
                   <div className="flex flex-wrap gap-3 text-[12px] text-white/25 mb-2">
                     <span className="flex items-center gap-1"><GraduationCap className="w-3 h-3" /> {r.college_name}</span>
@@ -161,6 +213,25 @@ export default function AdminReviews() {
               <div><p className="text-[11px] text-white/20 uppercase tracking-wider mb-1">Experience</p><p className="text-[14px] text-white/50 italic">"{selectedReview.experience}"</p></div>
               {selectedReview.pricing_review && <div><p className="text-[11px] text-white/20 uppercase tracking-wider mb-1">Pricing</p><p className="text-[14px] text-gold/60">{selectedReview.pricing_review}</p></div>}
               {selectedReview.team_members && <div><p className="text-[11px] text-white/20 uppercase tracking-wider mb-1">Team Members</p><p className="text-[14px] text-crimson/60">{selectedReview.team_members}</p></div>}
+              {selectedReview.is_approved && (
+                <div className="flex items-center justify-between py-2 px-3 bg-white/[0.02] border border-white/5 rounded-xl mt-4">
+                  <span className="text-[12px] text-white/50">Show on Home Testimonials</span>
+                  <button 
+                    onClick={() => {
+                      const newVis = !selectedReview.visible_in_home;
+                      handleToggleHome(selectedReview.id, newVis);
+                      setSelectedReview({ ...selectedReview, visible_in_home: newVis });
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                      selectedReview.visible_in_home 
+                        ? 'bg-crimson text-white hover:bg-crimson-light' 
+                        : 'bg-white/5 text-white/60 hover:bg-white/10'
+                    }`}
+                  >
+                    {selectedReview.visible_in_home ? '★ Visible' : '☆ Pin to Home'}
+                  </button>
+                </div>
+              )}
               <div className="flex gap-2 pt-4 border-t border-border">
                 {!selectedReview.is_approved && <button onClick={() => handleApprove(selectedReview.id)} className="flex-1 py-2.5 bg-green-500 text-white text-[13px] font-medium rounded-xl hover:bg-green-600 transition-colors flex items-center justify-center gap-1.5"><Check className="w-4 h-4" /> Approve</button>}
                 <button onClick={() => handleDelete(selectedReview.id)} className="flex-1 py-2.5 bg-red-500 text-white text-[13px] font-medium rounded-xl hover:bg-red-600 transition-colors flex items-center justify-center gap-1.5"><X className="w-4 h-4" /> {selectedReview.is_approved ? 'Remove' : 'Reject'}</button>

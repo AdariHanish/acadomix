@@ -78,22 +78,17 @@ app.use((_req, res, next) => {
   res.setHeader('X-XSS-Protection', '1; mode=block');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-  res.setHeader('Content-Security-Policy',
-    "default-src 'none'; script-src 'none'; object-src 'none'; frame-ancestors 'none';"
-  );
   next();
 });
 
 // ─── CORS ─────────────────────────────────────────────────────────────────────
+// Allow all origins for API (Vite proxy strips origin header in dev, Netlify handles in prod)
 app.use((req, res, next) => {
-  const origin = req.headers.origin || '';
-  const isAllowed = !ALLOWED_ORIGIN || origin === ALLOWED_ORIGIN || origin.endsWith('.netlify.app') || origin.includes('localhost');
-  if (isAllowed) {
-    res.setHeader('Access-Control-Allow-Origin', origin || '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.setHeader('Access-Control-Max-Age', '86400');
-  }
+  const origin = req.headers.origin || '*';
+  res.setHeader('Access-Control-Allow-Origin', origin);
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Max-Age', '86400');
   if (req.method === 'OPTIONS') return res.status(204).end();
   next();
 });
@@ -139,6 +134,15 @@ app.use((req, res, next) => {
       if (!checkRateLimit(`auth:${ip}`, AUTH_LIMIT)) {
         return res.status(429).json({ error: 'Too many attempts. Try again in 15 minutes.' });
       }
+    }
+    return next();
+  }
+
+  // Public PUT: OTP verification (user doesn't have a token yet — they're resetting password)
+  if (method === 'PUT' && path.includes('/otp')) {
+    const ip = getIP(req);
+    if (!checkRateLimit(`auth:${ip}`, AUTH_LIMIT)) {
+      return res.status(429).json({ error: 'Too many attempts. Try again in 15 minutes.' });
     }
     return next();
   }

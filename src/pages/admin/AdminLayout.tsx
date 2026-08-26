@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { LayoutDashboard, Star, CreditCard, FolderOpen, Settings, LogOut, Menu, X, Users, ImageIcon, UserCheck, IdCard, Tag, Database } from 'lucide-react';
-import { AdminAuth, AssetsDB } from '../../utils/storage';
+import { AdminAuth, AssetsDB, prefetchAdminData } from '../../utils/storage';
 
 const navItems = [
   { path: '/admin/dashboard', icon: <LayoutDashboard className="w-[18px] h-[18px]" />, label: 'Dashboard' },
@@ -28,6 +28,8 @@ export default function AdminLayout() {
     AssetsDB.get('logo').then(logo => {
       if (logo) setLogoSrc(logo.data);
     });
+    // Warm the cache in the background — no-op if already cached
+    prefetchAdminData().catch(() => {});
   }, []);
 
   // Check auth on every route change — if not logged in, redirect to login

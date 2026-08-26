@@ -7,6 +7,7 @@ import AnimatedRoutes from './components/AnimatedRoutes';
 import useIdleRefresh from './hooks/useIdleRefresh';
 import useSwipeNavigation from './hooks/useSwipeNavigation';
 import { NavigationHistoryProvider } from './context/NavigationHistoryContext';
+import { prefetchPublicData } from './utils/storage';
 
 /** Rendered inside HashRouter so useNavigate() is available */
 function SwipeNavigator() {
@@ -21,7 +22,11 @@ export default function App() {
   useIdleRefresh(15);
 
   useEffect(() => {
+    // Start background prefetch immediately so navigation is instant
+    prefetchPublicData().catch(() => {});
+
     const handler = (e: Event) => {
+
       const detail = (e as CustomEvent).detail;
       setLightboxSrc(detail.src);
       setLightboxAlt(detail.alt || '');

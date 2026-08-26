@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "predev": "kill-port 3001 5173 5174 || true",
-    "dev": "concurrently --kill-others \"vite\" \"tsx --watch local-server.ts\"",
+    "dev": "concurrently --kill-others \"wait-on tcp:3001 && vite\" \"tsx --watch local-server.ts\"",
     "build": "vite build",
     "preview": "vite preview"
   },
@@ -38,6 +38,7 @@
     "tsx": "^4.23.1",
     "typescript": "5.9.3",
     "vite": "7.3.2",
-    "vite-plugin-singlefile": "2.3.0"
+    "vite-plugin-singlefile": "2.3.0",
+    "wait-on": "^9.1.0"
   }
 }

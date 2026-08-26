@@ -17,64 +17,74 @@ export default async function handler(req: any, res: any) {
       }
 
       if (action === 'data' && table) {
-        const p = parseInt(page) || 1;
-        const l = Math.min(parseInt(limit) || 50, 200);
-        const offset = (p - 1) * l;
+        const conn = await pool.getConnection();
+        try {
+          const p = parseInt(page) || 1;
+          const l = Math.min(parseInt(limit) || 50, 200);
+          const offset = (p - 1) * l;
 
-        const [countResult]: any = await pool.query(`SELECT COUNT(*) as total FROM ??`, [table]);
-        const total = countResult[0].total;
+          const [countResult]: any = await conn.query(`SELECT COUNT(*) as total FROM ??`, [table]);
+          const total = countResult[0].total;
 
-        const [rows] = await pool.query(`SELECT * FROM ?? ORDER BY id DESC LIMIT ? OFFSET ?`, [table, l, offset]);
-        return res.status(200).json({ rows, total, page: p, limit: l });
+          const [rows] = await conn.query(`SELECT * FROM ?? ORDER BY id DESC LIMIT ? OFFSET ?`, [table, l, offset]);
+          return res.status(200).json({ rows, total, page: p, limit: l });
+        } finally {
+          conn.release();
+        }
       }
 
       if (action === 'stats') {
-        // Get table stats
-        const [tableRows] = await pool.query('SHOW TABLES');
-        const tableNames = (tableRows as any[]).map(row => Object.values(row)[0] as string);
-
-        const tableStats: any[] = [];
-        let totalRows = 0;
-
-        for (const t of tableNames) {
-          const [countResult]: any = await pool.query(`SELECT COUNT(*) as cnt FROM ??`, [t]);
-          const cnt = countResult[0].cnt;
-          totalRows += cnt;
-          tableStats.push({ table: t, rows: cnt });
-        }
-
-        // Get database size info (works on TiDB/MySQL)
-        let dbSizeMB = 0;
+        const conn = await pool.getConnection();
         try {
-          const [sizeResult]: any = await pool.query(
-            `SELECT SUM(data_length + index_length) / 1024 / 1024 AS size_mb 
-             FROM information_schema.tables 
-             WHERE table_schema = DATABASE()`
-          );
-          dbSizeMB = parseFloat(sizeResult[0]?.size_mb) || 0;
-        } catch {
-          dbSizeMB = 0;
-        }
+          // Get table stats
+          const [tableRows] = await conn.query('SHOW TABLES');
+          const tableNames = (tableRows as any[]).map(row => Object.values(row)[0] as string);
 
-        // Get connection info
-        let activeConnections = 0;
-        let connectionDetails = [];
-        try {
-          const [connResult]: any = await pool.query(`SELECT * FROM information_schema.processlist`);
-          activeConnections = connResult.length;
-          connectionDetails = connResult;
-        } catch {
-          activeConnections = 0;
-        }
+          let counts: Record<string, number> = {};
+          if (tableNames.length > 0) {
+            const selectClauses = tableNames.map(t => `(SELECT COUNT(*) FROM \`${t}\`) as \`${t}\``).join(', ');
+            const [countResult]: any = await conn.query(`SELECT ${selectClauses}`);
+            counts = countResult[0] || {};
+          }
 
-        return res.status(200).json({
-          totalTables: tableNames.length,
-          totalRows,
-          dbSizeMB: dbSizeMB.toFixed(2),
-          activeConnections,
-          connectionDetails,
-          tableStats,
-        });
+          const tableStats = tableNames.map(t => ({ table: t, rows: Number(counts[t]) || 0 }));
+          const totalRows = tableStats.reduce((sum, item) => sum + item.rows, 0);
+
+          // Get database size info (works on TiDB/MySQL)
+          let dbSizeMB = 0;
+          try {
+            const [sizeResult]: any = await conn.query(
+              `SELECT SUM(data_length + index_length) / 1024 / 1024 AS size_mb 
+               FROM information_schema.tables 
+               WHERE table_schema = DATABASE()`
+            );
+            dbSizeMB = parseFloat(sizeResult[0]?.size_mb) || 0;
+          } catch {
+            dbSizeMB = 0;
+          }
+
+          // Get connection info
+          let activeConnections = 0;
+          let connectionDetails = [];
+          try {
+            const [connResult]: any = await conn.query(`SELECT * FROM information_schema.processlist`);
+            activeConnections = connResult.length;
+            connectionDetails = connResult;
+          } catch {
+            activeConnections = 0;
+          }
+
+          return res.status(200).json({
+            totalTables: tableNames.length,
+            totalRows,
+            dbSizeMB: dbSizeMB.toFixed(2),
+            activeConnections,
+            connectionDetails,
+            tableStats,
+          });
+        } finally {
+          conn.release();
+        }
       }
 
       res.status(400).json({ error: 'Invalid action or missing parameters' });

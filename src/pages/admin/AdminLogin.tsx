@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lock, ArrowLeft, Eye, EyeOff, AlertCircle, CheckCircle, ArrowRight, Shield, Smartphone, KeyRound } from 'lucide-react';
-import { AdminAuth, SettingsDB } from '../../utils/storage';
+import { AdminAuth, SettingsDB, prefetchAdminData } from '../../utils/storage';
 import { Spinner } from '../../components/Spinner';
 
 type Mode = 'login' | 'phone' | 'otp' | 'reset';
@@ -57,6 +57,8 @@ export default function AdminLogin() {
     await new Promise(resolve => setTimeout(resolve, 350));
     
     if (await AdminAuth.login(password)) {
+      // Kick off background prefetch of all admin data — pages load instantly from cache
+      prefetchAdminData().catch(() => {});
       setSubmitting(false);
       navigate('/admin/dashboard');
     } else {

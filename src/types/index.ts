@@ -56,6 +56,7 @@ export interface Review {
   pricing_review: string;
   date: string;
   is_approved: boolean;
+  visible_in_home?: boolean;
   created_at: string;
 }
 

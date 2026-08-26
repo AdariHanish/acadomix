@@ -67,6 +67,7 @@ export default function ReviewPage() {
   const [hoverRating, setHoverRating] = useState(0);
   const [tagline, setTagline] = useState('Coding Your Ideas');
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
+  const [searchTerm, setSearchTerm] = useState('');
   
   const [reviewType, setReviewType] = useState<'individual' | 'team'>('individual');
   const [memberCount, setMemberCount] = useState(2);
@@ -81,28 +82,45 @@ export default function ReviewPage() {
   useLockBodyScroll(selectedReview !== null);
 
   useEffect(() => {
-    // Fire all DB calls in parallel for fast load
-    Promise.all([
-      ReviewsDB.getApproved(),
-      AssetsDB.get('logo'),
-      SettingsDB.get(),
-    ]).then(([data, logo, settings]) => {
-      setReviews(data);
-      const count = data.reduce((total, r) => {
-        const teamCount = r.team_members
-          ? r.team_members.split(',').filter((m: string) => m.trim()).length
-          : 0;
-        return total + 1 + teamCount;
-      }, 0);
-      setTotalStudents(count);
+    let cancelled = false;
 
-      if (logo) {
-        setLogoSrc(logo.data);
-        try { localStorage.setItem('acadomix_cached_logo', logo.data); } catch {}
+    const load = async (attempt = 0) => {
+      try {
+        const [data, logo, settings] = await Promise.all([
+          ReviewsDB.getApproved(),
+          AssetsDB.get('logo'),
+          SettingsDB.get(),
+        ]);
+
+        if (cancelled) return;
+        setReviews(data);
+        const count = data.reduce((total, r) => {
+          const teamCount = r.team_members
+            ? r.team_members.split(',').filter((m: string) => m.trim()).length
+            : 0;
+          return total + 1 + teamCount;
+        }, 0);
+        setTotalStudents(count);
+
+        if (logo) {
+          setLogoSrc(logo.data);
+          try { localStorage.setItem('acadomix_cached_logo', logo.data); } catch {}
+        }
+        if (settings?.company_tagline) setTagline(settings.company_tagline);
+        setLoading(false);
+      } catch {
+        if (cancelled) return;
+        if (attempt < 2) {
+          // Auto-retry up to 2 times with a short delay (handles dev server restart)
+          setTimeout(() => load(attempt + 1), 800);
+        } else {
+          setLoading(false); // Give up, show empty state rather than freezing
+        }
       }
-      if (settings?.company_tagline) setTagline(settings.company_tagline);
-      setLoading(false);
-    });
+    };
+
+    load();
+    return () => { cancelled = true; };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -155,7 +173,17 @@ export default function ReviewPage() {
     return new Date(dateStr).getTime();
   };
 
-  const sortedReviews = [...reviews].sort((a, b) => {
+  const filteredReviews = reviews.filter(r => {
+    if (!searchTerm) return true;
+    const lowerTerm = searchTerm.toLowerCase();
+    return (
+      r.project_name.toLowerCase().includes(lowerTerm) ||
+      r.student_name.toLowerCase().includes(lowerTerm) ||
+      (r.team_members && r.team_members.toLowerCase().includes(lowerTerm))
+    );
+  });
+
+  const sortedReviews = [...filteredReviews].sort((a, b) => {
     return sortOrder === 'newest'
       ? parseDate(b.date) - parseDate(a.date)
       : parseDate(a.date) - parseDate(b.date);
@@ -385,17 +413,34 @@ export default function ReviewPage() {
               <AppleLoader />
             ) : (
               <div className="space-y-6">
-                <div className="flex justify-end items-center px-2">
-                  <div className="flex items-center gap-2 text-xs">
-                    <span className="text-white/40 font-medium">Sort by:</span>
-                    <select 
-                      value={sortOrder} 
-                      onChange={(e) => setSortOrder(e.target.value as 'newest' | 'oldest')}
-                      className="bg-black border border-white/10 rounded-lg px-3 py-1.5 text-white/80 focus:outline-none focus:border-crimson/40 transition-colors cursor-pointer"
-                    >
-                      <option value="newest">Newest First</option>
-                      <option value="oldest">Oldest First</option>
-                    </select>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center px-2 gap-4">
+                  <div className="w-full sm:w-auto flex-1 max-w-md relative">
+                    <input
+                      type="text"
+                      placeholder="Search by project or member name..."
+                      value={searchTerm}
+                      onChange={e => setSearchTerm(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2 bg-black/50 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-crimson/50 transition-colors"
+                    />
+                    <svg className="w-4 h-4 text-white/40 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </div>
+                  <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
+                    <span className="text-xs text-white/50 font-medium whitespace-nowrap">
+                      {sortedReviews.length} result{sortedReviews.length !== 1 ? 's' : ''}
+                    </span>
+                    <div className="flex items-center gap-2 text-xs">
+                      <span className="text-white/40 font-medium">Sort by:</span>
+                      <select 
+                        value={sortOrder} 
+                        onChange={(e) => setSortOrder(e.target.value as 'newest' | 'oldest')}
+                        className="bg-black border border-white/10 rounded-lg px-3 py-1.5 text-white/80 focus:outline-none focus:border-crimson/40 transition-colors cursor-pointer"
+                      >
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
                 

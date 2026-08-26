@@ -14,10 +14,12 @@ export default function Dashboard() {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const projects = await ProjectsDB.getAll();
-      const reviews = await ReviewsDB.getAll();
-      const payments = await PaymentsDB.getAll();
-      const leads = await LeadsDB.getAll();
+      const [projects, reviews, payments, leads] = await Promise.all([
+        ProjectsDB.getAll(),
+        ReviewsDB.getAll(),
+        PaymentsDB.getAll(),
+        LeadsDB.getAll()
+      ]);
       setStats({
         totalProjects: projects.length, totalReviews: reviews.length,
         pendingReviews: reviews.filter(r => !r.is_approved).length,

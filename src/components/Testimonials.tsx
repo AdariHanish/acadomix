@@ -33,8 +33,9 @@ export default function Testimonials() {
 
   if (reviews.length === 0) return null;
 
-  // Show only the 10 newest reviews in the marquee
-  const marqueeReviews = reviews.slice(0, 10);
+  // Show reviews marked as visible_in_home; fallback to 10 newest if none are marked
+  const homeVisibleReviews = reviews.filter(r => r.visible_in_home);
+  const marqueeReviews = homeVisibleReviews.length > 0 ? homeVisibleReviews : reviews.slice(0, 10);
 
   return (
     <section id="testimonials" className="bg-black relative overflow-hidden">
@@ -57,8 +58,8 @@ export default function Testimonials() {
           <p className="section-sub">
             Real feedback from our happy students across various engineering colleges.
           </p>
-          <p className="text-white/30 text-sm font-medium tracking-widest mt-4">
-            ✦&nbsp; Scrolling through the&nbsp;<span className="text-gold/70 font-semibold">10 newest reviews</span>&nbsp; ✦
+          <p className="text-white/30 text-sm font-medium tracking-widest mt-4 flex items-center justify-center gap-1.5 flex-wrap">
+            ✦ Scrolling through {homeVisibleReviews.length > 0 ? <span className="text-gold/70 font-semibold">featured reviews</span> : <span className="text-gold/70 font-semibold">the 10 newest reviews</span>} ✦
           </p>
         </motion.div>
       </div>{/* end container-responsive for header */}
@@ -100,7 +101,7 @@ export default function Testimonials() {
           onClick={() => setShowAll(true)}
           className="px-8 py-4 bg-gradient-to-r from-crimson to-gold text-white text-sm sm:text-base font-bold rounded-full shadow-xl shadow-crimson/20 btn-glow shine transition-transform active:scale-[0.98]"
         >
-          View All 10 Reviews
+          View All {reviews.length} Reviews
         </button>
       </div>
 
@@ -129,7 +130,7 @@ export default function Testimonials() {
 
               <div className="flex-1 overflow-y-auto p-6 sm:p-10 custom-scrollbar">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {marqueeReviews.map((r, i) => (
+                  {reviews.map((r, i) => (
                     <div key={i} className="glass-card p-6 rounded-[30px] border border-white/5 hover:border-crimson/30 transition-all flex flex-col group">
                       <h4 className="text-lg font-bold text-white mb-3 group-hover:text-gold transition-colors">{r.project_name}</h4>
                       
