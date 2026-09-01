@@ -56,10 +56,18 @@ export default function ProjectsPage() {
   const displayed = getFilteredProjects();
 
   return (
-    <div className="bg-black min-h-screen text-white">
+    <div className="vintage-classic-canvas min-h-screen text-white relative overflow-hidden">
+      {/* Subtle vintage grain texture */}
+      <div className="absolute inset-0 vintage-grain pointer-events-none opacity-40" />
+
+      {/* Background ambient orbs */}
+      <div className="absolute top-20 left-10 w-96 h-96 bg-crimson/8 rounded-full blur-[110px] pointer-events-none" />
+      <div className="absolute top-1/3 right-10 w-96 h-96 bg-gold/8 rounded-full blur-[110px] pointer-events-none" />
+      <div className="absolute bottom-20 left-1/4 w-96 h-96 bg-crimson/6 rounded-full blur-[130px] pointer-events-none" />
+
       <Navbar />
       
-      <main className="pt-24 sm:pt-32 pb-20">
+      <main className="pt-24 sm:pt-32 pb-20 relative z-10">
         <div className="container-responsive">
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">

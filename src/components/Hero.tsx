@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Zap, Users, Award, Clock, Sparkles } from 'lucide-react';
 import { ReviewsDB, getCachedData } from '../utils/storage';
-import LazyImage from './LazyImage';
 
 function computeStats(data: any[]) {
   if (!Array.isArray(data)) return { projects: 0, students: 0, teamStats: { teams: 0, members: 0, individuals: 0 } };
@@ -48,27 +47,65 @@ export default function Hero() {
 
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 
-  return (
-    <section id="home" className="relative min-h-[100svh] flex items-center justify-center overflow-hidden">
-      <div className="absolute inset-0">
-        <LazyImage 
-          src="/api/assets?asset_name=hero_bg&raw=true" 
-          alt="" 
-          spinnerSize="lg"
-          fetchPriority="high"
-          loading="eager"
-          className="w-full h-full object-cover opacity-30" 
-          onError={(e) => (e.currentTarget.src = '/images/hero-bg.jpg')}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black" />
-        <div className="absolute inset-0 bg-grid opacity-30" />
-      </div>
+  const heroBgSrc = '/api/assets?asset_name=hero_bg&raw=true';
+  const [heroBgLoaded, setHeroBgLoaded] = useState(false);
+  const [heroBgFailed, setHeroBgFailed] = useState(false);
+  const [heroLogo, setHeroLogo] = useState<string | null>(() => {
+    try { return localStorage.getItem('acadomix_cached_logo') || null; } catch { return null; }
+  });
 
-      {/* Orbs — CSS animated for GPU performance */}
-      <div className="absolute top-1/4 left-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-crimson/10 rounded-full blur-[60px] pointer-events-none"
-        style={{ animation: 'orbFloat1 10s ease-in-out infinite', willChange: 'transform' }} />
-      <div className="absolute bottom-1/4 right-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-gold/10 rounded-full blur-[60px] pointer-events-none"
-        style={{ animation: 'orbFloat2 12s ease-in-out infinite 1s', willChange: 'transform' }} />
+  useEffect(() => {
+    if (!heroLogo) {
+      import('../utils/storage').then(({ AssetsDB }) => {
+        AssetsDB.get('logo').then(asset => {
+          if (asset?.data) setHeroLogo(asset.data);
+        }).catch(() => {});
+      });
+    }
+  }, [heroLogo]);
+
+  return (
+    <section id="home" className="relative min-h-[100svh] flex items-center justify-center overflow-hidden vintage-classic-canvas">
+      {/* Vintage Classic Background Art */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Subtle vintage grain texture */}
+        <div className="absolute inset-0 vintage-grain pointer-events-none opacity-40" />
+
+        {/* Vintage antique illumination: warm golden zenith & deep wine ambient tones */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `
+              radial-gradient(ellipse 90% 45% at 50% 0%, rgba(212, 168, 83, 0.14) 0%, transparent 65%),
+              radial-gradient(ellipse 80% 50% at 85% 85%, rgba(180, 20, 50, 0.10) 0%, transparent 60%),
+              radial-gradient(ellipse 70% 45% at 15% 85%, rgba(139, 0, 0, 0.12) 0%, transparent 55%),
+              transparent
+            `
+          }}
+        />
+
+        {/* Database uploaded background image (if uploaded by admin) */}
+        {!heroBgFailed && (
+          <img
+            src={heroBgSrc}
+            alt=""
+            fetchPriority="high"
+            decoding="async"
+            className={`absolute inset-0 w-full h-full object-cover mix-blend-screen transition-opacity duration-700 ${heroBgLoaded ? 'opacity-25' : 'opacity-0'}`}
+            onLoad={() => setHeroBgLoaded(true)}
+            onError={() => setHeroBgFailed(true)}
+          />
+        )}
+
+        {/* Vignette & Soft Contrast Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80" />
+
+        {/* Soft, slow floating ambient orbs in distant corners */}
+        <div className="absolute top-1/6 left-1/10 w-72 sm:w-[460px] h-72 sm:h-[460px] bg-crimson/10 rounded-full blur-[100px] pointer-events-none"
+          style={{ animation: 'orbFloat1 14s ease-in-out infinite', willChange: 'transform' }} />
+        <div className="absolute bottom-1/6 right-1/10 w-72 sm:w-[460px] h-72 sm:h-[460px] bg-gold/10 rounded-full blur-[100px] pointer-events-none"
+          style={{ animation: 'orbFloat2 16s ease-in-out infinite 1s', willChange: 'transform' }} />
+      </div>
 
       <div className="relative z-10 container-responsive text-center pt-20 sm:pt-24">
         {/* Solid Glassmorphic Badge Pill — No see-through, 100% visible text */}

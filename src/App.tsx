@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, useLocation } from 'react-router-dom';
 import AppleLoader from './components/AppleLoader';
 import ImageLightbox from './components/ImageLightbox';
 import SwipeIndicator from './components/SwipeIndicator';
@@ -8,8 +8,18 @@ import useIdleRefresh from './hooks/useIdleRefresh';
 import useSwipeNavigation from './hooks/useSwipeNavigation';
 import { NavigationHistoryProvider } from './context/NavigationHistoryContext';
 import { prefetchPublicData } from './utils/storage';
+import { trackPageView } from './utils/analytics';
 
-/** Rendered inside HashRouter so useNavigate() is available */
+/** Automatically track page visits anonymously */
+function RouteTracker() {
+  const location = useLocation();
+  useEffect(() => {
+    trackPageView(location.pathname);
+  }, [location.pathname]);
+  return null;
+}
+
+/** Rendered inside BrowserRouter so useNavigate() is available */
 function SwipeNavigator() {
   useSwipeNavigation();
   return null;
@@ -73,6 +83,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <NavigationHistoryProvider>
+        <RouteTracker />
         <SwipeNavigator />
         <SwipeIndicator />
 

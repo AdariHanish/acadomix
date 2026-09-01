@@ -110,7 +110,15 @@ export default function PaymentPage() {
   const labelCls = "block text-[10px] sm:text-xs text-white/30 mb-1.5 uppercase tracking-wider font-medium";
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen vintage-classic-canvas text-white relative overflow-hidden">
+      {/* Subtle vintage grain texture */}
+      <div className="absolute inset-0 vintage-grain pointer-events-none opacity-40" />
+
+      {/* Background ambient orbs */}
+      <div className="absolute top-16 left-10 w-96 h-96 bg-crimson/8 rounded-full blur-[110px] pointer-events-none" />
+      <div className="absolute top-1/2 right-10 w-96 h-96 bg-gold/8 rounded-full blur-[110px] pointer-events-none" />
+      <div className="absolute bottom-16 left-1/3 w-96 h-96 bg-crimson/6 rounded-full blur-[130px] pointer-events-none" />
+
       {/* Header */}
       <div className="sticky top-0 z-50 glass-nav">
         <div className="container-responsive flex items-center justify-between h-14 sm:h-16">

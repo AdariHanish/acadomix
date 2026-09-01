@@ -85,12 +85,11 @@ export default function Pricing() {
   ];
 
   return (
-    <section id="pricing" className="relative section-glow overflow-hidden">
-      <div className="absolute inset-0 bg-dots opacity-20" />
+    <section id="pricing" className="relative section-glow overflow-hidden vintage-pinstripe">
       <div className="container-responsive relative z-10">
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.15 }} transition={{ duration: 0.7 }}
           className="section-header">
-          <span className="section-badge glass text-crimson">Pricing Plans</span>
+          <span className="section-badge glass-pill-solid text-crimson">Pricing Plans</span>
           <h2 className="text-section text-white">
             Premium quality.
             <br /><span className="text-gradient">Student-friendly prices.</span>

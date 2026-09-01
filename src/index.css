@@ -227,24 +227,69 @@ body {
 .text-card-title { font-size: clamp(0.95rem, 1.8vw, 1.2rem); font-weight: 600; }
 .text-body { font-size: clamp(0.85rem, 1.4vw, 1.1rem); line-height: 1.7; }
 
-/* ===== BACKGROUNDS ===== */
+/* ===== VINTAGE CLASSIC BACKGROUND SYSTEM ===== */
 .bg-grid {
-  /* grid lines removed — was causing visible horizontal/vertical lines */
   display: none;
 }
-.bg-dots {
-  background-image: radial-gradient(rgba(220,20,60,0.12) 1px, transparent 1px);
-  background-size: 30px 30px;
+
+/* Vintage fine grain noise texture overlay */
+.vintage-grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.035'/%3E%3C/svg%3E");
 }
+
+/* Classic vintage pinstripe texture */
+.vintage-pinstripe {
+  background-image: radial-gradient(rgba(212,168,83,0.12) 1px, transparent 1px), linear-gradient(0deg, rgba(212,168,83,0.02) 1px, transparent 1px);
+  background-size: 36px 36px, 100% 48px;
+}
+
+/* Vintage Classic Canvas - Unified rich aesthetic for the whole website */
+.vintage-classic-canvas {
+  background: 
+    radial-gradient(ellipse 90% 50% at 50% 0%, rgba(212, 168, 83, 0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 60% at 90% 40%, rgba(180, 20, 50, 0.10) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 60% at 10% 70%, rgba(139, 0, 0, 0.12) 0%, transparent 55%),
+    radial-gradient(ellipse 90% 50% at 50% 100%, rgba(212, 168, 83, 0.08) 0%, transparent 60%),
+    #08070a;
+}
+
+.bg-luxury-mesh {
+  background: 
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(212, 168, 83, 0.11) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 85% 85%, rgba(220, 20, 60, 0.09) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 45% at 15% 75%, rgba(139, 0, 0, 0.10) 0%, transparent 50%),
+    #09070b;
+}
+
+/* Vintage Classic Section Glow — Soft warm illumination without text obstruction */
 .section-glow { position: relative; }
 .section-glow::before {
-  content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-  width: 60%; height: 60%;
-  background: radial-gradient(ellipse, rgba(220,20,60,0.06) 0%, transparent 70%);
+  content: ''; position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
+  width: 80%; height: 80%;
+  background: radial-gradient(ellipse, rgba(212,168,83,0.06) 0%, rgba(180,20,50,0.05) 40%, transparent 75%);
   pointer-events: none; z-index: 0;
 }
 
-/* gold-divider removed — was causing visible horizontal lines */
+/* Vintage Classic Card Frame */
+.vintage-card {
+  background: linear-gradient(135deg, rgba(28, 20, 26, 0.7) 0%, rgba(16, 14, 18, 0.8) 50%, rgba(24, 18, 22, 0.75) 100%);
+  border: 1px solid rgba(212, 168, 83, 0.25);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(212, 168, 83, 0.2),
+    inset 0 -1px 0 rgba(220, 20, 60, 0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.vintage-card:hover {
+  border-color: rgba(212, 168, 83, 0.45);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.75),
+    0 0 25px rgba(212, 168, 83, 0.12),
+    inset 0 1px 0 rgba(212, 168, 83, 0.35);
+}
+
 .gold-divider { display: none; }
 
 /* ===== CONTAINER ===== */

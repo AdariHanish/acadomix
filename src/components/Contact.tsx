@@ -58,12 +58,11 @@ export default function Contact() {
   const labelCls = "block text-[9px] sm:text-[11px] text-gold/40 mb-1 sm:mb-1.5 uppercase tracking-wider font-medium";
 
   return (
-    <section id="contact" className="relative bg-surface-1 section-glow overflow-hidden">
-      <div className="absolute inset-0 bg-grid opacity-20" />
+    <section id="contact" className="relative section-glow overflow-hidden vintage-pinstripe">
       <div className="container-responsive relative z-10">
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.15 }} transition={{ duration: 0.7 }}
           className="section-header">
-          <span className="section-badge glass text-gold">Get In Touch</span>
+          <span className="section-badge glass-pill-solid text-gold">Get In Touch</span>
           <h2 className="text-section text-white">Let's <span className="text-gradient">build together.</span></h2>
           <p className="section-sub">Reach out online or visit us offline — we're always ready to help.</p>
         </motion.div>

@@ -75,8 +75,7 @@ export default function Services() {
   const offerActive = settings?.offer_active && settings?.offer_end_time && new Date(settings.offer_end_time).getTime() > Date.now();
 
   return (
-    <section id="services" className="relative section-glow overflow-hidden">
-      <div className="absolute inset-0 bg-dots opacity-20" />
+    <section id="services" className="relative section-glow overflow-hidden vintage-pinstripe">
       <div className="container-responsive relative z-10">
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.15 }} transition={{ duration: 0.7 }}
           className="section-header">
@@ -84,12 +83,12 @@ export default function Services() {
             <motion.span 
               animate={{ scale: [1, 1.05, 1], boxShadow: ["0 0 10px rgba(220,20,60,0.2)", "0 0 20px rgba(220,20,60,0.6)", "0 0 10px rgba(220,20,60,0.2)"] }}
               transition={{ duration: 2, repeat: Infinity }}
-              className="section-badge glass bg-crimson/20 border border-crimson/40 text-white shadow-lg shadow-crimson/20"
+              className="section-badge glass-pill-solid text-white shadow-lg shadow-crimson/20"
             >
               <Tag className="w-4 h-4 text-gold" /> {settings.offer_reason} — Limited Time
             </motion.span>
           ) : (
-            <span className="section-badge glass text-gold">Our Services</span>
+            <span className="section-badge glass-pill-solid text-gold">Our Services</span>
           )}
           <h2 className="text-section text-white">
             Everything you need.

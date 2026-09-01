@@ -363,3 +363,15 @@ export const DatabaseDB = {
       body: JSON.stringify({ action: 'query', query })
     }),
 };
+
+// Analytics DB (Admin Only)
+export const AnalyticsDB = {
+  getStats: async (): Promise<{
+    totalViews: number;
+    uniqueVisitors: number;
+    todayViews: number;
+    todayUnique: number;
+    history: Array<{ date: string; views: number; visitors: number }>;
+    topPages: Array<{ page: string; count: number }>;
+  }> => fetchAPI('/analytics'),
+};

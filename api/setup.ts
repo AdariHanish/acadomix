@@ -77,6 +77,15 @@ export default async function handler(_req: any, res: any) {
           mime_type VARCHAR(100),
           data LONGTEXT,
           updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      )`,
+      `CREATE TABLE IF NOT EXISTS page_views (
+          id BIGINT AUTO_INCREMENT PRIMARY KEY,
+          visitor_id VARCHAR(64) NOT NULL,
+          page VARCHAR(200) NOT NULL,
+          referrer VARCHAR(500),
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          INDEX idx_created_at (created_at),
+          INDEX idx_visitor_id (visitor_id)
       )`
     ];
 

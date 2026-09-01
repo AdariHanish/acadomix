@@ -14,19 +14,21 @@ import reviewsHandler from '../../api/reviews';
 import settingsHandler from '../../api/settings';
 import setupHandler from '../../api/setup';
 import databaseHandler from '../../api/database';
+import analyticsHandler from '../../api/analytics';
 
 const app = express();
 
 const SECRET = process.env.VITE_JWT_SECRET || 'acadomix_fallback_secure_key_2026_xYz';
-const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '';
 
 // ─── In-Memory Rate Limiter ───────────────────────────────────────────────────
-// Tracks failed requests per IP. Automatically clears entries after the window expires.
+// Tracks requests per IP key. Automatically clears entries after the window expires.
 interface RateEntry { count: number; firstSeen: number; }
 const rateLimitStore = new Map<string, RateEntry>();
-const RATE_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
-const AUTH_LIMIT    = 10;  // max login/otp attempts per window
-const GLOBAL_LIMIT  = 200; // max any requests per window
+const RATE_WINDOW_MS   = 15 * 60 * 1000; // 15 minutes
+const AUTH_LIMIT       = 8;   // max login/otp attempts per 15 min
+const SUBMISSION_LIMIT = 25;  // max leads/payments/reviews per 15 min
+const ANALYTICS_LIMIT  = 120; // max analytics pings per 15 min
+const GLOBAL_LIMIT     = 400; // max total requests per 15 min
 
 function getIP(req: express.Request): string {
   return (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || req.socket.remoteAddress || 'unknown';
@@ -44,13 +46,20 @@ function checkRateLimit(key: string, max: number): boolean {
   return true;
 }
 
-// ─── Token Verification ───────────────────────────────────────────────────────
+// ─── Token Verification (24-Hour Expiry) ───────────────────────────────────────
 function verifyToken(token: string): boolean {
   try {
     const [payload, signature] = token.split('.');
     if (!payload || !signature) return false;
     const expected = crypto.createHmac('sha256', SECRET).update(payload).digest('base64');
-    return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
+    if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) return false;
+
+    // Check expiration
+    const data = JSON.parse(Buffer.from(payload, 'base64').toString('utf8'));
+    if (data.exp && Date.now() > data.exp) return false;
+    if (data.ts && Date.now() - data.ts > 24 * 60 * 60 * 1000) return false;
+
+    return true;
   } catch {
     return false;
   }
@@ -62,14 +71,9 @@ function getToken(req: express.Request): string | null {
   return header.split(' ')[1];
 }
 
-function isAdmin(req: express.Request): boolean {
-  const token = getToken(req);
-  return !!token && verifyToken(token);
-}
-
 // ─── Body Parsing ─────────────────────────────────────────────────────────────
-app.use(express.json({ limit: '5mb' }));
-app.use(express.urlencoded({ extended: true, limit: '5mb' }));
+app.use(express.json({ limit: '6mb' }));
+app.use(express.urlencoded({ extended: true, limit: '6mb' }));
 
 // ─── Security Headers ─────────────────────────────────────────────────────────
 app.use((_req, res, next) => {
@@ -78,14 +82,21 @@ app.use((_req, res, next) => {
   res.setHeader('X-XSS-Protection', '1; mode=block');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
   next();
 });
 
 // ─── CORS ─────────────────────────────────────────────────────────────────────
-// Allow all origins for API (Vite proxy strips origin header in dev, Netlify handles in prod)
 app.use((req, res, next) => {
-  const origin = req.headers.origin || '*';
-  res.setHeader('Access-Control-Allow-Origin', origin);
+  const origin = req.headers.origin;
+  // Allow requests from acadomix domains, netlify deploy previews, or local dev
+  const isAllowed = !origin || 
+    origin.includes('localhost') || 
+    origin.includes('127.0.0.1') || 
+    origin.includes('acadomix') || 
+    origin.includes('netlify.app');
+
+  res.setHeader('Access-Control-Allow-Origin', isAllowed && origin ? origin : '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader('Access-Control-Max-Age', '86400');
@@ -106,11 +117,12 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
   const path = req.path;
   const method = req.method;
+  const ip = getIP(req);
 
   // Always allow OPTIONS (handled by CORS above)
   if (method === 'OPTIONS') return next();
 
-  // Public GETs: projects, settings, reviews (approved only — filtered in handler)
+  // Public GETs: projects, settings, reviews
   if (method === 'GET' && (
     path.includes('/projects') ||
     path.includes('/settings') ||
@@ -120,6 +132,14 @@ app.use((req, res, next) => {
   // Public: image/public assets by name (logos, banners, qr codes, etc.)
   if (method === 'GET' && path.includes('/assets') && req.query.asset_name) return next();
 
+  // Public POST: Analytics tracking
+  if (method === 'POST' && path.includes('/analytics')) {
+    if (!checkRateLimit(`analytics:${ip}`, ANALYTICS_LIMIT)) {
+      return res.status(429).json({ error: 'Rate limit exceeded' });
+    }
+    return next();
+  }
+
   // Public POSTs: auth (login), otp, leads (enquiry form), payments (payment submission), reviews (new review)
   if (method === 'POST' && (
     path.includes('/auth') ||
@@ -128,19 +148,22 @@ app.use((req, res, next) => {
     path.includes('/payments') ||
     path.includes('/reviews')
   )) {
-    // Rate-limit auth and OTP endpoints
+    // Stricter rate-limit for auth and OTP
     if (path.includes('/auth') || path.includes('/otp')) {
-      const ip = getIP(req);
       if (!checkRateLimit(`auth:${ip}`, AUTH_LIMIT)) {
-        return res.status(429).json({ error: 'Too many attempts. Try again in 15 minutes.' });
+        return res.status(429).json({ error: 'Too many authentication attempts. Try again in 15 minutes.' });
+      }
+    } else {
+      // General form submissions
+      if (!checkRateLimit(`submission:${ip}`, SUBMISSION_LIMIT)) {
+        return res.status(429).json({ error: 'Too many submissions. Please wait a few minutes before trying again.' });
       }
     }
     return next();
   }
 
-  // Public PUT: OTP verification (user doesn't have a token yet — they're resetting password)
+  // Public PUT: OTP verification (user resetting password)
   if (method === 'PUT' && path.includes('/otp')) {
-    const ip = getIP(req);
     if (!checkRateLimit(`auth:${ip}`, AUTH_LIMIT)) {
       return res.status(429).json({ error: 'Too many attempts. Try again in 15 minutes.' });
     }
@@ -150,10 +173,10 @@ app.use((req, res, next) => {
   // Student ID upload — public PUT (specific prefix only)
   if (method === 'PUT' && path.includes('/assets') && req.body?.asset_name?.startsWith('studentid_')) return next();
 
-  // Everything else requires valid admin token
+  // Everything else (admin routes: /database, /leads GET/PUT/DELETE, /reviews PUT/DELETE, /analytics GET, etc.) requires valid admin token
   const token = getToken(req);
   if (!token) return res.status(401).json({ error: 'Unauthorized' });
-  if (!verifyToken(token)) return res.status(403).json({ error: 'Forbidden' });
+  if (!verifyToken(token)) return res.status(403).json({ error: 'Forbidden or session expired. Please log in again.' });
 
   next();
 });
@@ -165,7 +188,6 @@ const adapt = (handler: any) => async (req: express.Request, res: express.Respon
   } catch (err) {
     console.error('[API Error]', err);
     if (!res.headersSent) {
-      // Never leak internal error details to client
       res.status(500).json({ error: 'Internal server error' });
     }
   }
@@ -173,6 +195,7 @@ const adapt = (handler: any) => async (req: express.Request, res: express.Respon
 
 // ─── Routes ───────────────────────────────────────────────────────────────────
 const router = express.Router();
+router.all('/analytics',          adapt(analyticsHandler));
 router.all('/assets',             adapt(assetsHandler));
 router.all('/auth',               adapt(authHandler));
 router.all('/database',           adapt(databaseHandler));

@@ -95,9 +95,7 @@ export default function ProjectsShowcase() {
   const scrollToContact = () => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
 
   return (
-    <section ref={sectionRef} id="projects" className="relative bg-surface-1 section-glow overflow-hidden">
-      <div className="absolute inset-0 bg-grid opacity-20" />
-
+    <section ref={sectionRef} id="projects" className="relative section-glow overflow-hidden vintage-pinstripe">
       <div className="container-responsive relative z-10">
         {/* Header */}
         <motion.div

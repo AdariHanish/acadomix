@@ -1,5 +1,19 @@
 import pool from './db.js';
 
+const ALLOWED_TABLES = new Set([
+  'leads',
+  'reviews',
+  'payments',
+  'projects',
+  'site_settings',
+  'app_assets',
+  'page_views',
+]);
+
+function isAllowedTable(table: unknown): boolean {
+  return typeof table === 'string' && ALLOWED_TABLES.has(table.toLowerCase());
+}
+
 export default async function handler(req: any, res: any) {
   if (req.method === 'GET') {
     try {
@@ -7,16 +21,24 @@ export default async function handler(req: any, res: any) {
 
       if (action === 'tables') {
         const [rows] = await pool.query('SHOW TABLES');
-        const tables = (rows as any[]).map(row => Object.values(row)[0]);
+        const tables = (rows as any[])
+          .map(row => Object.values(row)[0] as string)
+          .filter(t => ALLOWED_TABLES.has(t.toLowerCase()));
         return res.status(200).json(tables);
       }
 
       if (action === 'schema' && table) {
+        if (!isAllowedTable(table)) {
+          return res.status(400).json({ error: 'Invalid or restricted table' });
+        }
         const [rows] = await pool.query(`DESCRIBE ??`, [table]);
         return res.status(200).json(rows);
       }
 
       if (action === 'data' && table) {
+        if (!isAllowedTable(table)) {
+          return res.status(400).json({ error: 'Invalid or restricted table' });
+        }
         const conn = await pool.getConnection();
         try {
           const p = parseInt(page) || 1;
@@ -36,9 +58,11 @@ export default async function handler(req: any, res: any) {
       if (action === 'stats') {
         const conn = await pool.getConnection();
         try {
-          // Get table stats
+          // Get table stats for allowed tables only
           const [tableRows] = await conn.query('SHOW TABLES');
-          const tableNames = (tableRows as any[]).map(row => Object.values(row)[0] as string);
+          const tableNames = (tableRows as any[])
+            .map(row => Object.values(row)[0] as string)
+            .filter(t => ALLOWED_TABLES.has(t.toLowerCase()));
 
           let counts: Record<string, number> = {};
           if (tableNames.length > 0) {
@@ -96,14 +120,28 @@ export default async function handler(req: any, res: any) {
     try {
       const { action, table, query: rawQuery, data } = req.body;
 
-      // Raw SQL query execution
+      // Safe query execution (SELECT / SHOW / DESCRIBE / EXPLAIN only)
       if (action === 'query' && rawQuery) {
-        const [result] = await pool.query(rawQuery);
+        const trimmed = String(rawQuery).trim();
+        const allowedStart = /^(SELECT|SHOW|DESCRIBE|EXPLAIN)\s+/i;
+        const dangerousWords = /\b(DROP|TRUNCATE|GRANT|REVOKE|ALTER\s+USER|CREATE\s+USER|SHUTDOWN)\b/i;
+
+        if (!allowedStart.test(trimmed) || dangerousWords.test(trimmed)) {
+          return res.status(400).json({ 
+            error: 'Restricted query. Only read-only queries (SELECT, SHOW, DESCRIBE, EXPLAIN) are permitted through query console.' 
+          });
+        }
+
+        const [result] = await pool.query(trimmed);
         return res.status(200).json({ result });
       }
 
       // Insert a new row
       if (action === 'insert' && table && data) {
+        if (!isAllowedTable(table)) {
+          return res.status(400).json({ error: 'Invalid or restricted table' });
+        }
+
         const cols = Object.keys(data);
         const vals = Object.values(data);
         const placeholders = cols.map(() => '?').join(', ');
@@ -118,6 +156,10 @@ export default async function handler(req: any, res: any) {
 
       // Update a row
       if (action === 'update' && table && data && req.body.id !== undefined) {
+        if (!isAllowedTable(table)) {
+          return res.status(400).json({ error: 'Invalid or restricted table' });
+        }
+
         const id = req.body.id;
         const cols = Object.keys(data);
         const vals = Object.values(data);
@@ -140,6 +182,9 @@ export default async function handler(req: any, res: any) {
       const { table, id } = req.query;
       if (!table || !id) {
         return res.status(400).json({ error: 'Table name and row ID are required' });
+      }
+      if (!isAllowedTable(table)) {
+        return res.status(400).json({ error: 'Invalid or restricted table' });
       }
       await pool.query(`DELETE FROM ?? WHERE id = ?`, [table, id]);
       return res.status(200).json({ success: true });

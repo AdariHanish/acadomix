@@ -1,12 +1,20 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FolderOpen, Star, CreditCard, Users, Clock, CheckCircle, AlertCircle, ArrowRight } from 'lucide-react';
-import { ReviewsDB, PaymentsDB, ProjectsDB, LeadsDB } from '../../utils/storage';
+import { FolderOpen, Star, CreditCard, Users, Clock, CheckCircle, AlertCircle, ArrowRight, Eye, Activity, Globe, TrendingUp } from 'lucide-react';
+import { ReviewsDB, PaymentsDB, ProjectsDB, LeadsDB, AnalyticsDB } from '../../utils/storage';
 import { SpinnerOverlay } from '../../components/Spinner';
 
 export default function Dashboard() {
   const [stats, setStats] = useState({ totalProjects: 0, pendingReviews: 0, totalReviews: 0, pendingPayments: 0, verifiedPayments: 0, totalPayments: 0, newLeads: 0, totalLeads: 0 });
+  const [analytics, setAnalytics] = useState<{
+    totalViews: number;
+    uniqueVisitors: number;
+    todayViews: number;
+    todayUnique: number;
+    history: Array<{ date: string; views: number; visitors: number }>;
+    topPages: Array<{ page: string; count: number }>;
+  } | null>(null);
   const [recentPayments, setRecentPayments] = useState<any[]>([]);
   const [recentReviews, setRecentReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -14,22 +22,36 @@ export default function Dashboard() {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const [projects, reviews, payments, leads] = await Promise.all([
+      const [projects, reviews, payments, leads, traffic] = await Promise.allSettled([
         ProjectsDB.getAll(),
         ReviewsDB.getAll(),
         PaymentsDB.getAll(),
-        LeadsDB.getAll()
+        LeadsDB.getAll(),
+        AnalyticsDB.getStats(),
       ]);
+
+      const projectsData = projects.status === 'fulfilled' ? projects.value : [];
+      const reviewsData = reviews.status === 'fulfilled' ? reviews.value : [];
+      const paymentsData = payments.status === 'fulfilled' ? payments.value : [];
+      const leadsData = leads.status === 'fulfilled' ? leads.value : [];
+
+      if (traffic.status === 'fulfilled' && traffic.value) {
+        setAnalytics(traffic.value);
+      }
+
       setStats({
-        totalProjects: projects.length, totalReviews: reviews.length,
-        pendingReviews: reviews.filter(r => !r.is_approved).length,
-        totalPayments: payments.length,
-        pendingPayments: payments.filter(p => p.status === 'pending').length,
-        verifiedPayments: payments.filter(p => p.status === 'verified').length,
-        totalLeads: leads.length, newLeads: leads.filter(l => l.status === 'new').length,
+        totalProjects: projectsData.length,
+        totalReviews: reviewsData.length,
+        pendingReviews: reviewsData.filter((r: any) => !r.is_approved).length,
+        totalPayments: paymentsData.length,
+        pendingPayments: paymentsData.filter((p: any) => p.status === 'pending').length,
+        verifiedPayments: paymentsData.filter((p: any) => p.status === 'verified').length,
+        totalLeads: leadsData.length,
+        newLeads: leadsData.filter((l: any) => l.status === 'new').length,
       });
-      setRecentPayments(payments.slice(-5).reverse());
-      setRecentReviews(reviews.filter(r => !r.is_approved).slice(-5));
+
+      setRecentPayments(paymentsData.slice(-5).reverse());
+      setRecentReviews(reviewsData.filter((r: any) => !r.is_approved).slice(-5));
       setLoading(false);
     })();
   }, []);
@@ -65,6 +87,57 @@ export default function Dashboard() {
           </motion.div>
         ))}
       </div>
+
+      {/* Traffic & Usage Analytics */}
+      {analytics && (
+        <div className="rounded-2xl glass-card p-5">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+              <p className="text-[14px] font-medium text-white flex items-center gap-1.5">
+                <Activity className="w-4 h-4 text-emerald-400" /> Live Website Usage & Traffic
+              </p>
+            </div>
+            <span className="text-[11px] text-white/30 bg-white/5 px-2.5 py-1 rounded-full border border-white/10">
+              Privacy-friendly tracking
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+            <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5">
+              <p className="text-[11px] text-white/40 flex items-center gap-1"><Eye className="w-3.5 h-3.5 text-blue-400" /> Today's Views</p>
+              <p className="text-xl font-bold text-white mt-1">{analytics.todayViews || 0}</p>
+            </div>
+            <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5">
+              <p className="text-[11px] text-white/40 flex items-center gap-1"><Globe className="w-3.5 h-3.5 text-emerald-400" /> Today's Visitors</p>
+              <p className="text-xl font-bold text-white mt-1">{analytics.todayUnique || 0}</p>
+            </div>
+            <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5">
+              <p className="text-[11px] text-white/40 flex items-center gap-1"><TrendingUp className="w-3.5 h-3.5 text-gold" /> Total Page Views</p>
+              <p className="text-xl font-bold text-white mt-1">{analytics.totalViews || 0}</p>
+            </div>
+            <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5">
+              <p className="text-[11px] text-white/40 flex items-center gap-1"><Users className="w-3.5 h-3.5 text-crimson" /> Unique Users</p>
+              <p className="text-xl font-bold text-white mt-1">{analytics.uniqueVisitors || 0}</p>
+            </div>
+          </div>
+
+          {/* Top Pages */}
+          {analytics.topPages && analytics.topPages.length > 0 && (
+            <div>
+              <p className="text-[12px] font-medium text-white/50 mb-2">Most Visited Pages</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                {analytics.topPages.map((tp, idx) => (
+                  <div key={idx} className="flex items-center justify-between px-3 py-2 rounded-lg bg-white/[0.015] border border-white/[0.03] text-xs">
+                    <span className="text-white/70 font-mono truncate max-w-[150px]">{tp.page}</span>
+                    <span className="text-gold font-bold text-[11px]">{tp.count} views</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Recent Payments */}

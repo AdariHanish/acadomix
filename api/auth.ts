@@ -6,7 +6,12 @@ const SECRET = process.env.VITE_JWT_SECRET || 'acadomix_fallback_secure_key_2026
 const SALT_ROUNDS = 12;
 
 function generateToken(): string {
-  const payload = Buffer.from(JSON.stringify({ role: 'admin', ts: Date.now() })).toString('base64');
+  const now = Date.now();
+  const payload = Buffer.from(JSON.stringify({ 
+    role: 'admin', 
+    ts: now,
+    exp: now + 24 * 60 * 60 * 1000 // 24 hours validity
+  })).toString('base64');
   const signature = crypto.createHmac('sha256', SECRET).update(payload).digest('base64');
   return `${payload}.${signature}`;
 }
