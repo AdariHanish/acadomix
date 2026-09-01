@@ -232,32 +232,38 @@ body {
   display: none;
 }
 
+/* Vintage Ornate Damask & Filigree Pattern — Authentic Classic Luxury */
+.vintage-damask-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23d4a853' stroke-width='0.75' stroke-opacity='0.18'%3E%3Cpath d='M40 0 L80 40 L40 80 L0 40 Z'/%3E%3Cpath d='M40 10 L70 40 L40 70 L10 40 Z' stroke-opacity='0.10'/%3E%3Ccircle cx='40' cy='40' r='6' stroke-opacity='0.22'/%3E%3Ccircle cx='40' cy='40' r='1.5' fill='%23d4a853' fill-opacity='0.25' stroke='none'/%3E%3Cpath d='M40 0 L40 20 M40 60 L40 80 M0 40 L20 40 M60 40 L80 40' stroke-opacity='0.15'/%3E%3Cpath d='M0 0 L15 15 M65 15 L80 0 M80 80 L65 65 M0 80 L15 65' stroke-opacity='0.12'/%3E%3C/g%3E%3C/svg%3E");
+}
+
 /* Vintage fine grain noise texture overlay */
 .vintage-grain {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.035'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.045'/%3E%3C/svg%3E");
 }
 
 /* Classic vintage pinstripe texture */
 .vintage-pinstripe {
-  background-image: radial-gradient(rgba(212,168,83,0.12) 1px, transparent 1px), linear-gradient(0deg, rgba(212,168,83,0.02) 1px, transparent 1px);
-  background-size: 36px 36px, 100% 48px;
+  background-image: 
+    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23d4a853' stroke-width='0.6' stroke-opacity='0.12'%3E%3Cpath d='M30 0 L60 30 L30 60 L0 30 Z'/%3E%3Ccircle cx='30' cy='30' r='2' fill='%23d4a853' fill-opacity='0.15' stroke='none'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(180deg, rgba(14, 10, 16, 0.95) 0%, rgba(8, 7, 10, 0.98) 100%);
 }
 
 /* Vintage Classic Canvas - Unified rich aesthetic for the whole website */
 .vintage-classic-canvas {
   background: 
-    radial-gradient(ellipse 90% 50% at 50% 0%, rgba(212, 168, 83, 0.10) 0%, transparent 60%),
-    radial-gradient(ellipse 80% 60% at 90% 40%, rgba(180, 20, 50, 0.10) 0%, transparent 55%),
-    radial-gradient(ellipse 70% 60% at 10% 70%, rgba(139, 0, 0, 0.12) 0%, transparent 55%),
-    radial-gradient(ellipse 90% 50% at 50% 100%, rgba(212, 168, 83, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 90% 50% at 50% 0%, rgba(212, 168, 83, 0.20) 0%, transparent 65%),
+    radial-gradient(ellipse 80% 60% at 85% 45%, rgba(180, 20, 50, 0.16) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 60% at 15% 65%, rgba(139, 0, 0, 0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 90% 50% at 50% 100%, rgba(212, 168, 83, 0.14) 0%, transparent 65%),
     #08070a;
 }
 
 .bg-luxury-mesh {
   background: 
-    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(212, 168, 83, 0.11) 0%, transparent 60%),
-    radial-gradient(ellipse 70% 50% at 85% 85%, rgba(220, 20, 60, 0.09) 0%, transparent 55%),
-    radial-gradient(ellipse 60% 45% at 15% 75%, rgba(139, 0, 0, 0.10) 0%, transparent 50%),
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(212, 168, 83, 0.18) 0%, transparent 65%),
+    radial-gradient(ellipse 70% 50% at 85% 85%, rgba(220, 20, 60, 0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 45% at 15% 75%, rgba(139, 0, 0, 0.15) 0%, transparent 55%),
     #09070b;
 }
 
@@ -265,29 +271,31 @@ body {
 .section-glow { position: relative; }
 .section-glow::before {
   content: ''; position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
-  width: 80%; height: 80%;
-  background: radial-gradient(ellipse, rgba(212,168,83,0.06) 0%, rgba(180,20,50,0.05) 40%, transparent 75%);
+  width: 85%; height: 85%;
+  background: radial-gradient(ellipse, rgba(212,168,83,0.10) 0%, rgba(180,20,50,0.08) 40%, transparent 75%);
   pointer-events: none; z-index: 0;
 }
 
-/* Vintage Classic Card Frame */
+/* Vintage Classic Card Frame with Antique Gold Border */
 .vintage-card {
-  background: linear-gradient(135deg, rgba(28, 20, 26, 0.7) 0%, rgba(16, 14, 18, 0.8) 50%, rgba(24, 18, 22, 0.75) 100%);
-  border: 1px solid rgba(212, 168, 83, 0.25);
+  background: linear-gradient(135deg, rgba(24, 18, 22, 0.85) 0%, rgba(14, 12, 16, 0.92) 50%, rgba(20, 15, 18, 0.88) 100%);
+  border: 1px solid rgba(212, 168, 83, 0.30);
   box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.6),
-    inset 0 1px 0 rgba(212, 168, 83, 0.2),
-    inset 0 -1px 0 rgba(220, 20, 60, 0.15);
+    0 8px 32px rgba(0, 0, 0, 0.7),
+    0 0 15px rgba(212, 168, 83, 0.08),
+    inset 0 1px 0 rgba(212, 168, 83, 0.3),
+    inset 0 -1px 0 rgba(220, 20, 60, 0.2);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
 
 .vintage-card:hover {
-  border-color: rgba(212, 168, 83, 0.45);
+  border-color: rgba(212, 168, 83, 0.55);
   box-shadow: 
-    0 12px 40px rgba(0, 0, 0, 0.75),
-    0 0 25px rgba(212, 168, 83, 0.12),
-    inset 0 1px 0 rgba(212, 168, 83, 0.35);
+    0 12px 40px rgba(0, 0, 0, 0.85),
+    0 0 25px rgba(212, 168, 83, 0.20),
+    0 0 45px rgba(220, 20, 60, 0.12),
+    inset 0 1px 0 rgba(212, 168, 83, 0.45);
 }
 
 .gold-divider { display: none; }

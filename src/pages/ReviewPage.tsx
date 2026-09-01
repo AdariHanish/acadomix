@@ -64,9 +64,9 @@ export default function ReviewPage() {
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
   const [logoSrc, setLogoSrc] = useState(() => {
     try {
-      return localStorage.getItem('acadomix_cached_logo') || '/images/logo-placeholder.png';
+      return localStorage.getItem('acadomix_cached_logo') || '/images/logo.png';
     } catch {
-      return '/images/logo-placeholder.png';
+      return '/images/logo.png';
     }
   });
   const [submitted, setSubmitted] = useState(false);

@@ -43,7 +43,7 @@ export default function Footer() {
   };
 
   const [logoSrc, setLogoSrc] = useState(() => {
-    return localStorage.getItem('acadomix_cached_logo') || '/images/logo-placeholder.png';
+    return localStorage.getItem('acadomix_cached_logo') || '/images/logo.png';
   });
   
   const [tagline, setTagline] = useState(() => {

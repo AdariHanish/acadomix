@@ -17,7 +17,7 @@ export default function PaymentPage() {
 
   const [qrCode, setQrCode] = useState<string | null>(initialQr);
   const [logoSrc, setLogoSrc] = useState(() => {
-    return localStorage.getItem('acadomix_cached_logo') || '/images/logo-placeholder.png';
+    return localStorage.getItem('acadomix_cached_logo') || '/images/logo.png';
   });
   const [submitted, setSubmitted] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);

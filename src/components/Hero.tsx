@@ -68,6 +68,9 @@ export default function Hero() {
     <section id="home" className="relative min-h-[100svh] flex items-center justify-center overflow-hidden vintage-classic-canvas">
       {/* Vintage Classic Background Art */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Vintage ornate damask wallpaper pattern layer — visible & high luxury */}
+        <div className="absolute inset-0 vintage-damask-pattern pointer-events-none opacity-60" />
+
         {/* Subtle vintage grain texture */}
         <div className="absolute inset-0 vintage-grain pointer-events-none opacity-40" />
 
@@ -76,9 +79,9 @@ export default function Hero() {
           className="absolute inset-0"
           style={{
             background: `
-              radial-gradient(ellipse 90% 45% at 50% 0%, rgba(212, 168, 83, 0.14) 0%, transparent 65%),
-              radial-gradient(ellipse 80% 50% at 85% 85%, rgba(180, 20, 50, 0.10) 0%, transparent 60%),
-              radial-gradient(ellipse 70% 45% at 15% 85%, rgba(139, 0, 0, 0.12) 0%, transparent 55%),
+              radial-gradient(ellipse 90% 50% at 50% 0%, rgba(212, 168, 83, 0.22) 0%, transparent 65%),
+              radial-gradient(ellipse 80% 55% at 85% 85%, rgba(180, 20, 50, 0.16) 0%, transparent 60%),
+              radial-gradient(ellipse 70% 50% at 15% 85%, rgba(139, 0, 0, 0.18) 0%, transparent 55%),
               transparent
             `
           }}
@@ -98,12 +101,12 @@ export default function Hero() {
         )}
 
         {/* Vignette & Soft Contrast Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/85" />
 
         {/* Soft, slow floating ambient orbs in distant corners */}
-        <div className="absolute top-1/6 left-1/10 w-72 sm:w-[460px] h-72 sm:h-[460px] bg-crimson/10 rounded-full blur-[100px] pointer-events-none"
+        <div className="absolute top-1/6 left-1/10 w-72 sm:w-[460px] h-72 sm:h-[460px] bg-crimson/12 rounded-full blur-[100px] pointer-events-none"
           style={{ animation: 'orbFloat1 14s ease-in-out infinite', willChange: 'transform' }} />
-        <div className="absolute bottom-1/6 right-1/10 w-72 sm:w-[460px] h-72 sm:h-[460px] bg-gold/10 rounded-full blur-[100px] pointer-events-none"
+        <div className="absolute bottom-1/6 right-1/10 w-72 sm:w-[460px] h-72 sm:h-[460px] bg-gold/14 rounded-full blur-[100px] pointer-events-none"
           style={{ animation: 'orbFloat2 16s ease-in-out infinite 1s', willChange: 'transform' }} />
       </div>
 

@@ -20,7 +20,7 @@ const routeLinks = [
 export default function Navbar() {
   const [activeSection, setActiveSection] = useState('');
   const [logoSrc, setLogoSrc] = useState(() => {
-    return localStorage.getItem('acadomix_cached_logo') || '/images/logo-placeholder.png';
+    return localStorage.getItem('acadomix_cached_logo') || '/images/logo.png';
   });
   const location = useLocation();
   const isHome = location.pathname === '/';
