@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Zap, Users, Award, Clock, Sparkles } from 'lucide-react';
+import { ArrowRight, Zap, Users, Award, Clock, Sparkles, CreditCard } from 'lucide-react';
 import { ReviewsDB, getCachedData } from '../utils/storage';
 
 function computeStats(data: any[]) {
@@ -142,15 +142,25 @@ export default function Hero() {
 
         {/* CTAs */}
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.15 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 px-4">
-          <button onClick={() => scrollTo('contact')}
-            className="w-full sm:w-auto px-8 py-3.5 sm:py-4 bg-gradient-to-r from-crimson via-crimson-dark to-gold-dark text-white text-sm sm:text-lg font-semibold rounded-full btn-glow shine flex items-center justify-center gap-2 active:scale-[0.97] transition-transform">
-            <Zap className="w-4 h-4 sm:w-5 sm:h-5" /> Start Your Project <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
-          </button>
-          <a href={`https://wa.me/918897492936?text=${encodeURIComponent('Hi! Acadomix, I’m interested in discussing a project collaboration with you.')}`} target="_blank" rel="noopener noreferrer"
-            className="w-full sm:w-auto px-8 py-3.5 sm:py-4 glass-pill-solid text-white hover:text-gold text-sm sm:text-lg font-semibold rounded-full transition-all duration-300 hover:scale-[1.02] active:scale-[0.97] flex items-center justify-center gap-2">
-            💬 WhatsApp Us
-          </a>
+          className="flex flex-col items-center justify-center gap-3 sm:gap-3.5 px-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto">
+            <button onClick={() => scrollTo('contact')}
+              className="w-full sm:w-auto px-8 py-3.5 sm:py-4 bg-gradient-to-r from-crimson via-crimson-dark to-gold-dark text-white text-sm sm:text-lg font-semibold rounded-full btn-glow shine flex items-center justify-center gap-2 active:scale-[0.97] transition-transform">
+              <Zap className="w-4 h-4 sm:w-5 sm:h-5" /> Start Your Project <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+            <a href={`https://wa.me/918897492936?text=${encodeURIComponent('Hi! Acadomix, I’m interested in discussing a project collaboration with you.')}`} target="_blank" rel="noopener noreferrer"
+              className="w-full sm:w-auto px-8 py-3.5 sm:py-4 glass-pill-solid text-white hover:text-gold text-sm sm:text-lg font-semibold rounded-full transition-all duration-300 hover:scale-[1.02] active:scale-[0.97] flex items-center justify-center gap-2">
+              💬 WhatsApp Us
+            </a>
+          </div>
+
+          {/* Do Payment Button */}
+          <Link to="/payment"
+            className="w-full sm:w-auto px-7 py-2.5 sm:py-3 glass-pill-solid text-gold hover:text-white text-xs sm:text-sm font-semibold rounded-full border border-gold/40 hover:border-gold shadow-lg shadow-gold/10 hover:shadow-gold/25 flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.02] active:scale-[0.97] group">
+            <CreditCard className="w-4 h-4 text-gold group-hover:text-gold-light transition-colors" />
+            <span>Do Payment / Pay Online</span>
+            <ArrowRight className="w-3.5 h-3.5 text-gold/60 group-hover:translate-x-1 group-hover:text-gold transition-all" />
+          </Link>
         </motion.div>
 
         {/* Stats */}

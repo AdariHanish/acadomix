@@ -38,7 +38,7 @@ export default function Testimonials() {
   const marqueeReviews = homeVisibleReviews.length > 0 ? homeVisibleReviews : reviews.slice(0, 10);
 
   return (
-    <section id="testimonials" className="bg-black relative overflow-hidden">
+    <section id="testimonials" className="relative section-glow overflow-hidden vintage-pinstripe">
       {/* Background Glows */}
       <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[500px] h-[500px] bg-crimson/10 blur-[60px] rounded-full pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-gold/5 blur-[60px] rounded-full pointer-events-none" />
@@ -49,7 +49,7 @@ export default function Testimonials() {
           whileInView={{ opacity: 1, scale: 1 }}
           className="section-header"
         >
-          <span className="section-badge glass border border-white/10 text-crimson">
+          <span className="section-badge glass-pill-solid text-crimson">
             <Star className="w-4 h-4 fill-crimson" /> Testimonials
           </span>
           <h2 className="text-section text-white">
@@ -64,12 +64,8 @@ export default function Testimonials() {
         </motion.div>
       </div>{/* end container-responsive for header */}
 
-      {/* Marquee Container (Edge-to-Edge) */}
+      {/* Marquee Container (Edge-to-Edge without black side fades) */}
       <div className="relative w-full overflow-hidden flex pb-8">
-        {/* Edge Gradients for Smooth Fade In/Out */}
-        <div className="absolute left-0 top-0 bottom-0 w-12 sm:w-24 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-12 sm:w-24 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none" />
-
         <div className="flex w-max animate-marquee gap-6 px-3 hover:[animation-play-state:paused]">
           {marqueeReviews.map((r, i) => (
             <div key={i} onClick={() => setSelectedReview(r)} className="w-[300px] sm:w-[400px] flex-shrink-0 glass-card p-6 sm:p-8 rounded-[30px] border border-white/5 hover:border-crimson/30 transition-all flex flex-col group cursor-pointer active:scale-95">

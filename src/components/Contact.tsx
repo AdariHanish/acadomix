@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Send, Phone, Mail, MapPin, Clock, CheckCircle, MessageCircle, ArrowRight } from 'lucide-react';
+import { Send, Phone, Mail, MapPin, Clock, CheckCircle, MessageCircle, ArrowRight, CreditCard } from 'lucide-react';
 import { LeadsDB, SettingsDB } from '../utils/storage';
 import StudentDiscountModal from './StudentDiscountModal';
 
@@ -155,6 +156,32 @@ export default function Contact() {
             <StudentDiscountModal isOpen={showDiscount} onClose={() => setShowDiscount(false)} />
           </motion.div>
         </div>
+
+        {/* Ending Payment Strip — Between Contact and Footer */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, amount: 0.2 }}
+          transition={{ duration: 0.6 }}
+          className="mt-10 sm:mt-14"
+        >
+          <div className="p-5 sm:p-7 rounded-2xl sm:rounded-3xl glass-card max-w-2xl mx-auto border border-gold/30 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="text-center sm:text-left">
+              <p className="text-[11px] sm:text-xs uppercase tracking-widest text-gold font-bold flex items-center justify-center sm:justify-start gap-1.5">
+                <CreditCard className="w-3.5 h-3.5 text-gold" /> Ready to finalize your order?
+              </p>
+              <p className="text-xs sm:text-sm text-white/80 font-medium mt-0.5">
+                Pay securely via UPI QR, Google Pay, PhonePe, or Bank Transfer
+              </p>
+            </div>
+            <Link 
+              to="/payment"
+              className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-crimson via-crimson-dark to-gold-dark text-white text-xs sm:text-sm font-bold rounded-full btn-glow shine flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] whitespace-nowrap shadow-lg shadow-crimson/25"
+            >
+              <CreditCard className="w-4 h-4" /> Make Payment <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
