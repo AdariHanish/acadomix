@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { TrendingUp, Star, ArrowRight, Sparkles } from 'lucide-react';
-import { ProjectsDB } from '../utils/storage';
+import { ProjectsDB, getCachedData } from '../utils/storage';
 import { Project } from '../types';
 import AppleLoader from './AppleLoader';
 
@@ -16,8 +16,9 @@ const categories = [
 ];
 
 export default function ProjectsShowcase() {
-  const [allProjects, setAllProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
+  const cachedProjects = getCachedData<Project[]>('/projects');
+  const [allProjects, setAllProjects] = useState<Project[]>(cachedProjects || []);
+  const [loading, setLoading] = useState(!cachedProjects || cachedProjects.length === 0);
   const [error, setError] = useState<string | null>(null);
   const [activeDomain, setActiveDomain] = useState('all');
   const [activeType, setActiveType] = useState<'mini' | 'major'>('major');
@@ -32,7 +33,7 @@ export default function ProjectsShowcase() {
       setAllProjects(data);
       setLoading(false);
     }).catch(() => {
-      setError('Failed to load projects.');
+      if (!cachedProjects) setError('Failed to load projects.');
       setLoading(false);
     });
   }, []);
@@ -106,7 +107,7 @@ export default function ProjectsShowcase() {
           transition={{ duration: 0.7 }}
           className="section-header"
         >
-          <span className="section-badge glass text-gold">
+          <span className="section-badge glass-pill-solid text-gold">
             Our Projects
           </span>
           <h2 className="text-section text-white">
@@ -137,7 +138,7 @@ export default function ProjectsShowcase() {
             className="-mx-2 px-2 overflow-x-auto no-scrollbar relative"
             onScroll={() => { if (!hasScrolled) setHasScrolled(true); }}
           >
-            <div className="flex gap-1.5 sm:gap-2 justify-start sm:justify-center w-max mx-auto p-1.5 glass rounded-full">
+            <div className="flex gap-1.5 sm:gap-2 justify-start sm:justify-center w-max mx-auto p-1.5 glass-pill-solid rounded-full border border-gold/20 shadow-lg">
             {categories.map((cat) => {
               const count = cat.id === 'all' ? allProjects.length : allProjects.filter(p => p.category === cat.id).length;
               return (
@@ -147,7 +148,7 @@ export default function ProjectsShowcase() {
                   className={`px-3 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs font-semibold rounded-full whitespace-nowrap transition-all duration-300 active:scale-95 flex items-center gap-1 ${
                     activeDomain === cat.id
                       ? 'bg-gradient-to-r from-crimson to-crimson-dark text-white shadow-lg shadow-crimson/30'
-                      : 'text-white/40 hover:text-white active:text-crimson hover:bg-white/5'
+                      : 'text-white/50 hover:text-white active:text-crimson hover:bg-white/5'
                   }`}
                 >
                   {cat.name}

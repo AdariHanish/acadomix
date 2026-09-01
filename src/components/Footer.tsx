@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUp, Heart, Phone, Mail, MapPin, Shield } from 'lucide-react';
-import { AdminAuth, AssetsDB, SettingsDB } from '../utils/storage';
+import { AdminAuth, AssetsDB, SettingsDB, getCachedData } from '../utils/storage';
+import { SiteSettings } from '../types';
 import LazyImage from './LazyImage';
 
 const footerLinks = {
@@ -23,7 +24,7 @@ const footerLinks = {
 };
 
 export default function Footer() {
-  const scrollTo = (id: string) => { AdminAuth.logout(); document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }); };
+  const scrollTo = (id: string) => { document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }); };
   
   const handleFooterLinkClick = (item: any, categoryTitle: string) => {
     if (categoryTitle === 'Services') {
@@ -44,9 +45,19 @@ export default function Footer() {
   const [logoSrc, setLogoSrc] = useState(() => {
     return localStorage.getItem('acadomix_cached_logo') || '/images/logo-placeholder.png';
   });
-  const [tagline, setTagline] = useState('Coding Your Ideas');
-  const [locationText, setLocationText] = useState('65-5-259, VUDA Colony, Vizag - 530011');
-  const [locationLink, setLocationLink] = useState('https://maps.google.com/?q=VUDA+Colony+Visakhapatnam');
+  
+  const [tagline, setTagline] = useState(() => {
+    const cached = getCachedData<SiteSettings>('/settings');
+    return cached?.company_tagline || 'Coding Your Ideas';
+  });
+  const [locationText, setLocationText] = useState(() => {
+    const cached = getCachedData<SiteSettings>('/settings');
+    return cached?.office_location_text || '65-5-259, VUDA Colony, Vizag - 530011';
+  });
+  const [locationLink, setLocationLink] = useState(() => {
+    const cached = getCachedData<SiteSettings>('/settings');
+    return cached?.office_location_link || 'https://maps.google.com/?q=VUDA+Colony+Visakhapatnam';
+  });
 
   useEffect(() => {
     AssetsDB.get('logo').then(logo => {
@@ -74,7 +85,7 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 sm:gap-8 mb-10 sm:mb-14">
           {/* Brand */}
           <div className="col-span-2 md:col-span-2 lg:col-span-2">
-            <Link to="/" onClick={() => { AdminAuth.logout(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="inline-flex items-start gap-2.5 mb-3 sm:mb-5 group">
+            <Link to="/" onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="inline-flex items-start gap-2.5 mb-3 sm:mb-5 group">
               <LazyImage 
                 src={logoSrc} 
                 alt="Acadomix" 
@@ -109,7 +120,7 @@ export default function Footer() {
                 {items.map((item: any, i: number) => (
                   <li key={i}>
                     {item.isRoute ? (
-                      <Link to={item.href} onClick={() => AdminAuth.logout()} className="text-[10px] sm:text-sm text-white/25 hover:text-white active:text-gold transition-colors flex items-center gap-1">
+                      <Link to={item.href} className="text-[10px] sm:text-sm text-white/25 hover:text-white active:text-gold transition-colors flex items-center gap-1">
                         {item.name === 'Admin' && <Shield className="w-3 h-3" />}{item.name}
                       </Link>
                     ) : item.external ? (

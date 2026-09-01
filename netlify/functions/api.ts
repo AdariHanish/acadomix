@@ -117,8 +117,8 @@ app.use((req, res, next) => {
     path.includes('/reviews')
   )) return next();
 
-  // Public: raw image assets by name only (for logos/banners on site)
-  if (method === 'GET' && path.includes('/assets') && req.query.asset_name && req.query.raw === 'true') return next();
+  // Public: image/public assets by name (logos, banners, qr codes, etc.)
+  if (method === 'GET' && path.includes('/assets') && req.query.asset_name) return next();
 
   // Public POSTs: auth (login), otp, leads (enquiry form), payments (payment submission), reviews (new review)
   if (method === 'POST' && (

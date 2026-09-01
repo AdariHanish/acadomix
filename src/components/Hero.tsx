@@ -2,36 +2,46 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Zap, Users, Award, Clock, Sparkles } from 'lucide-react';
-import { ReviewsDB } from '../utils/storage';
+import { ReviewsDB, getCachedData } from '../utils/storage';
 import LazyImage from './LazyImage';
 
+function computeStats(data: any[]) {
+  if (!Array.isArray(data)) return { projects: 0, students: 0, teamStats: { teams: 0, members: 0, individuals: 0 } };
+  let tTeams = 0, tMembers = 0, tIndiv = 0;
+  const count = data.reduce((total, r) => {
+    if (r.team_members) {
+      tTeams++;
+      const mCount = r.team_members.split(',').filter((m: string) => m.trim()).length;
+      tMembers += (mCount + 1);
+      return total + 1 + mCount;
+    } else {
+      tIndiv++;
+      return total + 1;
+    }
+  }, 0);
+  return {
+    projects: data.length,
+    students: count,
+    teamStats: { teams: tTeams, members: tMembers, individuals: tIndiv }
+  };
+}
+
 export default function Hero() {
-  const [totalStudents, setTotalStudents] = useState(0);
-  const [totalProjects, setTotalProjects] = useState(0);
-  const [teamStats, setTeamStats] = useState({ teams: 0, members: 0, individuals: 0 });
+  const initialCached = getCachedData<any[]>('/reviews');
+  const initialStats = computeStats(initialCached || []);
+
+  const [totalStudents, setTotalStudents] = useState(initialStats.students);
+  const [totalProjects, setTotalProjects] = useState(initialStats.projects);
+  const [teamStats, setTeamStats] = useState(initialStats.teamStats);
   
   useEffect(() => {
     ReviewsDB.getApproved()
       .then(data => {
         if (!Array.isArray(data)) return;
-        
-        // Projects: each review = 1 project (team project still counts as 1)
-        setTotalProjects(data.length);
-        let tTeams = 0, tMembers = 0, tIndiv = 0;
-        // Students: 1 (lead/solo) + count of team members per review
-        const count = data.reduce((total, r) => {
-          if (r.team_members) {
-            tTeams++;
-            const mCount = r.team_members.split(',').filter((m: string) => m.trim()).length;
-            tMembers += (mCount + 1);
-            return total + 1 + mCount;
-          } else {
-            tIndiv++;
-            return total + 1;
-          }
-        }, 0);
-        setTotalStudents(count);
-        setTeamStats({ teams: tTeams, members: tMembers, individuals: tIndiv });
+        const stats = computeStats(data);
+        setTotalProjects(stats.projects);
+        setTotalStudents(stats.students);
+        setTeamStats(stats.teamStats);
       })
       .catch(err => console.error("Failed to load hero stats:", err));
   }, []);
@@ -42,7 +52,7 @@ export default function Hero() {
     <section id="home" className="relative min-h-[100svh] flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0">
         <LazyImage 
-          src="/api/assets?asset_name=hero_bg" 
+          src="/api/assets?asset_name=hero_bg&raw=true" 
           alt="" 
           spinnerSize="lg"
           fetchPriority="high"
@@ -61,11 +71,17 @@ export default function Hero() {
         style={{ animation: 'orbFloat2 12s ease-in-out infinite 1s', willChange: 'transform' }} />
 
       <div className="relative z-10 container-responsive text-center pt-20 sm:pt-24">
-        {/* Badge */}
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-6 sm:mb-8">
-          <Sparkles className="w-4 h-4 text-gold" />
-          <span className="text-[10px] sm:text-sm text-gold/80 font-medium">#1 Project Partner for Students</span>
+        {/* Solid Glassmorphic Badge Pill — No see-through, 100% visible text */}
+        <motion.div 
+          initial={{ opacity: 0, y: 10, scale: 0.95 }} 
+          animate={{ opacity: 1, y: 0, scale: 1 }} 
+          transition={{ duration: 0.3 }}
+          className="inline-flex items-center gap-2.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full glass-pill-solid mb-6 sm:mb-8 cursor-default"
+        >
+          <Sparkles className="w-4 h-4 text-gold shrink-0 drop-shadow-[0_0_8px_rgba(212,168,83,0.9)]" />
+          <span className="text-xs sm:text-sm text-gold font-bold tracking-wide select-none drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+            #1 Project Partner for Students
+          </span>
         </motion.div>
 
         {/* Headline */}
@@ -92,7 +108,7 @@ export default function Hero() {
             <Zap className="w-4 h-4 sm:w-5 sm:h-5" /> Start Your Project <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
           <a href={`https://wa.me/918897492936?text=${encodeURIComponent('Hi! Acadomix, I’m interested in discussing a project collaboration with you.')}`} target="_blank" rel="noopener noreferrer"
-            className="w-full sm:w-auto px-8 py-3.5 sm:py-4 glass text-white/80 hover:text-white text-sm sm:text-lg font-semibold rounded-full transition-all duration-300 hover:bg-white/10 active:scale-[0.97] flex items-center justify-center gap-2">
+            className="w-full sm:w-auto px-8 py-3.5 sm:py-4 glass-pill-solid text-white hover:text-gold text-sm sm:text-lg font-semibold rounded-full transition-all duration-300 hover:scale-[1.02] active:scale-[0.97] flex items-center justify-center gap-2">
             💬 WhatsApp Us
           </a>
         </motion.div>

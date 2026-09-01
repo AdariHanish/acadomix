@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Shield } from 'lucide-react';
-import { AssetsDB, AdminAuth, SettingsDB } from '../utils/storage';
+import { AssetsDB, SettingsDB, getCachedData } from '../utils/storage';
+import { SiteSettings } from '../types';
 
 const sectionLinks = [
   { name: 'Services', id: 'services' },
@@ -24,7 +25,10 @@ export default function Navbar() {
   const location = useLocation();
   const isHome = location.pathname === '/';
 
-  const [tagline, setTagline] = useState('Coding Your Ideas');
+  const [tagline, setTagline] = useState(() => {
+    const cached = getCachedData<SiteSettings>('/settings');
+    return cached?.company_tagline || 'Coding Your Ideas';
+  });
 
   useEffect(() => {
     AssetsDB.get('logo').then(logo => {
@@ -87,20 +91,19 @@ export default function Navbar() {
   }, [location.pathname, isHome]);
 
   const scrollTo = (id: string) => {
-    AdminAuth.logout();
     if (isHome) {
       document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
     } else {
-      window.location.href = '/#/';
+      window.location.href = `/#${id}`;
       setTimeout(() => {
         document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
+      }, 50);
     }
   };
 
   const navItemClass = (isActive: boolean) =>
     `relative flex-shrink-0 px-3 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-[13px] font-medium whitespace-nowrap transition-colors duration-250 active:scale-95 group flex items-center justify-center ${
-      isActive ? 'text-gold' : 'text-white/60 hover:text-white'
+      isActive ? 'text-gold font-bold' : 'text-white/70 hover:text-white'
     }`;
 
   // Gold animated underline
@@ -135,7 +138,7 @@ export default function Navbar() {
             />
             <Link
               to="/"
-              onClick={() => { AdminAuth.logout(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               className="flex flex-col items-start active:scale-95 transition-transform"
             >
               <span className="text-xs sm:text-lg md:text-2xl font-black tracking-[0.1em] sm:tracking-[0.15em] text-gradient uppercase leading-none">
@@ -147,9 +150,9 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Nav Links - Unified Glass Pill */}
+          {/* Nav Links - Unified Solid Glass Pill */}
           <div className="flex-1 max-w-[50%] sm:max-w-xl mx-2 sm:mx-4 overflow-hidden flex justify-center">
-            <nav className="flex items-center gap-1 sm:gap-2 px-3 py-1 sm:py-1.5 rounded-full glass-card border border-gold/10 overflow-x-auto small-header-scrollbar whitespace-nowrap max-w-full">
+            <nav className="flex items-center gap-1 sm:gap-2 px-3 py-1 sm:py-1.5 rounded-full glass-pill-solid border border-gold/25 overflow-x-auto small-header-scrollbar whitespace-nowrap max-w-full">
               {sectionLinks.map((link) => (
                 <button
                   key={link.name}
@@ -166,7 +169,6 @@ export default function Navbar() {
                   key={link.name}
                   id={`nav-btn-${link.name.toLowerCase()}`}
                   to={link.href}
-                  onClick={() => AdminAuth.logout()}
                   className={navItemClass(location.pathname === link.href)}
                 >
                   {link.name}

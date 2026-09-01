@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Send, ArrowLeft, CheckCircle, Calendar, GraduationCap, Briefcase, Quote, Shield, X, Users } from 'lucide-react';
-import { ReviewsDB, AssetsDB, SettingsDB } from '../utils/storage';
-import { Review } from '../types';
+import { ReviewsDB, AssetsDB, SettingsDB, getCachedData } from '../utils/storage';
+import { Review, SiteSettings } from '../types';
 
 import AppleLoader from '../components/AppleLoader';
 import WhatsAppButton from '../components/WhatsAppButton';
@@ -49,10 +49,17 @@ const projectTypes = [
 ];
 
 export default function ReviewPage() {
+  const cachedReviews = getCachedData<Review[]>('/reviews');
+  const initialCount = cachedReviews ? cachedReviews.reduce((total, r) => {
+    const teamCount = r.team_members
+      ? r.team_members.split(',').filter((m: string) => m.trim()).length
+      : 0;
+    return total + 1 + teamCount;
+  }, 0) : 0;
 
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [totalStudents, setTotalStudents] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [reviews, setReviews] = useState<Review[]>(cachedReviews || []);
+  const [totalStudents, setTotalStudents] = useState(initialCount);
+  const [loading, setLoading] = useState(!cachedReviews || cachedReviews.length === 0);
   const [showForm, setShowForm] = useState(false);
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
   const [logoSrc, setLogoSrc] = useState(() => {
@@ -65,7 +72,10 @@ export default function ReviewPage() {
   const [submitted, setSubmitted] = useState(false);
   const [rating, setRating] = useState(5);
   const [hoverRating, setHoverRating] = useState(0);
-  const [tagline, setTagline] = useState('Coding Your Ideas');
+  const [tagline, setTagline] = useState(() => {
+    const cached = getCachedData<SiteSettings>('/settings');
+    return cached?.company_tagline || 'Coding Your Ideas';
+  });
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
   const [searchTerm, setSearchTerm] = useState('');
   
@@ -84,38 +94,40 @@ export default function ReviewPage() {
   useEffect(() => {
     let cancelled = false;
 
-    const load = async (attempt = 0) => {
+    const load = async () => {
       try {
-        const [data, logo, settings] = await Promise.all([
+        const [data, logo, settings] = await Promise.allSettled([
           ReviewsDB.getApproved(),
           AssetsDB.get('logo'),
           SettingsDB.get(),
         ]);
 
         if (cancelled) return;
-        setReviews(data);
-        const count = data.reduce((total, r) => {
-          const teamCount = r.team_members
-            ? r.team_members.split(',').filter((m: string) => m.trim()).length
-            : 0;
-          return total + 1 + teamCount;
-        }, 0);
-        setTotalStudents(count);
 
-        if (logo) {
-          setLogoSrc(logo.data);
-          try { localStorage.setItem('acadomix_cached_logo', logo.data); } catch {}
+        if (data.status === 'fulfilled' && Array.isArray(data.value)) {
+          setReviews(data.value);
+          const count = data.value.reduce((total, r) => {
+            const teamCount = r.team_members
+              ? r.team_members.split(',').filter((m: string) => m.trim()).length
+              : 0;
+            return total + 1 + teamCount;
+          }, 0);
+          setTotalStudents(count);
         }
-        if (settings?.company_tagline) setTagline(settings.company_tagline);
+
+        if (logo.status === 'fulfilled' && logo.value?.data) {
+          setLogoSrc(logo.value.data);
+          try { localStorage.setItem('acadomix_cached_logo', logo.value.data); } catch {}
+        }
+
+        if (settings.status === 'fulfilled' && settings.value?.company_tagline) {
+          setTagline(settings.value.company_tagline);
+        }
+
         setLoading(false);
       } catch {
         if (cancelled) return;
-        if (attempt < 2) {
-          // Auto-retry up to 2 times with a short delay (handles dev server restart)
-          setTimeout(() => load(attempt + 1), 800);
-        } else {
-          setLoading(false); // Give up, show empty state rather than freezing
-        }
+        setLoading(false);
       }
     };
 

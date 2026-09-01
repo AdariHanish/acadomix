@@ -114,6 +114,18 @@ async function networkFetch(endpoint: string, options: RequestInit): Promise<any
   return data;
 }
 
+// ── Synchronously get cached data if available (0ms instant state initialization) ──
+export function getCachedData<T = any>(endpoint: string): T | null {
+  const mem = MEM_CACHE[endpoint];
+  if (mem && mem.data !== undefined) return mem.data as T;
+  const ls = lsGet(endpoint);
+  if (ls && ls.data !== undefined) {
+    MEM_CACHE[endpoint] = ls;
+    return ls.data as T;
+  }
+  return null;
+}
+
 /** Prefetch multiple endpoints in parallel (call after login to warm cache) */
 export async function prefetchAdminData() {
   const token = localStorage.getItem('acadomix_admin_auth');
@@ -122,10 +134,16 @@ export async function prefetchAdminData() {
   await Promise.allSettled(endpoints.map(ep => networkFetch(ep, { headers })));
 }
 
-/** Prefetch public data in parallel (call on app load to warm cache for visitors) */
+/** Prefetch all public data in parallel (call on app load to warm cache for visitors) */
 export async function prefetchPublicData() {
   // fetchAPI naturally checks cache first and only hits network if needed
-  const endpoints = ['/reviews'];
+  const endpoints = [
+    '/reviews',
+    '/projects',
+    '/settings',
+    '/assets?asset_name=logo',
+    '/assets?asset_name=payment_qr'
+  ];
   await Promise.allSettled(endpoints.map(ep => fetchAPI(ep)));
 }
 
@@ -311,12 +329,6 @@ export const AdminAuth = {
   },
   logout: (): void => {
     localStorage.removeItem('acadomix_admin_auth');
-    try {
-      Object.keys(localStorage).forEach(k => {
-        if (k.startsWith(LS_PREFIX)) localStorage.removeItem(k);
-      });
-      Object.keys(MEM_CACHE).forEach(k => delete MEM_CACHE[k]);
-    } catch {}
   },
   isLoggedIn: (): boolean => {
     return !!localStorage.getItem('acadomix_admin_auth');

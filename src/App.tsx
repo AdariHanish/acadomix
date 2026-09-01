@@ -25,6 +25,18 @@ export default function App() {
     // Start background prefetch immediately so navigation is instant
     prefetchPublicData().catch(() => {});
 
+    // Prefetch lazy route chunks during idle time → zero-lag page transitions
+    const prefetchRoutes = () => {
+      import('./pages/ReviewPage').catch(() => {});
+      import('./pages/ProjectsPage').catch(() => {});
+      import('./pages/PaymentPage').catch(() => {});
+    };
+    if ('requestIdleCallback' in window) {
+      (window as any).requestIdleCallback(prefetchRoutes, { timeout: 2000 });
+    } else {
+      setTimeout(prefetchRoutes, 1000);
+    }
+
     const handler = (e: Event) => {
 
       const detail = (e as CustomEvent).detail;

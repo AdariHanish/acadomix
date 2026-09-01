@@ -4,7 +4,7 @@ import { ArrowLeft, TrendingUp, Star, Sparkles, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { ProjectsDB } from '../utils/storage';
+import { ProjectsDB, getCachedData } from '../utils/storage';
 import { Project } from '../types';
 import AppleLoader from '../components/AppleLoader';
 
@@ -18,8 +18,9 @@ const categories = [
 ];
 
 export default function ProjectsPage() {
-  const [allProjects, setAllProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
+  const cached = getCachedData<Project[]>('/projects');
+  const [allProjects, setAllProjects] = useState<Project[]>(cached || []);
+  const [loading, setLoading] = useState(!cached || cached.length === 0);
   const [activeDomain, setActiveDomain] = useState('all');
   const [activeType, setActiveType] = useState<'mini' | 'major'>('major');
 
@@ -27,6 +28,8 @@ export default function ProjectsPage() {
     window.scrollTo(0, 0);
     ProjectsDB.getAll().then(data => {
       setAllProjects(data);
+      setLoading(false);
+    }).catch(() => {
       setLoading(false);
     });
   }, []);

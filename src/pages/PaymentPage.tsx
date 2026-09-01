@@ -2,44 +2,53 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Upload, CheckCircle, AlertCircle, Copy, Check, QrCode, Shield } from 'lucide-react';
-import { PaymentsDB, AssetsDB, SettingsDB } from '../utils/storage';
+import { PaymentsDB, AssetsDB, SettingsDB, getCachedData } from '../utils/storage';
+import { AppAsset, SiteSettings } from '../types';
 import { compressImage } from '../utils/image';
 import AppleLoader from '../components/AppleLoader';
 import WhatsAppButton from '../components/WhatsAppButton';
 
 import { ClickableImage } from '../components/ImageLightbox';
 import { Spinner } from '../components/Spinner';
-export default function PaymentPage() {
 
-  const [qrCode, setQrCode] = useState<string | null>(null);
-  const [logoSrc, setLogoSrc] = useState('/images/logo-placeholder.png');
+export default function PaymentPage() {
+  const cachedQr = getCachedData<AppAsset[]>('/assets?asset_name=payment_qr');
+  const initialQr = cachedQr && cachedQr.length > 0 ? cachedQr[0].data : null;
+
+  const [qrCode, setQrCode] = useState<string | null>(initialQr);
+  const [logoSrc, setLogoSrc] = useState(() => {
+    return localStorage.getItem('acadomix_cached_logo') || '/images/logo-placeholder.png';
+  });
   const [submitted, setSubmitted] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
   const [formData, setFormData] = useState({ student_name: '', college: '', phone: '', email: '', project_name: '', amount: '' });
   const [screenshot, setScreenshot] = useState<{ data: string; mime_type: string; name: string } | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [adminPhone, setAdminPhone] = useState('9515192936');
-  const [whatsappUrl, setWhatsappUrl] = useState<string | null>(null);
-  const [tagline, setTagline] = useState('Coding Your Ideas');
 
-  const [loadingQr, setLoadingQr] = useState(true);
+  const cachedSettings = getCachedData<SiteSettings>('/settings');
+  const [adminPhone, setAdminPhone] = useState(cachedSettings?.admin_phone || '9515192936');
+  const [whatsappUrl, setWhatsappUrl] = useState<string | null>(null);
+  const [tagline, setTagline] = useState(cachedSettings?.company_tagline || 'Coding Your Ideas');
+
+  const [loadingQr, setLoadingQr] = useState(!initialQr);
 
   useEffect(() => { 
     AssetsDB.get('payment_qr').then(qr => { 
       if (qr) setQrCode(qr.data); 
       setLoadingQr(false);
-    }); 
+    }).catch(() => setLoadingQr(false)); 
+    
     AssetsDB.get('logo').then(logo => {
-      if (logo) setLogoSrc(logo.data);
-    });
+      if (logo?.data) {
+        setLogoSrc(logo.data);
+        try { localStorage.setItem('acadomix_cached_logo', logo.data); } catch {}
+      }
+    }).catch(() => {});
+    
     SettingsDB.get().then(settings => {
-      if (settings && settings.admin_phone) {
-        setAdminPhone(settings.admin_phone);
-      }
-      if (settings && settings.company_tagline) {
-        setTagline(settings.company_tagline);
-      }
-    });
+      if (settings?.admin_phone) setAdminPhone(settings.admin_phone);
+      if (settings?.company_tagline) setTagline(settings.company_tagline);
+    }).catch(() => {});
   }, []);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
