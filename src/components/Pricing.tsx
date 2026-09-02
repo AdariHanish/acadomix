@@ -87,7 +87,7 @@ export default function Pricing() {
   return (
     <section id="pricing" className="relative section-glow overflow-hidden vintage-pinstripe">
       <div className="container-responsive relative z-10">
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.15 }} transition={{ duration: 0.7 }}
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.15 }} transition={{ duration: 0.7 , ease: "easeOut" }}
           className="section-header">
           <span className="section-badge glass-pill-solid text-crimson">Pricing Plans</span>
           <h2 className="text-section text-white">
@@ -112,7 +112,7 @@ export default function Pricing() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 max-w-5xl mx-auto">
           {plans.map((plan, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.5, delay: i * 0.12 }}
+            <motion.div key={i} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.8, delay: i * 0.12 , ease: "easeOut" }}
               className={`relative glass-card rounded-2xl sm:rounded-3xl p-5 sm:p-6 lg:p-7 flex flex-col ${plan.popular ? 'md:-mt-3 md:mb-[-12px] ring-2 ring-crimson/40' : ''}`}>
               {plan.popular && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-crimson via-gold-dark to-gold text-white text-[9px] sm:text-[10px] font-bold rounded-full uppercase tracking-wider shadow-lg shadow-crimson/30">

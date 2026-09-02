@@ -15,7 +15,7 @@ export default function WhyUs() {
     <section className="relative bg-surface-1 section-glow overflow-hidden">
       <div className="absolute inset-0 bg-grid opacity-20" />
       <div className="container-responsive relative z-10">
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.15 }} transition={{ duration: 0.7 }}
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.15 }} transition={{ duration: 0.7 , ease: "easeOut" }}
           className="section-header">
           <span className="section-badge glass text-crimson">Why Choose Us</span>
           <h2 className="text-section text-white">
@@ -26,7 +26,7 @@ export default function WhyUs() {
         </motion.div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-5">
           {reasons.map((item, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.5, delay: i * 0.08 }}
+            <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.8, delay: i * 0.08 , ease: "easeOut" }}
               className="glass-card rounded-2xl p-4 sm:p-5 flex gap-3 sm:gap-4 group active:bg-white/5 transition-colors">
               <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl glass flex items-center justify-center flex-shrink-0 ${item.color} transition-colors`}>
                 {item.icon}

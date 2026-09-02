@@ -128,7 +128,7 @@ export default function AdminLayout() {
         </header>
 
         <main className="p-4 sm:p-5 lg:p-7">
-          <motion.div key={location.pathname} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.15 }}>
+          <motion.div key={location.pathname} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.15 , ease: "easeOut" }}>
             <Outlet />
           </motion.div>
         </main>

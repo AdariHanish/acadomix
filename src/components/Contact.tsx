@@ -61,7 +61,7 @@ export default function Contact() {
   return (
     <section id="contact" className="relative section-glow overflow-hidden vintage-pinstripe">
       <div className="container-responsive relative z-10">
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.15 }} transition={{ duration: 0.7 }}
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.15 }} transition={{ duration: 0.7 , ease: "easeOut" }}
           className="section-header">
           <span className="section-badge glass-pill-solid text-gold">Get In Touch</span>
           <h2 className="text-section text-white">Let's <span className="text-gradient">build together.</span></h2>
@@ -70,7 +70,7 @@ export default function Contact() {
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 sm:gap-6 lg:gap-8">
           {/* Form */}
-          <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.6 }}
+          <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.8 , ease: "easeOut" }}
             className="lg:col-span-3">
             <div className="glass-card rounded-2xl p-4 sm:p-6 lg:p-8">
               <h3 className="text-sm sm:text-lg font-bold text-white mb-4 sm:mb-5">📩 Send Your Requirements</h3>
@@ -112,13 +112,13 @@ export default function Contact() {
           </motion.div>
 
           {/* Info */}
-          <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.6, delay: 0.1 }}
+          <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.8, delay: 0.1 , ease: "easeOut" }}
             className="lg:col-span-2 space-y-3 sm:space-y-4">
             <div className="glass-card rounded-2xl p-4 sm:p-5">
               <h3 className="text-xs sm:text-base font-bold text-white mb-3 sm:mb-4">📍 Contact Information</h3>
               <div className="space-y-3">
                 {[
-                  { icon: <Phone className="w-4 h-4" />, label: 'Call / WhatsApp', value: '+91 88974 92936', href: 'tel:+918897492936', color: 'group-hover:text-gold' },
+                  { icon: <Phone className="w-4 h-4" />, label: 'Call Us Now', value: '+91 95151 92936', href: 'tel:+919515192936', color: 'group-hover:text-gold' },
                   { icon: <Mail className="w-4 h-4" />, label: 'Email', value: 'acadomix@gmail.com', href: `https://mail.google.com/mail/?view=cm&fs=1&to=acadomix@gmail.com&su=${encodeURIComponent('Project Collaboration')}&body=${encodeURIComponent("Hi! Acadomix, I'm interested in discussing a project collaboration with you.")}`, target: '_blank', color: 'group-hover:text-crimson' },
                   { icon: <MapPin className="w-4 h-4" />, label: 'Office', value: locationText, href: locationLink, color: 'group-hover:text-gold' },
                   { icon: <Clock className="w-4 h-4" />, label: 'Hours', value: 'Mon - Sat: 9 AM - 9 PM', href: '#', color: 'group-hover:text-crimson' },
@@ -134,11 +134,18 @@ export default function Contact() {
               </div>
             </div>
 
-            <a href={`https://wa.me/918897492936?text=${encodeURIComponent('Hi! Acadomix, I’m interested in discussing a project collaboration with you.')}`} target="_blank" rel="noopener noreferrer"
+            <a href={`https://wa.me/918897492636?text=${encodeURIComponent('Hi! Acadomix, I’m interested in discussing a project collaboration with you.')}`} target="_blank" rel="noopener noreferrer"
               className="glass-card rounded-2xl p-4 sm:p-5 text-center block group hover:ring-1 hover:ring-green-500/30 active:bg-white/5 transition-all">
               <MessageCircle className="w-7 h-7 sm:w-9 sm:h-9 text-green-400 mx-auto mb-1.5 group-hover:scale-110 transition-transform" />
               <p className="text-green-400 text-xs sm:text-sm font-semibold">WhatsApp Us Now</p>
               <p className="text-green-400/40 text-[10px] sm:text-xs mt-0.5">Instant response guaranteed</p>
+            </a>
+
+            <a href="tel:+919515192936"
+              className="glass-card rounded-2xl p-4 sm:p-5 text-center block group hover:ring-1 hover:ring-blue-500/30 active:bg-white/5 transition-all">
+              <Phone className="w-7 h-7 sm:w-9 sm:h-9 text-blue-400 mx-auto mb-1.5 group-hover:scale-110 transition-transform" />
+              <p className="text-blue-400 text-xs sm:text-sm font-semibold">Call Us Now</p>
+              <p className="text-blue-400/40 text-[10px] sm:text-xs mt-0.5">Talk to our experts</p>
             </a>
 
             <button
@@ -162,7 +169,7 @@ export default function Contact() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, amount: 0.2 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.8 , ease: "easeOut" }}
           className="mt-10 sm:mt-14"
         >
           <div className="p-5 sm:p-7 rounded-2xl sm:rounded-3xl glass-card max-w-2xl mx-auto border border-gold/30 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -176,9 +183,9 @@ export default function Contact() {
             </div>
             <Link 
               to="/payment"
-              className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-crimson via-crimson-dark to-gold-dark text-white text-xs sm:text-sm font-bold rounded-full btn-glow shine flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] whitespace-nowrap shadow-lg shadow-crimson/25"
+              className="btn-payment-luxury w-full sm:w-auto px-6 py-3 text-xs sm:text-sm font-bold rounded-full flex items-center justify-center gap-2 whitespace-nowrap"
             >
-              <CreditCard className="w-4 h-4" /> Make Payment <ArrowRight className="w-3.5 h-3.5" />
+              <CreditCard className="w-4 h-4 text-gold-light drop-shadow-[0_0_6px_rgba(212,168,83,0.8)]" /> Make Payment <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </motion.div>

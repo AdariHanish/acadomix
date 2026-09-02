@@ -138,7 +138,7 @@ export default function ProjectsPage() {
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.3, delay: i * 0.05 }}
+                    transition={{ duration: 0.8, delay: i * 0.05 , ease: "easeOut" }}
                     className="glass-card rounded-3xl overflow-hidden flex flex-col h-full border border-white/5 hover:border-gold/30 transition-colors group"
                   >
                     <div className="flex flex-wrap gap-1.5 p-5 pb-0">
@@ -204,7 +204,7 @@ export default function ProjectsPage() {
                         </div>
                         
                         <a
-                          href={`https://wa.me/918897492936?text=${encodeURIComponent(`Hi! Acadomix, I’m interested in discussing the project: "${project.title}" (₹${project.our_price}).`)}`}
+                          href={`https://wa.me/918897492636?text=${encodeURIComponent(`Hi! Acadomix, I’m interested in discussing the project: "${project.title}" (₹${project.our_price}).`)}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="w-full py-3.5 bg-gradient-to-r from-gold-dark to-gold text-black text-sm font-bold rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform"

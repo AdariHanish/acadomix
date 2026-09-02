@@ -102,7 +102,7 @@ export default function ProjectsShowcase() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, amount: 0.15 }}
-          transition={{ duration: 0.7 }}
+          transition={{ duration: 0.7 , ease: "easeOut" }}
           className="section-header"
         >
           <span className="section-badge glass-pill-solid text-gold">
@@ -217,7 +217,7 @@ export default function ProjectsShowcase() {
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.35, delay: i * 0.04 }}
+                  transition={{ duration: 0.85, delay: i * 0.04 , ease: "easeOut" }}
                   className="glass-card rounded-2xl sm:rounded-3xl overflow-hidden group"
                 >
                   {/* Badges */}
@@ -304,7 +304,7 @@ export default function ProjectsShowcase() {
 
                     {/* CTA */}
                     <a
-                      href={`https://wa.me/918897492936?text=${encodeURIComponent(`Hi! Acadomix, I’m interested in discussing the project: "${project.title}" (₹${project.our_price}).`)}`}
+                      href={`https://wa.me/918897492636?text=${encodeURIComponent(`Hi! Acadomix, I’m interested in discussing the project: "${project.title}" (₹${project.our_price}).`)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="mt-4 w-full py-3 bg-gradient-to-r from-crimson to-crimson-dark text-white text-xs sm:text-sm font-semibold rounded-xl flex items-center justify-center gap-2 btn-glow shine active:scale-[0.98] transition-transform"
@@ -322,7 +322,7 @@ export default function ProjectsShowcase() {
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.35, delay: displayed.length * 0.04 }}
+                  transition={{ duration: 0.85, delay: displayed.length * 0.04 , ease: "easeOut" }}
                   className="glass-card rounded-2xl sm:rounded-3xl overflow-hidden group flex flex-col justify-center items-center text-center p-8 border border-gold/20 hover:border-gold/50 cursor-pointer"
                   onClick={() => window.scrollTo(0, 0)}
                 >

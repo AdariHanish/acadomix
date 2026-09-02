@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, Send, ArrowLeft, CheckCircle, Calendar, GraduationCap, Briefcase, Quote, Shield, X, Users } from 'lucide-react';
+import { Star, Send, ArrowLeft, CheckCircle, Calendar, GraduationCap, Briefcase, Quote, Shield, X, Users, CreditCard, ArrowRight, ArrowUp } from 'lucide-react';
 import { ReviewsDB, AssetsDB, SettingsDB, getCachedData } from '../utils/storage';
 import { Review, SiteSettings } from '../types';
 
@@ -90,6 +90,26 @@ export default function ReviewPage() {
   });
 
   useLockBodyScroll(selectedReview !== null);
+
+  const [showGoToTop, setShowGoToTop] = useState(false);
+
+  // Scroll to top when page mounts (navigating from another page)
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
+
+  // Show / hide Go to Top button on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowGoToTop(window.scrollY > 300);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -306,18 +326,27 @@ export default function ReviewPage() {
             </div>
           </div>
 
-          <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row items-stretch justify-center gap-4 max-w-4xl mx-auto px-6">
-            <Link to="/" className="flex-1 glass-card rounded-2xl p-4 sm:p-5 text-center hover:scale-[1.02] transition-transform cursor-pointer flex flex-col items-center justify-center gap-2">
-              <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 text-white/50 mb-1" />
-              <span className="text-xs sm:text-sm font-bold text-white/80 uppercase tracking-wider">Back to Home</span>
-            </Link>
-            <div 
-              onClick={() => setShowForm(!showForm)} 
-              className="flex-1 glass-card rounded-2xl p-4 sm:p-5 text-center hover:scale-[1.02] transition-transform cursor-pointer flex flex-col items-center justify-center gap-2 border border-crimson/20 hover:border-crimson/40"
-            >
-              <Send className="w-5 h-5 sm:w-6 sm:h-6 text-crimson mb-1" />
-              <span className="text-xs sm:text-sm font-bold text-gradient uppercase tracking-wider">{showForm ? 'View All Reviews' : 'Write a Review ✍️'}</span>
+          <div className="mt-4 sm:mt-6 flex flex-col items-center justify-center gap-4 max-w-4xl mx-auto px-6">
+            <div className="flex flex-col sm:flex-row items-stretch justify-center gap-4 w-full">
+              <Link to="/" className="flex-1 glass-card rounded-2xl p-4 sm:p-5 text-center hover:scale-[1.02] transition-transform cursor-pointer flex flex-col items-center justify-center gap-2">
+                <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 text-white/50 mb-1" />
+                <span className="text-xs sm:text-sm font-bold text-white/80 uppercase tracking-wider">Back to Home</span>
+              </Link>
+              <div 
+                onClick={() => setShowForm(!showForm)} 
+                className="flex-1 glass-card rounded-2xl p-4 sm:p-5 text-center hover:scale-[1.02] transition-transform cursor-pointer flex flex-col items-center justify-center gap-2 border border-crimson/20 hover:border-crimson/40"
+              >
+                <Send className="w-5 h-5 sm:w-6 sm:h-6 text-crimson mb-1" />
+                <span className="text-xs sm:text-sm font-bold text-gradient uppercase tracking-wider">{showForm ? 'View All Reviews' : 'Write a Review ✍️'}</span>
+              </div>
             </div>
+            <Link to="/payment"
+              className="btn-payment-luxury w-full sm:w-auto px-8 sm:px-12 py-3.5 sm:py-4 rounded-2xl flex items-center justify-center gap-2.5 shadow-lg"
+            >
+              <CreditCard className="w-5 h-5 drop-shadow-[0_0_6px_rgba(212,168,83,0.8)]" />
+              <span className="text-xs sm:text-sm font-bold uppercase tracking-wider">Do Payment / Pay Online</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
         </motion.div>
 
@@ -466,7 +495,7 @@ export default function ReviewPage() {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
                   {sortedReviews.map((r, i) => (
-                  <motion.div key={r.id} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i * 0.03, 0.3), duration: 0.2 }}
+                  <motion.div key={r.id} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i * 0.03, 0.3), duration: 0.2 , ease: "easeOut" }}
                     onClick={() => setSelectedReview(r)}
                     className="glass-card rounded-2xl sm:rounded-3xl p-5 sm:p-6 flex flex-col group cursor-pointer hover:border-crimson/30 active:scale-[0.98] transition-all">
                     <Quote className="w-8 h-8 text-crimson/30 mb-3 group-hover:text-crimson/60 transition-colors" />
@@ -612,6 +641,54 @@ export default function ReviewPage() {
               </div>
             </motion.div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Bottom Payment CTA Banner */}
+      <div className="container-responsive pb-12 pt-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, amount: 0.1 }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+          className="glass-card rounded-3xl p-6 sm:p-10 text-center border-gold/20"
+        >
+          <p className="text-xs sm:text-sm text-gold/70 uppercase tracking-widest font-bold mb-2">Ready to get started?</p>
+          <h3 className="text-xl sm:text-3xl font-black text-white mb-2">
+            Make Your <span className="text-gradient">Payment Online</span>
+          </h3>
+          <p className="text-sm text-white/35 mb-6 max-w-lg mx-auto">Secure, instant payment processing. Get your project started today!</p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Link to="/payment"
+              className="btn-payment-luxury px-8 sm:px-12 py-3.5 sm:py-4 rounded-full text-sm sm:text-base flex items-center gap-2.5"
+            >
+              <CreditCard className="w-5 h-5 drop-shadow-[0_0_6px_rgba(212,168,83,0.8)]" />
+              <span>Do Payment / Pay Online</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link to="/" className="px-8 py-3.5 glass rounded-full text-white/60 hover:text-white text-sm font-semibold transition-colors border border-white/10 hover:border-white/30">
+              ← Back to Home
+            </Link>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Floating Go to Top Button */}
+      <AnimatePresence>
+        {showGoToTop && (
+          <motion.button
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={scrollToTop}
+            className="fixed bottom-4 sm:bottom-6 left-4 sm:left-6 z-50 px-4 py-3 sm:px-5 sm:py-3.5 rounded-full glass-pill-solid text-gold border border-gold/40 hover:border-gold shadow-lg shadow-gold/20 flex items-center gap-2 group cursor-pointer transition-colors"
+            title="Go to Top"
+          >
+            <ArrowUp className="w-4 h-4 sm:w-5 sm:h-5 text-gold group-hover:-translate-y-0.5 transition-transform" />
+            <span className="text-xs sm:text-sm font-bold tracking-wide text-white">Go to Top</span>
+          </motion.button>
         )}
       </AnimatePresence>
     </div>

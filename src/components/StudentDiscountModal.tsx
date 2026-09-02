@@ -61,7 +61,7 @@ export default function StudentDiscountModal({ isOpen, onClose }: Props) {
         `📎 College ID Card: ${publicUrl}`
       );
       
-      const waUrl = `https://wa.me/918897492936?text=${msg}`;
+      const waUrl = `https://wa.me/918897492636?text=${msg}`;
       
       // Open WhatsApp — no file downloads, just the hosted link
       window.open(waUrl, '_blank');

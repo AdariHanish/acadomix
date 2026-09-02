@@ -13,7 +13,7 @@ export default function HowItWorks() {
     <section id="how-it-works" className="relative section-glow overflow-hidden">
       <div className="absolute inset-0 bg-dots opacity-20" />
       <div className="container-responsive relative z-10">
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.15 }} transition={{ duration: 0.7 }}
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.15 }} transition={{ duration: 0.7 , ease: "easeOut" }}
           className="section-header">
           <span className="section-badge glass text-gold">How It Works</span>
           <h2 className="text-section text-white">
@@ -24,7 +24,7 @@ export default function HowItWorks() {
         </motion.div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
           {steps.map((item, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.5, delay: i * 0.1 }}
+            <motion.div key={i} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.8, delay: i * 0.1 , ease: "easeOut" }}
               className="glass-card rounded-2xl p-4 sm:p-5 text-center relative group active:bg-white/5 transition-colors">
               <span className="absolute top-3 right-3 text-2xl sm:text-3xl font-bold text-white/[0.04] group-hover:text-gold/10 transition-colors">{item.step}</span>
               <div className={`w-11 h-11 sm:w-14 sm:h-14 rounded-xl glass flex items-center justify-center mx-auto mb-3 sm:mb-4 ${item.color} transition-colors`}>
@@ -35,7 +35,7 @@ export default function HowItWorks() {
             </motion.div>
           ))}
         </div>
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.15 }} transition={{ delay: 0.3 }}
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.15 }} transition={{ delay: 0.3 , ease: "easeOut" }}
           className="text-center mt-10 sm:mt-14">
           <button onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
             className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-crimson via-crimson-dark to-gold-dark text-white text-sm sm:text-base font-semibold rounded-full btn-glow shine active:scale-[0.97] transition-transform">

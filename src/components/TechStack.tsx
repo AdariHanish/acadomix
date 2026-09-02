@@ -61,14 +61,12 @@ export default function TechStack() {
       <div className="gold-divider mb-10" />
       
       {/* Title Centered at Top */}
-      <div className="container-responsive mb-8 text-center">
+      <div className="container-responsive mb-10 text-center">
         <span className="section-badge glass text-gold/70">Technologies We Master</span>
       </div>
 
       {/* Scrolling Marquee Animation */}
       <div className="relative">
-        <div className="absolute left-0 top-0 bottom-0 w-12 sm:w-24 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-12 sm:w-24 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none" />
         <motion.div
           animate={{ x: ['0%', '-50%'] }}
           transition={{ duration: 35, repeat: Infinity, ease: 'linear' }}
@@ -181,7 +179,7 @@ export default function TechStack() {
                       key={t.name}
                       initial={{ opacity: 0, scale: 0.85 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: i * 0.03 }}
+                      transition={{ delay: i * 0.03 , ease: "easeOut" }}
                       className="flex flex-col items-center gap-3 p-4 rounded-2xl group transition-all cursor-default"
                       style={{
                         background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 100%)',

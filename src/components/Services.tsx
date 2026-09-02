@@ -77,12 +77,12 @@ export default function Services() {
   return (
     <section id="services" className="relative section-glow overflow-hidden vintage-pinstripe">
       <div className="container-responsive relative z-10">
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.15 }} transition={{ duration: 0.7 }}
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.15 }} transition={{ duration: 0.7 , ease: "easeOut" }}
           className="section-header">
           {offerActive ? (
             <motion.span 
               animate={{ scale: [1, 1.05, 1], boxShadow: ["0 0 10px rgba(220,20,60,0.2)", "0 0 20px rgba(220,20,60,0.6)", "0 0 10px rgba(220,20,60,0.2)"] }}
-              transition={{ duration: 2, repeat: Infinity }}
+              transition={{ duration: 2, repeat: Infinity , ease: "easeOut" }}
               className="section-badge glass-pill-solid text-white shadow-lg shadow-crimson/20"
             >
               <Tag className="w-4 h-4 text-gold" /> {settings.offer_reason} — Limited Time
@@ -102,7 +102,7 @@ export default function Services() {
           onTouchMove={handleTouchMove}
         >
           {services.map((s, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.5, delay: i * 0.06 }}
+            <motion.div key={i} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.8, delay: i * 0.06 , ease: "easeOut" }}
               onClick={() => handleServiceClick(s.title)}
               onTouchStart={() => setActiveTouchIndex(i)}
               data-index={i}
@@ -147,7 +147,7 @@ export default function Services() {
                 ))}
               </ul>
 
-              <a href={`https://wa.me/918897492936?text=${encodeURIComponent(`Hi! I'm interested in ${s.title} (${s.currentPrice}). Can you help?`)}`}
+              <a href={`https://wa.me/918897492636?text=${encodeURIComponent(`Hi! I'm interested in ${s.title} (${s.currentPrice}). Can you help?`)}`}
                 target="_blank" rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
                 className={`flex items-center gap-1 text-[10px] sm:text-xs font-semibold transition-colors group/link active:scale-95 relative z-10 ${

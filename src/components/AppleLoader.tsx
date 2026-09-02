@@ -11,7 +11,7 @@ export default function AppleLoader({ fullScreen = false }: { fullScreen?: boole
         className="relative flex items-center justify-center w-12 h-12"
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.3, ease: "easeOut" }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
       >
         {/* Outer glowing ring */}
         <motion.div

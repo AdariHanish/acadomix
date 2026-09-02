@@ -229,7 +229,7 @@ export default function PaymentPage() {
           </motion.div>
 
           {/* Form */}
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}>
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 , ease: "easeOut" }}>
             <div className="glass-card rounded-2xl sm:rounded-3xl p-5 sm:p-6 lg:p-8">
               <h2 className="text-base sm:text-lg font-bold text-white mb-5 sm:mb-6">📤 Upload Payment Confirmation</h2>
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -272,7 +272,7 @@ export default function PaymentPage() {
               </form>
 
               <div className="mt-5 pt-5 border-t border-white/5 text-center">
-                <p className="text-xs sm:text-sm text-white/20">Need help? <a href={`https://wa.me/918897492936?text=${encodeURIComponent("Hi! Acadomix, I'm interested in discussing a project collaboration with you.")}`} target="_blank" rel="noopener noreferrer" className="text-green-400 hover:underline">WhatsApp us</a></p>
+                <p className="text-xs sm:text-sm text-white/20">Need help? <a href={`https://wa.me/918897492636?text=${encodeURIComponent("Hi! Acadomix, I'm interested in discussing a project collaboration with you.")}`} target="_blank" rel="noopener noreferrer" className="text-green-400 hover:underline">WhatsApp us</a></p>
               </div>
             </div>
           </motion.div>
