@@ -211,5 +211,15 @@ router.all('/setup',              adapt(setupHandler));
 app.use('/api', router);
 app.use('/.netlify/functions/api', router);
 
-export const handler = serverless(app);
+export const handler = serverless(app, {
+  binary: [
+    'image/*',
+    'image/png',
+    'image/jpeg',
+    'image/webp',
+    'image/gif',
+    'image/svg+xml',
+    'application/pdf'
+  ]
+});
 export { app };
