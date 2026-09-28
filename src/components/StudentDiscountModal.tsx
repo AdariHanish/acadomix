@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Upload, Send, GraduationCap } from 'lucide-react';
 import { compressImage } from '../utils/image';
-import { AssetsDB } from '../utils/storage';
+import { AssetsDB, getCachedData } from '../utils/storage';
+import { SiteSettings } from '../types';
 
 interface Props {
   isOpen: boolean;
@@ -60,8 +61,8 @@ export default function StudentDiscountModal({ isOpen, onClose }: Props) {
         `👤 Name: ${studentName}\n` +
         `📎 College ID Card: ${publicUrl}`
       );
-      
-      const waUrl = `https://wa.me/918897492636?text=${msg}`;
+      const waNumber = getCachedData<SiteSettings>('/settings')?.contact_whatsapp_number || '918897492636';
+      const waUrl = `https://wa.me/${waNumber}?text=${msg}`;
       
       // Open WhatsApp — no file downloads, just the hosted link
       window.open(waUrl, '_blank');

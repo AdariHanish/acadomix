@@ -147,7 +147,7 @@ export default function Services() {
                 ))}
               </ul>
 
-              <a href={`https://wa.me/918897492636?text=${encodeURIComponent(`Hi! I'm interested in ${s.title} (${s.currentPrice}). Can you help?`)}`}
+              <a href={`https://wa.me/${settings?.contact_whatsapp_number || '918897492636'}?text=${encodeURIComponent(`Hi! I'm interested in ${s.title} (${s.currentPrice}). Can you help?`)}`}
                 target="_blank" rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
                 className={`flex items-center gap-1 text-[10px] sm:text-xs font-semibold transition-colors group/link active:scale-95 relative z-10 ${

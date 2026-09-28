@@ -12,11 +12,15 @@ export default function Contact() {
 
   const [locationText, setLocationText] = useState('65-5-259, VUDA Colony, Vizag - 530011');
   const [locationLink, setLocationLink] = useState('https://maps.google.com/?q=VUDA+Colony+Visakhapatnam');
+  const [waNumber, setWaNumber] = useState('918897492636');
+  const [callNumber, setCallNumber] = useState('+919515192936');
 
   useEffect(() => {
     SettingsDB.get().then(settings => {
       if (settings?.office_location_text) setLocationText(settings.office_location_text);
       if (settings?.office_location_link) setLocationLink(settings.office_location_link);
+      if (settings?.contact_whatsapp_number) setWaNumber(settings.contact_whatsapp_number);
+      if (settings?.contact_call_number) setCallNumber(settings.contact_call_number);
     }).catch(() => {});
   }, []);
 
@@ -118,7 +122,7 @@ export default function Contact() {
               <h3 className="text-xs sm:text-base font-bold text-white mb-3 sm:mb-4">📍 Contact Information</h3>
               <div className="space-y-3">
                 {[
-                  { icon: <Phone className="w-4 h-4" />, label: 'Call Us Now', value: '+91 95151 92936', href: 'tel:+919515192936', color: 'group-hover:text-gold' },
+                  { icon: <Phone className="w-4 h-4" />, label: 'Call Us Now', value: callNumber, href: `tel:${callNumber}`, color: 'group-hover:text-gold' },
                   { icon: <Mail className="w-4 h-4" />, label: 'Email', value: 'acadomix@gmail.com', href: `https://mail.google.com/mail/?view=cm&fs=1&to=acadomix@gmail.com&su=${encodeURIComponent('Project Collaboration')}&body=${encodeURIComponent("Hi! Acadomix, I'm interested in discussing a project collaboration with you.")}`, target: '_blank', color: 'group-hover:text-crimson' },
                   { icon: <MapPin className="w-4 h-4" />, label: 'Office', value: locationText, href: locationLink, color: 'group-hover:text-gold' },
                   { icon: <Clock className="w-4 h-4" />, label: 'Hours', value: 'Mon - Sat: 9 AM - 9 PM', href: '#', color: 'group-hover:text-crimson' },
@@ -134,14 +138,14 @@ export default function Contact() {
               </div>
             </div>
 
-            <a href={`https://wa.me/918897492636?text=${encodeURIComponent('Hi! Acadomix, I’m interested in discussing a project collaboration with you.')}`} target="_blank" rel="noopener noreferrer"
+            <a href={`https://wa.me/${waNumber}?text=${encodeURIComponent('Hi! Acadomix, I’m interested in discussing a project collaboration with you.')}`} target="_blank" rel="noopener noreferrer"
               className="glass-card rounded-2xl p-4 sm:p-5 text-center block group hover:ring-1 hover:ring-green-500/30 active:bg-white/5 transition-all">
               <MessageCircle className="w-7 h-7 sm:w-9 sm:h-9 text-green-400 mx-auto mb-1.5 group-hover:scale-110 transition-transform" />
               <p className="text-green-400 text-xs sm:text-sm font-semibold">WhatsApp Us Now</p>
               <p className="text-green-400/40 text-[10px] sm:text-xs mt-0.5">Instant response guaranteed</p>
             </a>
 
-            <a href="tel:+919515192936"
+            <a href={`tel:${callNumber}`}
               className="glass-card rounded-2xl p-4 sm:p-5 text-center block group hover:ring-1 hover:ring-blue-500/30 active:bg-white/5 transition-all">
               <Phone className="w-7 h-7 sm:w-9 sm:h-9 text-blue-400 mx-auto mb-1.5 group-hover:scale-110 transition-transform" />
               <p className="text-blue-400 text-xs sm:text-sm font-semibold">Call Us Now</p>

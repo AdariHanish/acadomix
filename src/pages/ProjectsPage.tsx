@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { ProjectsDB, getCachedData } from '../utils/storage';
-import { Project } from '../types';
+import { Project, SiteSettings } from '../types';
 import AppleLoader from '../components/AppleLoader';
 
 const categories = [
@@ -204,7 +204,7 @@ export default function ProjectsPage() {
                         </div>
                         
                         <a
-                          href={`https://wa.me/918897492636?text=${encodeURIComponent(`Hi! Acadomix, I’m interested in discussing the project: "${project.title}" (₹${project.our_price}).`)}`}
+                          href={`https://wa.me/${getCachedData<SiteSettings>('/settings')?.contact_whatsapp_number || '918897492636'}?text=${encodeURIComponent(`Hi! Acadomix, I’m interested in discussing the project: "${project.title}" (₹${project.our_price}).`)}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="w-full py-3.5 bg-gradient-to-r from-gold-dark to-gold text-black text-sm font-bold rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform"

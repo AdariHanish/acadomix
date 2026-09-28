@@ -5,24 +5,6 @@ import { AdminAuth, AssetsDB, SettingsDB, getCachedData } from '../utils/storage
 import { SiteSettings } from '../types';
 import LazyImage from './LazyImage';
 
-const footerLinks = {
-  Services: [
-    { name: 'Mini Projects', href: '#services' }, { name: 'Major Projects', href: '#services' },
-    { name: 'Websites', href: '#services' }, { name: 'Research Papers', href: '#services' },
-    { name: 'Assignments', href: '#services' }, { name: 'Plagiarism Removal', href: '#services' },
-  ],
-  Company: [
-    { name: 'How It Works', href: '#how-it-works' }, { name: 'Pricing', href: '#pricing' },
-    { name: 'Reviews', href: '/reviews', isRoute: true }, { name: 'Payment', href: '/payment', isRoute: true },
-    { name: 'Admin', href: '/admin', isRoute: true },
-  ],
-  Support: [
-    { name: 'Contact Us', href: '#contact' },
-    { name: 'WhatsApp', href: `https://wa.me/918897492636?text=${encodeURIComponent('Hi! Acadomix, I’m interested in discussing a project collaboration with you.')}`, external: true },
-    { name: 'Privacy Policy', href: '#' }, { name: 'Terms', href: '#' },
-  ],
-};
-
 export default function Footer() {
   const scrollTo = (id: string) => { document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }); };
   
@@ -58,6 +40,32 @@ export default function Footer() {
     const cached = getCachedData<SiteSettings>('/settings');
     return cached?.office_location_link || 'https://maps.google.com/?q=VUDA+Colony+Visakhapatnam';
   });
+  const [waNumber, setWaNumber] = useState(() => {
+    const cached = getCachedData<SiteSettings>('/settings');
+    return cached?.contact_whatsapp_number || '918897492636';
+  });
+  const [callNumber, setCallNumber] = useState(() => {
+    const cached = getCachedData<SiteSettings>('/settings');
+    return cached?.contact_call_number || '+919515192936';
+  });
+
+  const footerLinks = {
+    Services: [
+      { name: 'Mini Projects', href: '#services' }, { name: 'Major Projects', href: '#services' },
+      { name: 'Websites', href: '#services' }, { name: 'Research Papers', href: '#services' },
+      { name: 'Assignments', href: '#services' }, { name: 'Plagiarism Removal', href: '#services' },
+    ],
+    Company: [
+      { name: 'How It Works', href: '#how-it-works' }, { name: 'Pricing', href: '#pricing' },
+      { name: 'Reviews', href: '/reviews', isRoute: true }, { name: 'Payment', href: '/payment', isRoute: true },
+      { name: 'Admin', href: '/admin', isRoute: true },
+    ],
+    Support: [
+      { name: 'Contact Us', href: '#contact' },
+      { name: 'WhatsApp', href: `https://wa.me/${waNumber}?text=${encodeURIComponent('Hi! Acadomix, I’m interested in discussing a project collaboration with you.')}`, external: true },
+      { name: 'Privacy Policy', href: '#' }, { name: 'Terms', href: '#' },
+    ],
+  };
 
   useEffect(() => {
     AssetsDB.get('logo').then(logo => {
@@ -73,6 +81,8 @@ export default function Footer() {
       if (settings?.company_tagline) setTagline(settings.company_tagline);
       if (settings?.office_location_text) setLocationText(settings.office_location_text);
       if (settings?.office_location_link) setLocationLink(settings.office_location_link);
+      if (settings?.contact_whatsapp_number) setWaNumber(settings.contact_whatsapp_number);
+      if (settings?.contact_call_number) setCallNumber(settings.contact_call_number);
     }).catch(() => {
       // Keep defaults
     });
@@ -101,8 +111,8 @@ export default function Footer() {
               Your trusted partner for academic projects. Student-friendly prices, expert delivery.
             </p>
             <div className="space-y-1.5 text-[10px] sm:text-sm">
-              <a href="tel:+919515192936" className="flex items-center gap-2 text-white/25 hover:text-gold active:text-crimson transition-colors">
-                <Phone className="w-3 h-3 flex-shrink-0" /> +91 95151 92936
+              <a href={`tel:${callNumber}`} className="flex items-center gap-2 text-white/25 hover:text-gold active:text-crimson transition-colors">
+                <Phone className="w-3 h-3 flex-shrink-0" /> {callNumber}
               </a>
               <a href={`https://mail.google.com/mail/?view=cm&fs=1&to=acadomix@gmail.com&su=${encodeURIComponent('Project Collaboration')}&body=${encodeURIComponent("Hi! Acadomix, I'm interested in discussing a project collaboration with you.")}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-white/25 hover:text-gold active:text-crimson transition-colors">
                 <Mail className="w-3 h-3 flex-shrink-0" /> acadomix@gmail.com
@@ -141,7 +151,7 @@ export default function Footer() {
             © {new Date().getFullYear()} Acadomix. Made with <Heart className="w-2.5 h-2.5 text-crimson fill-crimson" /> for students.
           </p>
           <div className="flex items-center gap-2">
-            <a href={`https://wa.me/918897492636?text=${encodeURIComponent('Hi! Acadomix, I’m interested in discussing a project collaboration with you.')}`} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full glass flex items-center justify-center text-white/25 hover:text-green-400 active:bg-green-500/10 transition-all text-xs">💬</a>
+            <a href={`https://wa.me/${waNumber}?text=${encodeURIComponent('Hi! Acadomix, I’m interested in discussing a project collaboration with you.')}`} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full glass flex items-center justify-center text-white/25 hover:text-green-400 active:bg-green-500/10 transition-all text-xs">💬</a>
             <a href={`https://mail.google.com/mail/?view=cm&fs=1&to=acadomix@gmail.com&su=${encodeURIComponent('Project Collaboration')}&body=${encodeURIComponent("Hi! Acadomix, I'm interested in discussing a project collaboration with you.")}`} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full glass flex items-center justify-center text-white/25 hover:text-gold active:bg-gold/10 transition-all"><Mail className="w-3.5 h-3.5" /></a>
             <Link to="/admin" onClick={() => AdminAuth.logout()} className="w-8 h-8 rounded-full glass flex items-center justify-center text-white/25 hover:text-crimson active:bg-crimson/10 transition-all"><Shield className="w-3.5 h-3.5" /></Link>
           </div>

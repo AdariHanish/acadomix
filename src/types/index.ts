@@ -81,6 +81,8 @@ export interface SiteSettings {
   office_location_text?: string;
   office_location_link?: string;
   admin_phone?: string;
+  contact_whatsapp_number?: string;
+  contact_call_number?: string;
   offer_active?: boolean;
   offer_reason?: string;
   offer_end_time?: string;

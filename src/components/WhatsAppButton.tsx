@@ -1,10 +1,15 @@
 import { motion } from 'framer-motion';
 import { MessageCircle } from 'lucide-react';
+import { getCachedData } from '../utils/storage';
+import { SiteSettings } from '../types';
 
 export default function WhatsAppButton() {
+  const cachedSettings = getCachedData<SiteSettings>('/settings');
+  const waNumber = cachedSettings?.contact_whatsapp_number || '918897492636';
+
   return (
     <motion.a
-      href={`https://wa.me/918897492636?text=${encodeURIComponent('Hi! Acadomix, I’m interested in discussing a project collaboration with you.')}`}
+      href={`https://wa.me/${waNumber}?text=${encodeURIComponent('Hi! Acadomix, I’m interested in discussing a project collaboration with you.')}`}
       target="_blank"
       rel="noopener noreferrer"
       initial={{ scale: 0, opacity: 0 }}

@@ -27,6 +27,7 @@ export default function PaymentPage() {
 
   const cachedSettings = getCachedData<SiteSettings>('/settings');
   const [adminPhone, setAdminPhone] = useState(cachedSettings?.admin_phone || '9515192936');
+  const [waNumber, setWaNumber] = useState(cachedSettings?.contact_whatsapp_number || '918897492636');
   const [whatsappUrl, setWhatsappUrl] = useState<string | null>(null);
   const [tagline, setTagline] = useState(cachedSettings?.company_tagline || 'Coding Your Ideas');
 
@@ -48,6 +49,7 @@ export default function PaymentPage() {
     SettingsDB.get().then(settings => {
       if (settings?.admin_phone) setAdminPhone(settings.admin_phone);
       if (settings?.company_tagline) setTagline(settings.company_tagline);
+      if (settings?.contact_whatsapp_number) setWaNumber(settings.contact_whatsapp_number);
     }).catch(() => {});
   }, []);
 
@@ -272,7 +274,7 @@ export default function PaymentPage() {
               </form>
 
               <div className="mt-5 pt-5 border-t border-white/5 text-center">
-                <p className="text-xs sm:text-sm text-white/20">Need help? <a href={`https://wa.me/918897492636?text=${encodeURIComponent("Hi! Acadomix, I'm interested in discussing a project collaboration with you.")}`} target="_blank" rel="noopener noreferrer" className="text-green-400 hover:underline">WhatsApp us</a></p>
+                <p className="text-xs sm:text-sm text-white/20">Need help? <a href={`https://wa.me/${waNumber}?text=${encodeURIComponent("Hi! Acadomix, I'm interested in discussing a project collaboration with you.")}`} target="_blank" rel="noopener noreferrer" className="text-green-400 hover:underline">WhatsApp us</a></p>
               </div>
             </div>
           </motion.div>

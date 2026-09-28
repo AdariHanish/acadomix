@@ -13,6 +13,8 @@ export default function AdminSettings() {
     office_location_text: '65-5-259, VUDA Colony, Vizag - 530011',
     office_location_link: 'https://maps.google.com/?q=VUDA+Colony+Visakhapatnam',
     admin_phone: '9515192936',
+    contact_call_number: '+919515192936',
+    contact_whatsapp_number: '918897492636',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [newPassword, setNewPassword] = useState('');
@@ -46,6 +48,8 @@ export default function AdminSettings() {
       company_tagline: settings.company_tagline,
       office_location_text: settings.office_location_text,
       office_location_link: settings.office_location_link,
+      contact_call_number: settings.contact_call_number,
+      contact_whatsapp_number: settings.contact_whatsapp_number,
     });
     setSuccess('Company details updated!'); setTimeout(() => setSuccess(null), 3000);
   };
@@ -119,6 +123,14 @@ export default function AdminSettings() {
               <div>
                 <label className="block text-xs text-white/25 mb-1">Google Maps Redirect Link</label>
                 <input type="text" value={settings.office_location_link || ''} onChange={e => setSettings({ ...settings, office_location_link: e.target.value })} placeholder="https://maps.google.com/..." className={inputCls} />
+              </div>
+              <div>
+                <label className="block text-xs text-white/25 mb-1">Contact Call Number</label>
+                <input type="text" value={settings.contact_call_number || ''} onChange={e => setSettings({ ...settings, contact_call_number: e.target.value })} placeholder="e.g. +919515192936" className={inputCls} />
+              </div>
+              <div>
+                <label className="block text-xs text-white/25 mb-1">Contact WhatsApp Number</label>
+                <input type="text" value={settings.contact_whatsapp_number || ''} onChange={e => setSettings({ ...settings, contact_whatsapp_number: e.target.value })} placeholder="e.g. 918897492636 (without +)" className={inputCls} />
               </div>
               <button onClick={saveCompanyInfo} className="w-full py-3 bg-gold hover:bg-gold-light text-black text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-2 mt-2">
                 <Save className="w-4 h-4" /> Save Company Details

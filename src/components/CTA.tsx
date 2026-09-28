@@ -1,8 +1,20 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Sparkles, CreditCard } from 'lucide-react';
+import { getCachedData } from '../utils/storage';
+import { SiteSettings } from '../types';
 
 export default function CTA() {
+  const [waNumber] = useState(() => {
+    const cached = getCachedData<SiteSettings>('/settings');
+    return cached?.contact_whatsapp_number || '918897492636';
+  });
+  const [callNumber] = useState(() => {
+    const cached = getCachedData<SiteSettings>('/settings');
+    return cached?.contact_call_number || '+919515192936';
+  });
+
   return (
     <section className="relative overflow-hidden vintage-pinstripe">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] bg-crimson/8 rounded-full blur-[100px] sm:blur-[150px] pointer-events-none" />
@@ -25,11 +37,11 @@ export default function CTA() {
               className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-gradient-to-r from-crimson via-crimson-dark to-gold-dark text-white text-sm sm:text-base font-semibold rounded-full btn-glow shine flex items-center justify-center gap-2 active:scale-[0.97] transition-transform">
               <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" /> Start Your Project <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
-            <a href={`https://wa.me/918897492636?text=${encodeURIComponent('Hi! Acadomix, I’m interested in discussing a project collaboration with you.')}`} target="_blank" rel="noopener noreferrer"
+            <a href={`https://wa.me/${waNumber}?text=${encodeURIComponent('Hi! Acadomix, I’m interested in discussing a project collaboration with you.')}`} target="_blank" rel="noopener noreferrer"
               className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-green-500 hover:bg-green-600 text-white text-sm sm:text-base font-semibold rounded-full transition-all shadow-lg shadow-green-500/30 flex items-center justify-center gap-2 active:scale-[0.97]">
               💬 WhatsApp Us
             </a>
-            <a href="tel:+919515192936"
+            <a href={`tel:${callNumber}`}
               className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-blue-500 hover:bg-blue-600 text-white text-sm sm:text-base font-semibold rounded-full transition-all shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2 active:scale-[0.97]">
               📞 Call Us Now
             </a>
