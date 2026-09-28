@@ -104,7 +104,9 @@ export default async function handler(_req: any, res: any) {
       { name: 'offer_end_time', type: "VARCHAR(255)" },
       { name: 'original_mini_price', type: "VARCHAR(100)" },
       { name: 'original_major_price', type: "VARCHAR(100)" },
-      { name: 'original_custom_price', type: "VARCHAR(100)" }
+      { name: 'original_custom_price', type: "VARCHAR(100)" },
+      { name: 'contact_call_number', type: "VARCHAR(20) DEFAULT '+919515192936'" },
+      { name: 'contact_whatsapp_number', type: "VARCHAR(20) DEFAULT '918897492636'" }
     ];
 
     for (const col of columns) {

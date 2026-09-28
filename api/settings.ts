@@ -24,13 +24,15 @@ export default async function handler(req: any, res: any) {
         'security_question', 'security_answer',
         'company_tagline', 'office_location_text', 'office_location_link',
         'admin_phone', 'offer_active', 'offer_reason', 'offer_end_time',
-        'original_mini_price', 'original_major_price', 'original_custom_price'
+        'original_mini_price', 'original_major_price', 'original_custom_price',
+        'contact_call_number', 'contact_whatsapp_number'
       ];
       // admin_password is intentionally excluded — use POST /api/auth with action='reset'
 
       const maxLengths: Record<string, number> = {
         company_tagline: 200, office_location_text: 300, office_location_link: 500,
         admin_phone: 20, offer_reason: 200, security_question: 200, security_answer: 200,
+        contact_call_number: 20, contact_whatsapp_number: 20
       };
 
       const [existing]: any = await pool.query('SELECT * FROM site_settings LIMIT 1');
