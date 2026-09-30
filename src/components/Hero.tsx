@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Zap, Users, Award, Clock, Sparkles, CreditCard } from 'lucide-react';
-import { ReviewsDB, getCachedData } from '../utils/storage';
+import { ReviewsDB, SettingsDB, getCachedData } from '../utils/storage';
 
 function computeStats(data: any[]) {
   if (!Array.isArray(data)) return { projects: 0, students: 0, teamStats: { teams: 0, members: 0, individuals: 0 } };
@@ -32,6 +32,9 @@ export default function Hero() {
   const [totalStudents, setTotalStudents] = useState(initialStats.students);
   const [totalProjects, setTotalProjects] = useState(initialStats.projects);
   const [teamStats, setTeamStats] = useState(initialStats.teamStats);
+  const [waNumber, setWaNumber] = useState(
+    getCachedData<any>('/settings')?.contact_whatsapp_number || '918897492636'
+  );
 
   useEffect(() => {
     ReviewsDB.getApproved()
@@ -43,6 +46,10 @@ export default function Hero() {
         setTeamStats(stats.teamStats);
       })
       .catch(err => console.error("Failed to load hero stats:", err));
+
+    SettingsDB.get().then(s => {
+      if (s?.contact_whatsapp_number) setWaNumber(s.contact_whatsapp_number);
+    }).catch(() => {});
   }, []);
 
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
@@ -148,7 +155,7 @@ export default function Hero() {
               className="w-full sm:w-auto px-8 py-3.5 sm:py-4 bg-gradient-to-r from-crimson via-crimson-dark to-gold-dark text-white text-sm sm:text-lg font-semibold rounded-full btn-glow shine flex items-center justify-center gap-2 active:scale-[0.97] transition-transform">
               <Zap className="w-4 h-4 sm:w-5 sm:h-5" /> Start Your Project <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
-            <a href={`https://wa.me/${getCachedData<any>('/settings')?.contact_whatsapp_number || '918897492636'}?text=${encodeURIComponent('Hi! Acadomix, I’m interested in discussing a project collaboration with you.')}`} target="_blank" rel="noopener noreferrer"
+            <a href={`https://wa.me/${waNumber}?text=${encodeURIComponent('Hi! Acadomix, I’m interested in discussing a project collaboration with you.')}`} target="_blank" rel="noopener noreferrer"
               className="w-full sm:w-auto px-8 py-3.5 sm:py-4 bg-green-500 hover:bg-green-600 text-white text-sm sm:text-lg font-semibold rounded-full transition-all shadow-lg shadow-green-500/30 flex items-center justify-center gap-2 active:scale-[0.97]">
               💬 WhatsApp Us
             </a>

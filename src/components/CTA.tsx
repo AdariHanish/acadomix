@@ -1,19 +1,21 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Sparkles, CreditCard } from 'lucide-react';
-import { getCachedData } from '../utils/storage';
+import { SettingsDB, getCachedData } from '../utils/storage';
 import { SiteSettings } from '../types';
 
 export default function CTA() {
-  const [waNumber] = useState(() => {
-    const cached = getCachedData<SiteSettings>('/settings');
-    return cached?.contact_whatsapp_number || '918897492636';
-  });
-  const [callNumber] = useState(() => {
-    const cached = getCachedData<SiteSettings>('/settings');
-    return cached?.contact_call_number || '+919515192936';
-  });
+  const cached = getCachedData<SiteSettings>('/settings');
+  const [waNumber, setWaNumber] = useState(cached?.contact_whatsapp_number || '918897492636');
+  const [callNumber, setCallNumber] = useState(cached?.contact_call_number || '+919515192936');
+
+  useEffect(() => {
+    SettingsDB.get().then(s => {
+      if (s?.contact_whatsapp_number) setWaNumber(s.contact_whatsapp_number);
+      if (s?.contact_call_number) setCallNumber(s.contact_call_number);
+    }).catch(() => {});
+  }, []);
 
   return (
     <section className="relative overflow-hidden vintage-pinstripe">

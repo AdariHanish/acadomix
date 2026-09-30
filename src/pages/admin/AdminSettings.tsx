@@ -17,6 +17,7 @@ export default function AdminSettings() {
     contact_whatsapp_number: '918897492636',
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [saving, setSaving] = useState<string | null>(null);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -33,25 +34,41 @@ export default function AdminSettings() {
   }, []);
 
   const savePricing = async () => {
-    await SettingsDB.update({
-      mini_project_price: settings.mini_project_price,
-      major_project_price: settings.major_project_price,
-      custom_project_price: settings.custom_project_price,
-      research_paper_price: settings.research_paper_price,
-      plagiarism_removal_price: settings.plagiarism_removal_price,
-    });
-    setSuccess('Pricing updated!'); setTimeout(() => setSuccess(null), 3000);
+    setSaving('pricing');
+    try {
+      await SettingsDB.update({
+        mini_project_price: settings.mini_project_price,
+        major_project_price: settings.major_project_price,
+        custom_project_price: settings.custom_project_price,
+        research_paper_price: settings.research_paper_price,
+        plagiarism_removal_price: settings.plagiarism_removal_price,
+      });
+      setSuccess('Pricing updated!'); setError(null); setTimeout(() => setSuccess(null), 3000);
+    } catch (err: any) {
+      setError('Failed to save pricing. Check your connection.'); setTimeout(() => setError(null), 4000);
+    } finally {
+      setSaving(null);
+    }
   };
 
   const saveCompanyInfo = async () => {
-    await SettingsDB.update({
-      company_tagline: settings.company_tagline,
-      office_location_text: settings.office_location_text,
-      office_location_link: settings.office_location_link,
-      contact_call_number: settings.contact_call_number,
-      contact_whatsapp_number: settings.contact_whatsapp_number,
-    });
-    setSuccess('Company details updated!'); setTimeout(() => setSuccess(null), 3000);
+    setSaving('company');
+    try {
+      await SettingsDB.update({
+        company_tagline: settings.company_tagline,
+        office_location_text: settings.office_location_text,
+        office_location_link: settings.office_location_link,
+        contact_call_number: settings.contact_call_number,
+        contact_whatsapp_number: settings.contact_whatsapp_number,
+      });
+      // Re-warm the cache so other components pick up the new values immediately
+      await SettingsDB.get();
+      setSuccess('Company details saved! ✅'); setError(null); setTimeout(() => setSuccess(null), 3000);
+    } catch (err: any) {
+      setError('Failed to save. Database may be offline — please resume your TiDB cluster.'); setTimeout(() => setError(null), 5000);
+    } finally {
+      setSaving(null);
+    }
   };
 
   const saveRecoveryPhone = async () => {
@@ -59,8 +76,15 @@ export default function AdminSettings() {
       setError('Recovery mobile must be exactly 10 digits');
       return;
     }
-    await SettingsDB.update({ admin_phone: settings.admin_phone });
-    setSuccess('Recovery mobile updated!'); setError(null); setTimeout(() => setSuccess(null), 3000);
+    setSaving('phone');
+    try {
+      await SettingsDB.update({ admin_phone: settings.admin_phone });
+      setSuccess('Recovery mobile updated!'); setError(null); setTimeout(() => setSuccess(null), 3000);
+    } catch (err: any) {
+      setError('Failed to save. Check your connection.'); setTimeout(() => setError(null), 4000);
+    } finally {
+      setSaving(null);
+    }
   };
 
   const changePassword = async () => {
@@ -80,9 +104,29 @@ export default function AdminSettings() {
     <div className="space-y-6">
       <div><h2 className="text-xl font-bold text-white">Settings</h2><p className="text-sm text-white/30">Configure pricing, credentials, and security.</p></div>
 
-      {success && <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="p-3 rounded-xl bg-green-500/[0.06] border border-green-500/[0.12] flex items-center gap-2"><Check className="w-4 h-4 text-green-400" /><p className="text-green-400 text-sm">{success}</p></motion.div>}
-      {error && <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="p-3 rounded-xl bg-red-500/[0.06] border border-red-500/[0.12] flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-red-400" /><p className="text-red-400 text-sm">{error}</p></motion.div>}
-
+      {/* Fixed Toast Notifications — always visible regardless of scroll */}
+      {success && (
+        <motion.div
+          initial={{ opacity: 0, y: 40, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 40 }}
+          className="fixed bottom-6 right-6 z-[999] flex items-center gap-3 px-5 py-3.5 rounded-2xl bg-green-500 text-white shadow-2xl shadow-green-500/40 border border-green-400/30"
+        >
+          <Check className="w-5 h-5 shrink-0" />
+          <span className="text-sm font-semibold">{success}</span>
+        </motion.div>
+      )}
+      {error && (
+        <motion.div
+          initial={{ opacity: 0, y: 40, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 40 }}
+          className="fixed bottom-6 right-6 z-[999] flex items-center gap-3 px-5 py-3.5 rounded-2xl bg-red-500 text-white shadow-2xl shadow-red-500/40 border border-red-400/30 max-w-xs"
+        >
+          <AlertTriangle className="w-5 h-5 shrink-0" />
+          <span className="text-sm font-semibold">{error}</span>
+        </motion.div>
+      )}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Base Pricing & Company Details */}
         <div className="space-y-5">
@@ -102,8 +146,8 @@ export default function AdminSettings() {
                   <input type="number" value={(settings as any)[item.key]} onChange={e => setSettings({ ...settings, [item.key]: e.target.value })} className={inputCls} />
                 </div>
               ))}
-              <button onClick={savePricing} className="w-full py-3 bg-gold hover:bg-gold-light text-black text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-2 mt-2">
-                <Save className="w-4 h-4" /> Save Pricing
+              <button onClick={savePricing} disabled={saving === 'pricing'} className="w-full py-3 bg-gold hover:bg-gold-light disabled:opacity-60 text-black text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-2 mt-2">
+                <Save className="w-4 h-4" /> {saving === 'pricing' ? 'Saving...' : 'Save Pricing'}
               </button>
             </div>
           </div>
@@ -132,8 +176,8 @@ export default function AdminSettings() {
                 <label className="block text-xs text-white/25 mb-1">Contact WhatsApp Number</label>
                 <input type="text" value={settings.contact_whatsapp_number || ''} onChange={e => setSettings({ ...settings, contact_whatsapp_number: e.target.value })} placeholder="e.g. 918897492636 (without +)" className={inputCls} />
               </div>
-              <button onClick={saveCompanyInfo} className="w-full py-3 bg-gold hover:bg-gold-light text-black text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-2 mt-2">
-                <Save className="w-4 h-4" /> Save Company Details
+              <button onClick={saveCompanyInfo} disabled={saving === 'company'} className="w-full py-3 bg-gold hover:bg-gold-light disabled:opacity-60 text-black text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-2 mt-2">
+                <Save className="w-4 h-4" /> {saving === 'company' ? 'Saving...' : 'Save Company Details'}
               </button>
             </div>
           </div>
@@ -187,8 +231,8 @@ export default function AdminSettings() {
                   className={inputCls} 
                 />
               </div>
-              <button onClick={saveRecoveryPhone} className="w-full py-3 bg-crimson hover:bg-crimson-light text-white text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-2">
-                <Save className="w-4 h-4" /> Save Recovery Mobile
+              <button onClick={saveRecoveryPhone} disabled={saving === 'phone'} className="w-full py-3 bg-crimson hover:bg-crimson-light disabled:opacity-60 text-white text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-2">
+                <Save className="w-4 h-4" /> {saving === 'phone' ? 'Saving...' : 'Save Recovery Mobile'}
               </button>
             </div>
 
