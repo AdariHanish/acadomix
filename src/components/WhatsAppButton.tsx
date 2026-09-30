@@ -17,7 +17,7 @@ export default function WhatsAppButton() {
 
   return (
     <motion.a
-      href={`https://wa.me/${waNumber}?text=${encodeURIComponent('Hi! Acadomix, I'm interested in discussing a project collaboration with you.')}`}
+      href={`https://wa.me/${waNumber}?text=${encodeURIComponent("Hi! Acadomix, I'm interested in discussing a project collaboration with you.")}`}
       target="_blank"
       rel="noopener noreferrer"
       initial={{ scale: 0, opacity: 0 }}
